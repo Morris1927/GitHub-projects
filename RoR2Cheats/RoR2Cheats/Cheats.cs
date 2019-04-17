@@ -36,6 +36,12 @@ namespace Cheats {
             SetupFOVIL();
         }
 
+        public void Update() {
+            if (Input.GetKeyDown(KeyCode.F2)) {
+                RoR2.Console.instance.SubmitCmd(NetworkUser.readOnlyInstancesList[0], "time_scale " + (Time.timeScale != 0 ? 0 : 1));
+            }
+        }
+
         private static void SetupNoEnemyIL() {
             IL.RoR2.CombatDirector.FixedUpdate += il => { 
                 var c = new ILCursor(il);
@@ -86,7 +92,6 @@ namespace Cheats {
                 c.GotoNext(x => x.MatchLdcR4(60f));
                 c.GotoNext(x => x.MatchLdarg(0));
                 c.EmitDelegate<Func<float, float>>(f => f = fov - 10f);
-                c.GotoNext(x => x.MatchBr(il.DefineLabel(x)));
             };
         }
 
@@ -330,9 +335,7 @@ namespace Cheats {
             string bodyString = ArgsHelper.GetValue(args.userArgs, 0);
             string playerString = ArgsHelper.GetValue(args.userArgs, 1);
 
-            bodyString = bodyString.Replace("Master", "");
-            bodyString = bodyString.Replace("Body", "");
-            bodyString = bodyString + "Body";
+            bodyString = bodyString.Contains("Body") ? bodyString : bodyString + "Body";
 
             NetworkUser player = GetNetUserFromString(playerString);
 
@@ -491,11 +494,11 @@ namespace Cheats {
         }
 
         [ConCommand(commandName = "spawn_body", flags = ConVarFlags.ExecuteOnServer, helpText = "Spawns a CharacterBody")]
-        private static void CCSpawnBraindead(ConCommandArgs args) {
+        private static void CCSpawnBody(ConCommandArgs args) {
             string prefabString = ArgsHelper.GetValue(args.userArgs, 0);
 
-            prefabString.Replace("Body", "");
-            prefabString = prefabString + "Body";
+            prefabString = prefabString.Contains("Body") ? prefabString : prefabString + "Body";
+            
             GameObject body = BodyCatalog.FindBodyPrefab(prefabString);
             if (body == null) {
                 List<string> array = new List<string>();
@@ -507,9 +510,7 @@ namespace Cheats {
                 return;
             }
             GameObject gameObject = Instantiate<GameObject>(body, args.sender.master.GetBody().transform.position, Quaternion.identity);
-            foreach (var item in gameObject.GetComponents<Component>()) {
-                Debug.Log(item.GetType());
-            }
+
             NetworkServer.Spawn(gameObject);
             Debug.Log("Attempting to spawn " + prefabString);
         }

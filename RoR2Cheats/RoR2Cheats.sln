@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoR2Cheats", "ClassLibrary1\RoR2Cheats.csproj", "{2C771A91-9B06-4002-8C6C-62019A77F6C8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoR2Cheats", "RoR2Cheats\RoR2Cheats.csproj", "{2C771A91-9B06-4002-8C6C-62019A77F6C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

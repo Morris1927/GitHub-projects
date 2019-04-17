@@ -33,6 +33,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="netstandard"></Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\..\..\Games\Steam\steamapps\common\Risk of Rain 2\mods\Libs\Assembly-CSharp.dll</HintPath>
     </Reference>

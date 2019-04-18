@@ -22,18 +22,40 @@ namespace Cheats {
 
         private static float fov = 60f;
         private static ulong seed = 0;
+        private static bool godMode = false;
 
         private static bool noEnemies = false;
 
         public void Awake() {
-            On.RoR2.Console.Awake += (orig, self) => {
-                CommandHelper.RegisterCommands(self);
-                orig(self);
-            };
+            HandleHooks();
+
             Morris.MorrisNetworkHandler.RegisterNetworkHandlerAttributes();
             SetupNoEnemyIL();
 
             SetupFOVIL();
+        }
+
+        private static void HandleHooks() {
+            On.RoR2.Console.Awake += (orig, self) => {
+                CommandHelper.RegisterCommands(self);
+                orig(self);
+            };
+
+            On.RoR2.CharacterBody.Start += (orig, self) => {
+                orig(self);
+
+                if (self.healthComponent) {
+                    if (self.isPlayerControlled)
+                        self.healthComponent.godMode = godMode;
+
+                }
+
+            };
+
+
+            On.RoR2.Run.Start += Run_Start;
+            On.RoR2.CameraRigController.Start += CameraRigController_Start;
+
         }
 
         public void Update() {
@@ -77,9 +99,6 @@ namespace Cheats {
 
         private void SetupFOVIL() {
 
-            On.RoR2.Run.Start += Run_Start;
-            On.RoR2.CameraRigController.Start += CameraRigController_Start;
-
             IL.EntityStates.Huntress.BackflipState.FixedUpdate += il => {
                 var c = new ILCursor(il);
                 c.GotoNext(x => x.MatchLdcR4(60f));
@@ -103,16 +122,21 @@ namespace Cheats {
 
         [ConCommand(commandName = "god", flags = ConVarFlags.ExecuteOnServer, helpText = "Godmode")]
         private static void CCGodModeToggle(ConCommandArgs args) {
-            CharacterBody cb = args.sender.master.GetBody();
-            if (cb) {
-                HealthComponent hc = cb.healthComponent;
-                if (hc) {
-                    hc.godMode = !hc.godMode;
-                    Debug.Log("God toggled " + hc.godMode);
+
+            godMode = !godMode;
+
+            foreach (var playerInstance in PlayerCharacterMasterController.instances) {
+                CharacterBody cb = playerInstance.master.GetBody();
+                if (cb) {
+                    HealthComponent hc = cb.healthComponent;
+                    if (hc) {
+                        hc.godMode = godMode;
+
+                    }
                 }
             }
 
-
+             Debug.Log("God toggled " + godMode);
         }
 
         [ConCommand(commandName = "time_scale", flags = ConVarFlags.None | ConVarFlags.ExecuteOnServer, helpText = "Time scale")]

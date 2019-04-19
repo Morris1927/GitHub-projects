@@ -15,8 +15,12 @@ namespace AllyPing {
         public static FieldInfo currentEnemy = typeof(BaseAI).GetField("currentEnemy", BindingFlags.NonPublic | BindingFlags.Instance);
         public static FieldInfo pingerController = typeof(PlayerCharacterMasterController).GetField("pingerController", BindingFlags.NonPublic | BindingFlags.Instance);
 
+        public static FieldInfo pingDuration = typeof(RoR2.UI.PingIndicator).GetField("pingDuration", BindingFlags.NonPublic | BindingFlags.Instance);
+        public static FieldInfo pingIndicator = typeof(PingerController).GetField("pingerIndicator", BindingFlags.NonPublic | BindingFlags.Instance);
+
 
         private void Awake() {
+
 
             IL.RoR2.CharacterBody.HandleConstructTurret += (il) => {
                 var c = new ILCursor(il);

@@ -33,7 +33,18 @@ namespace Cheats {
             SetupNoEnemyIL();
 
             SetupFOVIL();
+
         }
+
+        public void Update() {
+            if (Input.GetKeyDown(KeyCode.F2)) {
+                RoR2.Console.instance.SubmitCmd(NetworkUser.readOnlyInstancesList[0], "time_scale " + (Time.timeScale != 0 ? 0 : 1));
+            }
+
+
+
+        }
+
 
         private static void HandleHooks() {
             On.RoR2.Console.Awake += (orig, self) => {
@@ -56,12 +67,6 @@ namespace Cheats {
             On.RoR2.Run.Start += Run_Start;
             On.RoR2.CameraRigController.Start += CameraRigController_Start;
 
-        }
-
-        public void Update() {
-            if (Input.GetKeyDown(KeyCode.F2)) {
-                RoR2.Console.instance.SubmitCmd(NetworkUser.readOnlyInstancesList[0], "time_scale " + (Time.timeScale != 0 ? 0 : 1));
-            }
         }
 
         private static void SetupNoEnemyIL() {
@@ -118,7 +123,6 @@ namespace Cheats {
             self.baseFov = fov;
             orig(self);
         }
-
 
         [ConCommand(commandName = "god", flags = ConVarFlags.ExecuteOnServer, helpText = "Godmode")]
         private static void CCGodModeToggle(ConCommandArgs args) {

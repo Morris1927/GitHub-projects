@@ -15,35 +15,57 @@ using UnityEngine.Networking;
 namespace DropInMultiplayer
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("dev.morris1927.ror2.DropInMultiplayer", "DropInMultiplayer", "2.0.0")]
+    [BepInPlugin("com.morris1927.DropInMultiplayer", "DropInMultiplayer", "2.1.0")]
     public class DropInMultiplayer : BaseUnityPlugin {
 
-        private static ConfigWrapper<bool> StartWithItemsEnabled { get; set; }
+        private static ConfigWrapper<bool> ImmediateSpawn { get; set; }
+        private static ConfigWrapper<bool> NormalSurvivorsOnly { get; set; }
+        private static ConfigWrapper<bool> AllowSpawnAsWhileAlive { get; set; }
+        private static ConfigWrapper<bool> StartWithItems { get; set; }
         public static ConfigWrapper<bool> SpawnAsEnabled { get; set; }
-        public static ConfigWrapper<bool> HostOnlySpawnAsEnabled { get; set; }
+        public static ConfigWrapper<bool> HostOnlySpawnAs { get; set; }
+
+        public static List<string> survivorList = new List<string>{
+            "CommandoBody",
+            "HuntressBody",
+            "EngiBody",
+            "ToolbotBody",
+            "MercBody",
+            "MageBody",
+            "BanditBody",
+        };
 
         public void Awake() {
-
-            StartWithItemsEnabled = Config.Wrap("Enable/Disable", "StartWithItems", "Enables or disables giving players items if they join mid-game", true);
+            
+            ImmediateSpawn = Config.Wrap("Enable/Disable", "ImmediateSpawn", "Enables or disables immediate spawning as you join", false);
+            NormalSurvivorsOnly = Config.Wrap("Enable/Disable", "NormalSurvivorsOnly", "Changes whether or not spawn_as can only be used to turn into survivors", true);
+            StartWithItems = Config.Wrap("Enable/Disable", "StartWithItems", "Enables or disables giving players items if they join mid-game", true);
+            AllowSpawnAsWhileAlive = Config.Wrap("Enable/Disable", "AllowSpawnAsWhileAlive", "Enables or disables players using spawn_as while alive", true);
             SpawnAsEnabled = Config.Wrap("Enable/Disable", "SpawnAs", "Enables or disables the spawn_as command", true);
-            HostOnlySpawnAsEnabled = Config.Wrap("Enable/Disable", "HostOnlySpawnAs", "Changes the spawn_as command to be host only", false);
+            HostOnlySpawnAs = Config.Wrap("Enable/Disable", "HostOnlySpawnAs", "Changes the spawn_as command to be host only", false);
 
             On.RoR2.Console.Awake += (orig, self) => {
                 CommandHelper.RegisterCommands(self);
                 orig(self);
             };
 
-            On.RoR2.Run.Start += (orig, self) => {
-                orig(self);
-                self.SetFieldValue("allowNewParticipants", true);
-            };
+            if (ImmediateSpawn.Value) {
+                On.RoR2.Run.Start += (orig, self) => {
+                    orig(self);
+                    self.SetFieldValue("allowNewParticipants", true);
+                };
+            }
 
             On.RoR2.Run.SetupUserCharacterMaster += SetupUserCharacterMaster;
             On.RoR2.Chat.UserChatMessage.ConstructChatString += UserChatMessage_ConstructChatString;
         }
 
         private string UserChatMessage_ConstructChatString(On.RoR2.Chat.UserChatMessage.orig_ConstructChatString orig, Chat.UserChatMessage self) {
-            
+
+            if (!NetworkServer.active) {
+                return orig(self); 
+            }
+
             List<string> split = new List<string>(self.text.Split(Char.Parse(" ")));
             string commandName = ArgsHelper.GetValue(split, 0);
 
@@ -59,47 +81,67 @@ namespace DropInMultiplayer
             return orig(self);
         }
 
+        [Server]
         private static void SpawnAs(NetworkUser user, string bodyString, string userString) {
 
             if (!SpawnAsEnabled.Value) {
                 return;
             }
 
-            CharacterMaster sender = user.master;
 
-            if (HostOnlySpawnAsEnabled.Value) {
+            if (HostOnlySpawnAs.Value) {
                 if (NetworkUser.readOnlyInstancesList[0].netId != user.netId) {
                     return;
                 }
             }
 
+
             bodyString = bodyString.Replace("Master", "");
             bodyString = bodyString.Replace("Body", "");
             bodyString = bodyString + "Body";
 
-            NetworkUser player = GetNetUserFromString(userString);
-            CharacterMaster master = player != null ? player.master : sender;
-
-            if (!master.alive) {
-                Debug.Log("Player is dead and cannot respawn.");
-                return;
-            }
-
             GameObject bodyPrefab = BodyCatalog.FindBodyPrefab(bodyString);
-
             if (bodyPrefab == null) {
                 List<string> array = new List<string>();
                 foreach (var item in BodyCatalog.allBodyPrefabs) {
                     array.Add(item.name);
                 }
                 string list = string.Join("\n", array);
-                Debug.LogFormat("Could not spawn as {0}, Try: spawn_as GolemBody   --- \n{1}", bodyString, list);
+                Debug.LogFormat("Could not spawn as {0}, Try: spawn_as GolemBody   --- \n{1}", bodyString, NormalSurvivorsOnly.Value ? string.Join("\n", survivorList) : list);
                 return;
             }
-            master.bodyPrefab = bodyPrefab;
-            Debug.Log(master.GetBody().GetUserName() + " is spawning as " + bodyString);
 
-            master.Respawn(master.GetBody().transform.position, master.GetBody().transform.rotation);
+            if (NormalSurvivorsOnly.Value) {
+                if (!survivorList.Contains(bodyString)) {
+                    return;
+                }
+            }
+
+            NetworkUser player = GetNetUserFromString(userString);
+            player = player ?? user;
+            CharacterMaster master = player.master;
+
+            if (master) {
+                if (AllowSpawnAsWhileAlive.Value) {
+                    master.bodyPrefab = bodyPrefab;
+                    master.Respawn(master.GetBody().transform.position, master.GetBody().transform.rotation);
+                    Debug.Log(player.userName + " respawning as " + bodyString);
+                }
+            } else {
+                Run.instance.SetFieldValue("allowNewParticipants", true);
+                Run.instance.OnUserAdded(user);
+                
+                user.master.bodyPrefab = bodyPrefab;
+
+                Transform spawnTransform = Stage.instance.GetPlayerSpawnTransform();
+                CharacterBody body = user.master.SpawnBody(bodyPrefab, spawnTransform.position, spawnTransform.rotation);
+
+                Run.instance.HandlePlayerFirstEntryAnimation(body, spawnTransform.position, spawnTransform.rotation);
+
+                if (!ImmediateSpawn.Value)
+                    Run.instance.SetFieldValue("allowNewParticipants", false);
+            }
+
         }
 
         private static NetworkUser GetNetUserFromString(string playerString) {
@@ -129,7 +171,7 @@ namespace DropInMultiplayer
 
         private void SetupUserCharacterMaster(On.RoR2.Run.orig_SetupUserCharacterMaster orig, Run self, NetworkUser user) {
             orig(self, user);
-            if (!StartWithItemsEnabled.Value || Run.instance.fixedTime < 30f) {
+            if (!StartWithItems.Value || Run.instance.fixedTime < 5f) {
                 return;
             }
 

@@ -38,10 +38,8 @@ namespace Cheats {
 
         public void Update() {
             if (Input.GetKeyDown(KeyCode.F2)) {
-                RoR2.Console.instance.SubmitCmd(NetworkUser.readOnlyInstancesList[0], "time_scale " + (Time.timeScale != 0 ? 0 : 1));
+                RoR2.Console.instance.SubmitCmd(NetworkUser.readOnlyLocalPlayersList[0], "time_scale " + (Time.timeScale != 0 ? 0 : 1));
             }
-
-
 
         }
 
@@ -122,6 +120,25 @@ namespace Cheats {
         private static void CameraRigController_Start(On.RoR2.CameraRigController.orig_Start orig, CameraRigController self) {
             self.baseFov = fov;
             orig(self);
+        }
+
+
+        [ConCommand(commandName = "suicide", flags = ConVarFlags.ExecuteOnServer, helpText = "kys")]
+        private static void CCSuicide(ConCommandArgs args) {
+            string playerString = ArgsHelper.GetValue(args.userArgs, 0);
+
+            NetworkUser user = GetNetUserFromString(playerString);
+            user = user ?? args.sender;
+
+            if (user) {
+                CharacterBody cb = user.GetCurrentBody();
+                if (cb) {
+                    HealthComponent hc = cb.healthComponent;
+                    if (hc) {
+                        hc.Suicide();
+                    }
+                }
+            }
         }
 
         [ConCommand(commandName = "god", flags = ConVarFlags.ExecuteOnServer, helpText = "Godmode")]

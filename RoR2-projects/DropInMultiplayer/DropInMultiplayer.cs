@@ -12,8 +12,7 @@ using Mono.Cecil.Cil;
 using BepInEx.Configuration;
 using UnityEngine.Networking;
 
-namespace DropInMultiplayer
-{
+namespace DropInMultiplayer {
     [BepInDependency("com.bepis.r2api")]
     [BepInPlugin("com.morris1927.DropInMultiplayer", "DropInMultiplayer", "2.1.0")]
     public class DropInMultiplayer : BaseUnityPlugin {
@@ -36,7 +35,7 @@ namespace DropInMultiplayer
         };
 
         public void Awake() {
-            
+
             ImmediateSpawn = Config.Wrap("Enable/Disable", "ImmediateSpawn", "Enables or disables immediate spawning as you join", false);
             NormalSurvivorsOnly = Config.Wrap("Enable/Disable", "NormalSurvivorsOnly", "Changes whether or not spawn_as can only be used to turn into survivors", true);
             StartWithItems = Config.Wrap("Enable/Disable", "StartWithItems", "Enables or disables giving players items if they join mid-game", true);
@@ -63,7 +62,7 @@ namespace DropInMultiplayer
         private string UserChatMessage_ConstructChatString(On.RoR2.Chat.UserChatMessage.orig_ConstructChatString orig, Chat.UserChatMessage self) {
 
             if (!NetworkServer.active) {
-                return orig(self); 
+                return orig(self);
             }
 
             List<string> split = new List<string>(self.text.Split(Char.Parse(" ")));
@@ -106,8 +105,8 @@ namespace DropInMultiplayer
                 foreach (var item in BodyCatalog.allBodyPrefabs) {
                     array.Add(item.name);
                 }
-                string list = string.Join("\n", array);
-                Debug.LogFormat("Could not spawn as {0}, Try: spawn_as GolemBody   --- \n{1}", bodyString, NormalSurvivorsOnly.Value ? string.Join("\n", survivorList) : list);
+                string list = string.Join("\n", array.ToArray());
+                Debug.LogFormat("Could not spawn as {0}, Try: spawn_as GolemBody   --- \n{1}", bodyString, NormalSurvivorsOnly.Value ? string.Join("\n", survivorList.ToArray()) : list);
                 return;
             }
 
@@ -130,7 +129,7 @@ namespace DropInMultiplayer
             } else {
                 Run.instance.SetFieldValue("allowNewParticipants", true);
                 Run.instance.OnUserAdded(user);
-                
+
                 user.master.bodyPrefab = bodyPrefab;
 
                 Transform spawnTransform = Stage.instance.GetPlayerSpawnTransform();
@@ -241,7 +240,7 @@ namespace DropInMultiplayer
             string playerString = ArgsHelper.GetValue(args.userArgs, 1);
 
             SpawnAs(args.sender, bodyString, playerString);
-            
+
         }
 
         [ConCommand(commandName = "player_list", flags = ConVarFlags.ExecuteOnServer, helpText = "Shows list of players with their ID")]

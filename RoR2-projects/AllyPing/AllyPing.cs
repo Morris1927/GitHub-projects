@@ -10,8 +10,7 @@ using UnityEngine;
 namespace AllyPing {
 
     [BepInPlugin("dev.morris1927.ror2.allyping", "AllyPing", "1.0.0")]
-    public class AllyPing : BaseUnityPlugin
-    {
+    public class AllyPing : BaseUnityPlugin {
         public static FieldInfo currentEnemy = typeof(BaseAI).GetField("currentEnemy", BindingFlags.NonPublic | BindingFlags.Instance);
         public static FieldInfo pingerController = typeof(PlayerCharacterMasterController).GetField("pingerController", BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -29,7 +28,7 @@ namespace AllyPing {
                 c.Emit(OpCodes.Ldloc_2);
                 c.EmitDelegate<Func<CharacterMaster, CharacterMaster, CharacterMaster>>((turret, master) => {
                     turret.gameObject.AddComponent<AIOwnership>().ownerMaster = master;
-                    
+
                     return turret;
                 });
 
@@ -62,7 +61,6 @@ namespace AllyPing {
                         }
                     }
                 });
-           
             };
 
         }

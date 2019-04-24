@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoR2Cheats", "RoR2Cheats\RoR2Cheats.csproj", "{4F2F44B9-ED3D-42DB-AB69-6C2B60914837}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Utilities", "Utilities\Utilities.shproj", "{6C9BF8BD-671A-4E13-A895-757F20C837DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DropInMultiplayer", "DropInMultiplayer\DropInMultiplayer.csproj", "{9B709980-D77A-4A7F-8B25-B75DD04F39D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllyPing", "AllyPing\AllyPing.csproj", "{1FA9FCE8-6AC3-48F1-961C-25579D0082A8}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Utilities\Utilities.projitems*{6c9bf8bd-671a-4e13-a895-757f20c837db}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4F2F44B9-ED3D-42DB-AB69-6C2B60914837}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F2F44B9-ED3D-42DB-AB69-6C2B60914837}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F2F44B9-ED3D-42DB-AB69-6C2B60914837}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F2F44B9-ED3D-42DB-AB69-6C2B60914837}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B709980-D77A-4A7F-8B25-B75DD04F39D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B709980-D77A-4A7F-8B25-B75DD04F39D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B709980-D77A-4A7F-8B25-B75DD04F39D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B709980-D77A-4A7F-8B25-B75DD04F39D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FA9FCE8-6AC3-48F1-961C-25579D0082A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FA9FCE8-6AC3-48F1-961C-25579D0082A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FA9FCE8-6AC3-48F1-961C-25579D0082A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FA9FCE8-6AC3-48F1-961C-25579D0082A8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {983A71EF-1536-4DEE-AB57-5A2F3B0B9FC6}
+	EndGlobalSection
+EndGlobal

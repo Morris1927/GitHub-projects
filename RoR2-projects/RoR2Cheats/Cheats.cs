@@ -9,27 +9,43 @@ using EntityStates.Commando;
 using EntityStates.Huntress;
 using MonoMod.Cil;
 using UnityEngine.Networking;
-using RoR2Cheats;
 using System.Reflection;
 using RoR2.Networking;
 using UnityEngine.SceneManagement;
 using RoR2.CharacterAI;
+using BepInEx.Configuration;
+using Utilities;
 
 namespace Cheats {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("dev.morris1927.ror2.RoR2Cheats", "RoR2Cheats", "2.2.0")]
+    [BepInPlugin("com.morris1927.RoR2Cheats", "RoR2Cheats", "2.2.1")]
     public class Cheats : BaseUnityPlugin {
 
-        private static float fov = 60f;
+        //private static float sprintFovMultiplier = 1f;
+        private static ConfigWrapperJson<float> sprintFovMultiplier { get; set; }
+        private static ConfigWrapperJson<float> fov { get; set; }
+
         private static ulong seed = 0;
         private static bool godMode = false;
 
         private static bool noEnemies = false;
 
         public void Awake() {
-            HandleHooks();
+            sprintFovMultiplier = Config.WrapJson<float>(
+                "FOV",
+                "sprintFovMultiplier",
+                "What FOV gets multiplied by while sprinting",
+                1.3f
+            );
+            sprintFovMultiplier = Config.WrapJson<float>(
+                "FOV",
+                "FOV",
+                "Your base FOV",
+                60f
+            );
 
-            Morris.MorrisNetworkHandler.RegisterNetworkHandlerAttributes();
+            HandleHooks();
+            NetworkHandler.RegisterNetworkHandlerAttributes();
             SetupNoEnemyIL();
 
             SetupFOVIL();
@@ -68,7 +84,7 @@ namespace Cheats {
         }
 
         private static void SetupNoEnemyIL() {
-            IL.RoR2.CombatDirector.FixedUpdate += il => { 
+            IL.RoR2.CombatDirector.FixedUpdate += il => {
                 var c = new ILCursor(il);
                 c.GotoNext(x => x.MatchStfld("RoR2.CombatDirector", "monsterCredit"));
                 c.EmitDelegate<Func<float, float>>((f) => {
@@ -102,23 +118,36 @@ namespace Cheats {
 
         private void SetupFOVIL() {
 
+            IL.RoR2.CameraRigController.Update += il => {
+                var c = new ILCursor(il);
+                c.GotoNext(
+                    x => x.MatchLdcR4(1.3f)
+                    //x => x.MatchMul()
+                );
+                c.Index++;
+                c.EmitDelegate<Func<float, float>>((f) => { return sprintFovMultiplier.Value; });
+
+            };
+
             IL.EntityStates.Huntress.BackflipState.FixedUpdate += il => {
                 var c = new ILCursor(il);
                 c.GotoNext(x => x.MatchLdcR4(60f));
-                c.GotoNext(x => x.MatchLdarg(0));
-                c.EmitDelegate<Func<float, float>>(f => f = fov - 10f);
+                c.Index++;
+                c.EmitDelegate<Func<float, float>>(f => { return fov.Value - 10f; });
             };
 
             IL.EntityStates.Commando.DodgeState.FixedUpdate += il => {
                 var c = new ILCursor(il);
+                Debug.Log(il.ToString());
                 c.GotoNext(x => x.MatchLdcR4(60f));
-                c.GotoNext(x => x.MatchLdarg(0));
-                c.EmitDelegate<Func<float, float>>(f => f = fov - 10f);
+                c.Index++;
+                c.EmitDelegate<Func<float, float>>(f => { return fov.Value - 10f; });
+                Debug.Log(il.ToString());
             };
         }
 
         private static void CameraRigController_Start(On.RoR2.CameraRigController.orig_Start orig, CameraRigController self) {
-            self.baseFov = fov;
+            self.baseFov = fov.Value;
             orig(self);
         }
 
@@ -157,7 +186,7 @@ namespace Cheats {
                 }
             }
 
-             Debug.Log("God toggled " + godMode);
+            Debug.Log("God toggled " + godMode);
         }
 
         [ConCommand(commandName = "time_scale", flags = ConVarFlags.None | ConVarFlags.ExecuteOnServer, helpText = "Time scale")]
@@ -180,7 +209,7 @@ namespace Cheats {
             NetworkWriter networkWriter = new NetworkWriter();
             networkWriter.StartMessage(101);
             networkWriter.Write((double)Time.timeScale);
-            
+
             networkWriter.FinishMessage();
             NetworkServer.SendWriterToReady(null, networkWriter, QosChannelIndex.time.intVal);
         }
@@ -188,7 +217,7 @@ namespace Cheats {
         [NetworkMessageHandler(msgType = 101, client = true, server = false)]
         private static void HandleTimeScale(NetworkMessage netMsg) {
             NetworkReader reader = netMsg.reader;
-            Time.timeScale = (float) reader.ReadDouble();
+            Time.timeScale = (float)reader.ReadDouble();
         }
 
         [ConCommand(commandName = "give_item", flags = ConVarFlags.ExecuteOnServer, helpText = "Give item")]
@@ -211,7 +240,7 @@ namespace Cheats {
             int itemIndex = 0;
             ItemIndex itemType = ItemIndex.Syringe;
             if (int.TryParse(indexString, out itemIndex)) {
-                if (itemIndex < (int) ItemIndex.Count && itemIndex >= 0) {
+                if (itemIndex < (int)ItemIndex.Count && itemIndex >= 0) {
                     itemType = (ItemIndex)itemIndex;
                     inventory.GiveItem(itemType, itemCount);
                 }
@@ -246,7 +275,7 @@ namespace Cheats {
             } else {
                 Debug.Log("Incorrect arguments. Try: give_equip meteor   --- https://pastebin.com/RLRpDpwY for a list of equipment");
             }
-                
+
         }
 
         [ConCommand(commandName = "give_money", flags = ConVarFlags.ExecuteOnServer, helpText = "Gives money")]
@@ -441,6 +470,23 @@ namespace Cheats {
             }
         }
 
+        [ConCommand(commandName = "sprint_fov_multiplier", flags = ConVarFlags.Engine, helpText = "Set your sprint FOV multiplier")]
+        private static void CCSetSprintFOVMulti(ConCommandArgs args) {
+            if (args.Count == 0) {
+                Debug.Log(sprintFovMultiplier);
+                return;
+            }
+            string multiString = ArgsHelper.GetValue(args.userArgs, 0);
+
+            float sprintFov = 1f;
+            if (float.TryParse(multiString, out sprintFov)) {
+                sprintFovMultiplier.Value = sprintFov;
+                Debug.Log("Set Sprint FOV Multiplier to " + sprintFovMultiplier.Value);
+            } else
+                Debug.Log("Incorrect arguments. Try: sprint_fov_multiplier 1");
+        }
+
+
         [ConCommand(commandName = "fov", flags = ConVarFlags.Engine, helpText = "Set your FOV")]
         private static void CCSetFov(ConCommandArgs args) {
             if (args.Count == 0) {
@@ -449,14 +495,17 @@ namespace Cheats {
             }
 
             string fovString = ArgsHelper.GetValue(args.userArgs, 0);
-            if (float.TryParse(fovString, out fov)) {
-                DodgeState.dodgeFOV = fov - 10f;
-                BackflipState.dodgeFOV = fov - 10f;
-                Debug.Log("Set FOV to " + fov);
+
+            float fovTemp = 60f;
+            if (float.TryParse(fovString, out fovTemp)) {
+                fov.Value = fovTemp;
+                DodgeState.dodgeFOV = fov.Value - 10f;
+                BackflipState.dodgeFOV = fov.Value - 10f;
+                Debug.Log("Set FOV to " + fov.Value);
 
                 List<CameraRigController> instancesList = (List<CameraRigController>)typeof(CameraRigController).GetField("instancesList", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).GetValue(null);
                 foreach (CameraRigController c in instancesList) {
-                    c.baseFov = fov;
+                    c.baseFov = fov.Value;
                 }
             } else {
                 Debug.Log("Incorrect arguments. Try: fov 60");
@@ -517,14 +566,14 @@ namespace Cheats {
 
             EliteIndex eliteIndex = EliteIndex.None;
             if (Enum.TryParse<EliteIndex>(eliteString, true, out eliteIndex)) {
-                if ((int) eliteIndex > (int)EliteIndex.None && (int)eliteIndex < (int)EliteIndex.Count) {
+                if ((int)eliteIndex > (int)EliteIndex.None && (int)eliteIndex < (int)EliteIndex.Count) {
                     master.inventory.SetEquipmentIndex(EliteCatalog.GetEliteDef(eliteIndex).eliteEquipmentIndex);
                 }
             }
 
             TeamIndex teamIndex = TeamIndex.Neutral;
             if (Enum.TryParse<TeamIndex>(teamString, true, out teamIndex)) {
-                if ((int) teamIndex >= (int)TeamIndex.None && (int)teamIndex < (int)TeamIndex.Count) {
+                if ((int)teamIndex >= (int)TeamIndex.None && (int)teamIndex < (int)TeamIndex.Count) {
                     master.teamIndex = teamIndex;
                 }
             }
@@ -543,7 +592,7 @@ namespace Cheats {
             string prefabString = ArgsHelper.GetValue(args.userArgs, 0);
 
             prefabString = prefabString.Contains("Body") ? prefabString : prefabString + "Body";
-            
+
             GameObject body = BodyCatalog.FindBodyPrefab(prefabString);
             if (body == null) {
                 List<string> array = new List<string>();
@@ -566,7 +615,7 @@ namespace Cheats {
 
 
 
-        
+
         //CommandHelper written by Wildbook
         public class CommandHelper {
             public static void RegisterCommands(RoR2.Console self) {

@@ -4,6 +4,8 @@ using BepInEx.Configuration;
 using TinyJson;
 
 namespace Utilities {
+
+    //More code written by Wildbook!
     public class ConfigWrapperJson<T> {
         private readonly ConfigWrapper<string> _wrapper;
 

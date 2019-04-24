@@ -20,10 +20,12 @@ namespace Cheats {
     [BepInDependency("com.bepis.r2api")]
     [BepInPlugin("com.morris1927.RoR2Cheats", "RoR2Cheats", "2.2.1")]
     public class Cheats : BaseUnityPlugin {
+        
+        private static ConfigWrapperJson<float> sprintFovMultiplierConfig { get; set; }
+        private static ConfigWrapperJson<float> fovConfig { get; set; }
+        private static float sprintFovMultiplier { get { return sprintFovMultiplierConfig.Value; } set { sprintFovMultiplierConfig.Value = value; } }
+        private static float fov { get { return fovConfig.Value; } set { fovConfig.Value = value; } }
 
-        //private static float sprintFovMultiplier = 1f;
-        private static ConfigWrapperJson<float> sprintFovMultiplier { get; set; }
-        private static ConfigWrapperJson<float> fov { get; set; }
 
         private static ulong seed = 0;
         private static bool godMode = false;
@@ -31,13 +33,13 @@ namespace Cheats {
         private static bool noEnemies = false;
 
         public void Awake() {
-            sprintFovMultiplier = Config.WrapJson<float>(
+            sprintFovMultiplierConfig = Config.WrapJson<float>(
                 "FOV",
                 "sprintFovMultiplier",
                 "What FOV gets multiplied by while sprinting",
                 1.3f
             );
-            sprintFovMultiplier = Config.WrapJson<float>(
+            fovConfig = Config.WrapJson<float>(
                 "FOV",
                 "FOV",
                 "Your base FOV",
@@ -125,7 +127,7 @@ namespace Cheats {
                     //x => x.MatchMul()
                 );
                 c.Index++;
-                c.EmitDelegate<Func<float, float>>((f) => { return sprintFovMultiplier.Value; });
+                c.EmitDelegate<Func<float, float>>((f) => { return sprintFovMultiplier; });
 
             };
 
@@ -133,7 +135,7 @@ namespace Cheats {
                 var c = new ILCursor(il);
                 c.GotoNext(x => x.MatchLdcR4(60f));
                 c.Index++;
-                c.EmitDelegate<Func<float, float>>(f => { return fov.Value - 10f; });
+                c.EmitDelegate<Func<float, float>>(f => { return fov - 10f; });
             };
 
             IL.EntityStates.Commando.DodgeState.FixedUpdate += il => {
@@ -141,13 +143,13 @@ namespace Cheats {
                 Debug.Log(il.ToString());
                 c.GotoNext(x => x.MatchLdcR4(60f));
                 c.Index++;
-                c.EmitDelegate<Func<float, float>>(f => { return fov.Value - 10f; });
+                c.EmitDelegate<Func<float, float>>(f => { return fov - 10f; });
                 Debug.Log(il.ToString());
             };
         }
 
         private static void CameraRigController_Start(On.RoR2.CameraRigController.orig_Start orig, CameraRigController self) {
-            self.baseFov = fov.Value;
+            self.baseFov = fov;
             orig(self);
         }
 
@@ -480,8 +482,8 @@ namespace Cheats {
 
             float sprintFov = 1f;
             if (float.TryParse(multiString, out sprintFov)) {
-                sprintFovMultiplier.Value = sprintFov;
-                Debug.Log("Set Sprint FOV Multiplier to " + sprintFovMultiplier.Value);
+                sprintFovMultiplier = sprintFov;
+                Debug.Log("Set Sprint FOV Multiplier to " + sprintFovMultiplier);
             } else
                 Debug.Log("Incorrect arguments. Try: sprint_fov_multiplier 1");
         }
@@ -498,14 +500,14 @@ namespace Cheats {
 
             float fovTemp = 60f;
             if (float.TryParse(fovString, out fovTemp)) {
-                fov.Value = fovTemp;
-                DodgeState.dodgeFOV = fov.Value - 10f;
-                BackflipState.dodgeFOV = fov.Value - 10f;
-                Debug.Log("Set FOV to " + fov.Value);
+                fov = fovTemp;
+                DodgeState.dodgeFOV = fov - 10f;
+                BackflipState.dodgeFOV = fov - 10f;
+                Debug.Log("Set FOV to " + fov);
 
                 List<CameraRigController> instancesList = (List<CameraRigController>)typeof(CameraRigController).GetField("instancesList", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).GetValue(null);
                 foreach (CameraRigController c in instancesList) {
-                    c.baseFov = fov.Value;
+                    c.baseFov = fov;
                 }
             } else {
                 Debug.Log("Incorrect arguments. Try: fov 60");

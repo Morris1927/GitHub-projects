@@ -1,38 +1,36 @@
 ﻿using System;
-using System.Collections;
 using UnityEngine;
 using BepInEx;
 using RoR2;
-using System.Linq;
 using System.Collections.Generic;
 using EntityStates.Commando;
 using EntityStates.Huntress;
-using MonoMod.Cil;
 using UnityEngine.Networking;
-using System.Reflection;
 using RoR2.Networking;
 using UnityEngine.SceneManagement;
 using RoR2.CharacterAI;
-using BepInEx.Configuration;
 using Utilities;
 
-namespace Cheats {
+using ArgsHelper = Utilities.Generic.ArgsHelper;
+
+namespace RoR2Cheats {
     [BepInDependency("com.bepis.r2api")]
     [BepInPlugin("com.morris1927.RoR2Cheats", "RoR2Cheats", "2.2.1")]
     public class Cheats : BaseUnityPlugin {
         
         private static ConfigWrapperJson<float> sprintFovMultiplierConfig { get; set; }
         private static ConfigWrapperJson<float> fovConfig { get; set; }
-        private static float sprintFovMultiplier { get { return sprintFovMultiplierConfig.Value; } set { sprintFovMultiplierConfig.Value = value; } }
-        private static float fov { get { return fovConfig.Value; } set { fovConfig.Value = value; } }
+        public static float sprintFovMultiplier { get { return sprintFovMultiplierConfig.Value; } set { sprintFovMultiplierConfig.Value = value; } }
+        public static float fov { get { return fovConfig.Value; } set { fovConfig.Value = value; } }
 
 
-        private static ulong seed = 0;
-        private static bool godMode = false;
+        public static ulong seed = 0;
+        public static bool godMode = false;
 
-        private static bool noEnemies = false;
+        public static bool noEnemies = false;
 
         public void Awake() {
+            
             sprintFovMultiplierConfig = Config.WrapJson<float>(
                 "FOV",
                 "sprintFovMultiplier",
@@ -46,11 +44,8 @@ namespace Cheats {
                 60f
             );
 
-            HandleHooks();
+            Hooks.InitializeHooks();
             NetworkHandler.RegisterNetworkHandlerAttributes();
-            SetupNoEnemyIL();
-
-            SetupFOVIL();
 
         }
 
@@ -58,100 +53,8 @@ namespace Cheats {
             if (Input.GetKeyDown(KeyCode.F2)) {
                 RoR2.Console.instance.SubmitCmd(NetworkUser.readOnlyLocalPlayersList[0], "time_scale " + (Time.timeScale != 0 ? 0 : 1));
             }
-
         }
 
-
-        private static void HandleHooks() {
-            On.RoR2.Console.Awake += (orig, self) => {
-                CommandHelper.RegisterCommands(self);
-                orig(self);
-            };
-
-            On.RoR2.CharacterBody.Start += (orig, self) => {
-                orig(self);
-
-                if (self.healthComponent) {
-                    if (self.isPlayerControlled)
-                        self.healthComponent.godMode = godMode;
-
-                }
-
-            };
-
-
-            On.RoR2.Run.Start += Run_Start;
-            On.RoR2.CameraRigController.Start += CameraRigController_Start;
-
-        }
-
-        private static void SetupNoEnemyIL() {
-            IL.RoR2.CombatDirector.FixedUpdate += il => {
-                var c = new ILCursor(il);
-                c.GotoNext(x => x.MatchStfld("RoR2.CombatDirector", "monsterCredit"));
-                c.EmitDelegate<Func<float, float>>((f) => {
-                    return noEnemies ? 0f : f;
-                });
-            };
-
-            IL.RoR2.TeleporterInteraction.OnStateChanged += il => {
-                var c = new ILCursor(il);
-                c.GotoNext(x => x.MatchStfld("RoR2.CombatDirector", "monsterCredit"));
-                c.EmitDelegate<Func<float, float>>((f) => {
-                    return noEnemies ? 0f : f;
-
-                });
-
-            };
-            IL.RoR2.SceneDirector.Start += il => {
-                var c = new ILCursor(il);
-                c.GotoNext(x => x.MatchStfld("RoR2.SceneDirector", "monsterCredit"));
-                c.EmitDelegate<Func<int, int>>((i) => {
-                    return noEnemies ? 0 : i;
-                });
-            };
-        }
-
-        private static void Run_Start(On.RoR2.Run.orig_Start orig, Run self) {
-
-            self.seed = Cheats.seed == 0 ? self.seed : Cheats.seed;
-            orig(self);
-        }
-
-        private void SetupFOVIL() {
-
-            IL.RoR2.CameraRigController.Update += il => {
-                var c = new ILCursor(il);
-                c.GotoNext(
-                    x => x.MatchLdcR4(1.3f)
-                    //x => x.MatchMul()
-                );
-                c.Index++;
-                c.EmitDelegate<Func<float, float>>((f) => { return sprintFovMultiplier; });
-
-            };
-
-            IL.EntityStates.Huntress.BackflipState.FixedUpdate += il => {
-                var c = new ILCursor(il);
-                c.GotoNext(x => x.MatchLdcR4(60f));
-                c.Index++;
-                c.EmitDelegate<Func<float, float>>(f => { return fov - 10f; });
-            };
-
-            IL.EntityStates.Commando.DodgeState.FixedUpdate += il => {
-                var c = new ILCursor(il);
-                Debug.Log(il.ToString());
-                c.GotoNext(x => x.MatchLdcR4(60f));
-                c.Index++;
-                c.EmitDelegate<Func<float, float>>(f => { return fov - 10f; });
-                Debug.Log(il.ToString());
-            };
-        }
-
-        private static void CameraRigController_Start(On.RoR2.CameraRigController.orig_Start orig, CameraRigController self) {
-            self.baseFov = fov;
-            orig(self);
-        }
 
 
         [ConCommand(commandName = "suicide", flags = ConVarFlags.ExecuteOnServer, helpText = "kys")]
@@ -161,30 +64,19 @@ namespace Cheats {
             NetworkUser user = GetNetUserFromString(playerString);
             user = user ?? args.sender;
 
-            if (user) {
-                CharacterBody cb = user.GetCurrentBody();
-                if (cb) {
-                    HealthComponent hc = cb.healthComponent;
-                    if (hc) {
-                        hc.Suicide();
-                    }
-                }
-            }
+            user.GetCurrentBody()?.healthComponent?.Suicide();
+
+
         }
 
         [ConCommand(commandName = "god", flags = ConVarFlags.ExecuteOnServer, helpText = "Godmode")]
         private static void CCGodModeToggle(ConCommandArgs args) {
-
             godMode = !godMode;
 
             foreach (var playerInstance in PlayerCharacterMasterController.instances) {
                 CharacterBody cb = playerInstance.master.GetBody();
-                if (cb) {
-                    HealthComponent hc = cb.healthComponent;
-                    if (hc) {
-                        hc.godMode = godMode;
-
-                    }
+                if (cb?.healthComponent) {
+                    cb.healthComponent.godMode = godMode;
                 }
             }
 
@@ -318,7 +210,6 @@ namespace Cheats {
 
         [ConCommand(commandName = "next_round", flags = ConVarFlags.ExecuteOnServer, helpText = "Start next round. Additional args for specific scene.")]
         private static void CCNextRound(ConCommandArgs args) {
-
             if (args.Count == 0) {
                 Run.instance.AdvanceStage(Run.instance.nextStageScene.SceneName);
                 return;
@@ -536,10 +427,10 @@ namespace Cheats {
 
         [ConCommand(commandName = "spawn_ai", flags = ConVarFlags.ExecuteOnServer, helpText = "Spawn an AI")]
         private static void CCSpawnAI(ConCommandArgs args) {
-
             GameObject prefab;
             GameObject body;
             GameObject gameObject = null;
+
             string prefabString = ArgsHelper.GetValue(args.userArgs, 0);
             string eliteString = ArgsHelper.GetValue(args.userArgs, 1);
             string teamString = ArgsHelper.GetValue(args.userArgs, 2);
@@ -614,42 +505,5 @@ namespace Cheats {
         private static void ResetEnemyTeamLevel() {
             TeamManager.instance.SetTeamLevel(TeamIndex.Monster, 1);
         }
-
-
-
-
-        //CommandHelper written by Wildbook
-        public class CommandHelper {
-            public static void RegisterCommands(RoR2.Console self) {
-                var types = typeof(CommandHelper).Assembly.GetTypes();
-                var catalog = self.GetFieldValue<IDictionary>("concommandCatalog");
-
-                foreach (var methodInfo in types.SelectMany(x => x.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))) {
-                    var customAttributes = methodInfo.GetCustomAttributes(false);
-                    foreach (var attribute in customAttributes.OfType<ConCommandAttribute>()) {
-                        var conCommand = Reflection.GetNestedType<RoR2.Console>("ConCommand").Instantiate();
-
-                        conCommand.SetFieldValue("flags", attribute.flags);
-                        conCommand.SetFieldValue("helpText", attribute.helpText);
-                        conCommand.SetFieldValue("action", (RoR2.Console.ConCommandDelegate)Delegate.CreateDelegate(typeof(RoR2.Console.ConCommandDelegate), methodInfo));
-
-                        catalog[attribute.commandName.ToLower()] = conCommand;
-                    }
-                }
-            }
-        }
-
-
-        public class ArgsHelper {
-
-            public static string GetValue(List<string> args, int index) {
-                if (index < args.Count && index >= 0) {
-                    return args[index];
-                }
-
-                return "";
-            }
-        }
-
     }
 }

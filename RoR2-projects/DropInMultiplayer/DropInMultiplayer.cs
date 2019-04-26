@@ -54,7 +54,6 @@ namespace DropInMultiplayer {
                     self.SetFieldValue("allowNewParticipants", true);
                 };
             }
-
             On.RoR2.Run.SetupUserCharacterMaster += SetupUserCharacterMaster;
             On.RoR2.Chat.UserChatMessage.ConstructChatString += UserChatMessage_ConstructChatString;
         }

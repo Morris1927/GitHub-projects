@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContinueGames", "ContinueGa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UberRoR", "UberRoR\UberRoR.csproj", "{0A6AD331-F4FF-4C23-9027-4FCC3A114833}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickMonsterCreditFix", "QuickMonsterCreditFix\QuickMonsterCreditFix.csproj", "{DC8D901F-7BCE-41F9-ACE4-99B9741699A5}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Utilities\Utilities.projitems*{6c9bf8bd-671a-4e13-a895-757f20c837db}*SharedItemsImports = 13
@@ -56,6 +58,10 @@ Global
 		{0A6AD331-F4FF-4C23-9027-4FCC3A114833}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A6AD331-F4FF-4C23-9027-4FCC3A114833}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A6AD331-F4FF-4C23-9027-4FCC3A114833}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC8D901F-7BCE-41F9-ACE4-99B9741699A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC8D901F-7BCE-41F9-ACE4-99B9741699A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC8D901F-7BCE-41F9-ACE4-99B9741699A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC8D901F-7BCE-41F9-ACE4-99B9741699A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

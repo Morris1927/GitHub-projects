@@ -38,44 +38,62 @@ namespace ContinueGames
 
         [ConCommand(commandName = "load", flags = ConVarFlags.Engine, helpText = "Load game")]
         private static void CCLoad(ConCommandArgs args) {
-            GameNetworkManager.singleton.desiredHost = new GameNetworkManager.HostDescription(new GameNetworkManager.HostDescription.HostingParameters {
-                listen = false,
-                maxPlayers = 1
-            });
-            instance.StartCoroutine(instance.StartLoading());
+            if (!NetworkServer.active) return;
+            if (args.Count != 1) {
+                Debug.Log("Command failed, requires 1 argument: load <filename>");
+                return;
+            }
+            instance.StartCoroutine(instance.StartLoading(ArgsHelper.GetValue(args.userArgs,0)));
         }
         [ConCommand(commandName = "save", flags = ConVarFlags.Engine, helpText = "Save game")]
         private static void CCSave(ConCommandArgs args) {
-            SaveGame();
+            if (!NetworkServer.active) return;
+            if (args.Count != 1) {
+                Debug.Log("Command failed, requires 1 argument: save <filename>");
+                return;
+            }
+            SaveGame(ArgsHelper.GetValue(args.userArgs, 0));
         }
 
-        private IEnumerator StartLoading() {
+        private IEnumerator StartLoading(string saveFile) {
             //yield return new WaitUntil(() => PreGameController.instance);
-            yield return new WaitForSeconds(1f);
-            PreGameController.instance?.StartLaunch();
+            if (Run.instance == null) {
+                GameNetworkManager.singleton.desiredHost = new GameNetworkManager.HostDescription(new GameNetworkManager.HostDescription.HostingParameters {
+                    listen = false,
+                    maxPlayers = 1
+                });
+                yield return new WaitForSeconds(1f);
+                PreGameController.instance?.StartLaunch();
+                yield return new WaitForSeconds(1f);
+            }
+
             //yield return new WaitUntil(() => Run.instance);
-            yield return new WaitForSeconds(1f);
+
             
-            LoadGame();
+            LoadGame(saveFile);
         }
 
-        private static void SaveGame() {
+        private static void SaveGame(string saveFile) {
             SaveData save = new SaveData();
             save.playerList = new List<PlayerData>();
 
             foreach (var item in NetworkUser.readOnlyInstancesList) {
                 SavePlayer(item, ref save);
             }
-            save.teamExp = (int) TeamManager.instance.GetTeamExperience(TeamIndex.Player);
+            SaveRun(ref save);
+
+            string json = TinyJson.JSONWriter.ToJson(save);
+            Debug.Log(json);
+            PlayerPrefs.SetString("Save" + saveFile, json);
+        }
+
+        private static void SaveRun(ref SaveData save) {
+            save.teamExp = (int)TeamManager.instance.GetTeamExperience(TeamIndex.Player);
 
             save.difficulty = (int)Run.instance.selectedDifficulty;
             save.fixedTime = Run.instance.fixedTime;
             save.stageClearCount = Run.instance.stageClearCount;
             save.sceneName = Stage.instance.sceneDef.sceneName;
-
-            string json = TinyJson.JSONWriter.ToJson(save);
-            Debug.Log(json);
-            PlayerPrefs.SetString("Save0", json);
         }
 
         private static void SavePlayer(NetworkUser player, ref SaveData save) {
@@ -83,9 +101,10 @@ namespace ContinueGames
             PlayerData playerData = new PlayerData();
             ulong steamID = GameNetworkManager.singleton.GetSteamIDForConnection(player.connectionToServer).value;
             
-            CharacterBody body = player.master?.GetBody();
-            Inventory inventory = body.inventory;
+            //CharacterBody body = player.master?.GetBody();
+            Inventory inventory = player.master?.inventory;
             playerData.steamID = steamID.ToString();
+
             playerData.items = new int[(int)ItemIndex.Count - 1];
             for (int i = 0; i < (int)ItemIndex.Count -1; i++) {
                 playerData.items[i] = inventory.GetItemCount((ItemIndex)i);
@@ -101,21 +120,28 @@ namespace ContinueGames
 
         }
 
-        private static void LoadGame() {
-            string data = PlayerPrefs.GetString("Save0");
+        private static void LoadGame(string saveFile) {
+            string data = PlayerPrefs.GetString("Save" + saveFile);
             SaveData save = TinyJson.JSONParser.FromJson<SaveData>(data);
 
             foreach (var item in save.playerList) {
                 LoadPlayer(item);
             }
 
-            TeamManager.instance.GiveTeamExperience(TeamIndex.Player, (ulong) save.teamExp);
+            LoadRun(save);
 
-            Run.instance.selectedDifficulty = (DifficultyIndex) save.difficulty;
+
+
+            //TODO: Get SceneDef to load variation
+        }
+
+        private static void LoadRun(SaveData save) {
+            TeamManager.instance.GiveTeamExperience(TeamIndex.Player, (ulong)save.teamExp);
+
+            Run.instance.selectedDifficulty = (DifficultyIndex)save.difficulty;
             Run.instance.fixedTime = save.fixedTime;
             Run.instance.stageClearCount = save.stageClearCount - 1;
             Run.instance.AdvanceStage(save.sceneName);
-            //TODO: Get SceneDef to load variation
         }
 
         private static void LoadPlayer(PlayerData playerData) {
@@ -123,13 +149,12 @@ namespace ContinueGames
             if (player == null) {
                 return;
             }
-
-            CharacterBody body = player?.master?.GetBody();
-            Inventory inventory = body?.inventory;
+            //CharacterBody body = player?.master?.GetBody();
+            Inventory inventory = player.master?.inventory;
 
             GameObject bodyPrefab = BodyCatalog.FindBodyPrefab(playerData.characterBodyName);
             player.master.bodyPrefab = bodyPrefab;
-            player.master.Respawn(Vector3.one, Quaternion.identity);
+            player.master.Respawn(Vector3.zero, Quaternion.identity);
 
             for (int i = 0; i < playerData.items.Length -1; i++) {
                 inventory.RemoveItem((ItemIndex)i, int.MaxValue);
@@ -141,6 +166,7 @@ namespace ContinueGames
                 inventory.SetActiveEquipmentSlot((byte)1);
                 inventory.SetEquipmentIndex((EquipmentIndex)playerData.equipItem1);
             }
+            player.master.money = 15;
         }
 
         public static NetworkUser RetrievePlayerFromSteamID(ulong steamID) {

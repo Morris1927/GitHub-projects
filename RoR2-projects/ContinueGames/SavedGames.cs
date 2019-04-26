@@ -29,15 +29,10 @@ namespace ContinueGames
                 Generic.CommandHelper.RegisterCommands(self);
                 orig(self);
             };
-
-            On.RoR2.Run.AdvanceStage += (orig, self, stage) => {
-                orig(self, stage);
-            };
         }
 
-        [ConCommand(commandName = "load", flags = ConVarFlags.Engine, helpText = "Load game")]
+        [ConCommand(commandName = "load", flags = ConVarFlags.None, helpText = "Load game")]
         private static void CCLoad(ConCommandArgs args) {
-            if (!NetworkServer.active) return;
             if (args.Count != 1) {
                 Debug.Log("Command failed, requires 1 argument: load <filename>");
                 return;
@@ -51,9 +46,8 @@ namespace ContinueGames
             SaveData save = TinyJson.JSONParser.FromJson<SaveData>(saveString);
             instance.StartCoroutine(instance.StartLoading(save));
         }
-        [ConCommand(commandName = "save", flags = ConVarFlags.Engine, helpText = "Save game")]
+        [ConCommand(commandName = "save", flags = ConVarFlags.None, helpText = "Save game")]
         private static void CCSave(ConCommandArgs args) {
-            if (!NetworkServer.active) return;
             if (args.Count != 1) {
                 Debug.Log("Command failed, requires 1 argument: save <filename>");
                 return;
@@ -62,7 +56,6 @@ namespace ContinueGames
         }
 
         private IEnumerator StartLoading(SaveData save) {
-            //yield return new WaitUntil(() => PreGameController.instance);
             if (Run.instance == null) {
                 GameNetworkManager.singleton.desiredHost = new GameNetworkManager.HostDescription(new GameNetworkManager.HostDescription.HostingParameters {
                     listen = false,
@@ -72,9 +65,6 @@ namespace ContinueGames
                 PreGameController.instance?.StartLaunch();
                 yield return new WaitForSeconds(1f);
             }
-
-            //yield return new WaitUntil(() => Run.instance);
-
             
             LoadGame(save);
         }
@@ -117,7 +107,7 @@ namespace ContinueGames
             playerData.equipItem1 = (int) inventory.GetEquipment(1).equipmentIndex;
             playerData.equipItemCount = inventory.GetEquipmentSlotCount();
 
-            playerData.characterBodyName = player.master.bodyPrefab.name;//.Replace(" (Clone)", "");
+            playerData.characterBodyName = player.master.bodyPrefab.name;
 
             save.playerList.Add(playerData);
 
@@ -129,10 +119,7 @@ namespace ContinueGames
             }
 
             LoadRun(save);
-
-
-
-            //TODO: Get SceneDef to load variation
+            
         }
 
         private static void LoadRun(SaveData save) {
@@ -150,7 +137,7 @@ namespace ContinueGames
                 Debug.Log("Could not find player: " + playerData.username);
                 return;
             }
-            //CharacterBody body = player?.master?.GetBody();
+
             Inventory inventory = player.master?.inventory;
 
             GameObject bodyPrefab = BodyCatalog.FindBodyPrefab(playerData.characterBodyName);

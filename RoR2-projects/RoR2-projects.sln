@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FullscreenModes", "Fullscre
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunTeleporters", "FunTeleporters\FunTeleporters.csproj", "{850E8708-C198-4560-A40D-EFFDF3C7DB86}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContinueGames", "ContinueGames\ContinueGames.csproj", "{263512EB-CE6B-4847-84EA-92A84FE49071}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SavedGames", "ContinueGames\SavedGames.csproj", "{263512EB-CE6B-4847-84EA-92A84FE49071}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UberRoR", "UberRoR\UberRoR.csproj", "{0A6AD331-F4FF-4C23-9027-4FCC3A114833}"
 EndProject

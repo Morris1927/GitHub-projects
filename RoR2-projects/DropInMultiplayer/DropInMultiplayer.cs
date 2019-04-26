@@ -54,6 +54,12 @@ namespace DropInMultiplayer {
                     self.SetFieldValue("allowNewParticipants", true);
                 };
             }
+            On.RoR2.NetworkUser.Start += (orig, self) => {
+                orig(self);
+                //if (NetworkServer.active)
+                    //Chat.AddMessage("Join the game by typing spawn_as");
+            };
+
             On.RoR2.Run.SetupUserCharacterMaster += SetupUserCharacterMaster;
             On.RoR2.Chat.UserChatMessage.ConstructChatString += UserChatMessage_ConstructChatString;
         }

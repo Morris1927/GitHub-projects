@@ -14,7 +14,7 @@ namespace FullscreenModes
     [BepInPlugin("com.morris1927.FullscreenModes", "FullscreenModes", "1.0.0")]
     public class FullscreenModes : BaseUnityPlugin {
 
-        public static bool cursorLocked = true;
+        public static bool cursorLocked = false;
 
         public void Awake() {
             On.RoR2.Console.Awake += (orig, self) => {

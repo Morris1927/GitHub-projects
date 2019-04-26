@@ -18,7 +18,7 @@ namespace ContinueGames {
     [Serializable]
     public struct PlayerData {
 
-        public string steamID;
+        public string username;
 
         public SerializableTransform transform;
 

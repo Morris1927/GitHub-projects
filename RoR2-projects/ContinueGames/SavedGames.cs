@@ -14,10 +14,10 @@ namespace ContinueGames
 {
 
     [BepInPlugin("com.morris1927.ContinueGames", "ContinueGames", "1.0.0")]
-    public class ContinueGames : BaseUnityPlugin
+    public class SavedGames : BaseUnityPlugin
     {
 
-        public static ContinueGames instance { get; set; }
+        public static SavedGames instance { get; set; }
 
         public void Awake() {
             if (instance == null) {
@@ -32,7 +32,6 @@ namespace ContinueGames
 
             On.RoR2.Run.AdvanceStage += (orig, self, stage) => {
                 orig(self, stage);
-                //SaveGame();
             };
         }
 
@@ -43,7 +42,14 @@ namespace ContinueGames
                 Debug.Log("Command failed, requires 1 argument: load <filename>");
                 return;
             }
-            instance.StartCoroutine(instance.StartLoading(ArgsHelper.GetValue(args.userArgs,0)));
+
+            string saveString = PlayerPrefs.GetString("Save" + ArgsHelper.GetValue(args.userArgs, 0));
+            if (saveString == "") {
+                Debug.Log("Save does not exist.");
+                return;
+            }
+            SaveData save = TinyJson.JSONParser.FromJson<SaveData>(saveString);
+            instance.StartCoroutine(instance.StartLoading(save));
         }
         [ConCommand(commandName = "save", flags = ConVarFlags.Engine, helpText = "Save game")]
         private static void CCSave(ConCommandArgs args) {
@@ -55,7 +61,7 @@ namespace ContinueGames
             SaveGame(ArgsHelper.GetValue(args.userArgs, 0));
         }
 
-        private IEnumerator StartLoading(string saveFile) {
+        private IEnumerator StartLoading(SaveData save) {
             //yield return new WaitUntil(() => PreGameController.instance);
             if (Run.instance == null) {
                 GameNetworkManager.singleton.desiredHost = new GameNetworkManager.HostDescription(new GameNetworkManager.HostDescription.HostingParameters {
@@ -70,7 +76,7 @@ namespace ContinueGames
             //yield return new WaitUntil(() => Run.instance);
 
             
-            LoadGame(saveFile);
+            LoadGame(save);
         }
 
         private static void SaveGame(string saveFile) {
@@ -97,13 +103,10 @@ namespace ContinueGames
         }
 
         private static void SavePlayer(NetworkUser player, ref SaveData save) {
-
             PlayerData playerData = new PlayerData();
-            ulong steamID = GameNetworkManager.singleton.GetSteamIDForConnection(player.connectionToServer).value;
-            
-            //CharacterBody body = player.master?.GetBody();
-            Inventory inventory = player.master?.inventory;
-            playerData.steamID = steamID.ToString();
+
+            Inventory inventory = player.master.inventory;
+            playerData.username = player.userName;
 
             playerData.items = new int[(int)ItemIndex.Count - 1];
             for (int i = 0; i < (int)ItemIndex.Count -1; i++) {
@@ -114,16 +117,13 @@ namespace ContinueGames
             playerData.equipItem1 = (int) inventory.GetEquipment(1).equipmentIndex;
             playerData.equipItemCount = inventory.GetEquipmentSlotCount();
 
-            playerData.characterBodyName = player.master.bodyPrefab.name.Replace(" (Clone)", "");
+            playerData.characterBodyName = player.master.bodyPrefab.name;//.Replace(" (Clone)", "");
 
             save.playerList.Add(playerData);
 
         }
 
-        private static void LoadGame(string saveFile) {
-            string data = PlayerPrefs.GetString("Save" + saveFile);
-            SaveData save = TinyJson.JSONParser.FromJson<SaveData>(data);
-
+        private static void LoadGame(SaveData save) {
             foreach (var item in save.playerList) {
                 LoadPlayer(item);
             }
@@ -145,8 +145,9 @@ namespace ContinueGames
         }
 
         private static void LoadPlayer(PlayerData playerData) {
-            NetworkUser player = RetrievePlayerFromSteamID(ulong.Parse(playerData.steamID));
+            NetworkUser player = GetPlayerFromUsername(playerData.username);
             if (player == null) {
+                Debug.Log("Could not find player: " + playerData.username);
                 return;
             }
             //CharacterBody body = player?.master?.GetBody();
@@ -169,9 +170,9 @@ namespace ContinueGames
             player.master.money = 15;
         }
 
-        public static NetworkUser RetrievePlayerFromSteamID(ulong steamID) {
+        public static NetworkUser GetPlayerFromUsername(string username) {
             foreach (var item in NetworkUser.readOnlyInstancesList) {
-                if (steamID == GameNetworkManager.singleton.GetSteamIDForConnection(item.connectionToServer).value) {
+                if (username == item.userName) {
                     return item;
                 }
             }

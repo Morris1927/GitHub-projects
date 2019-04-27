@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace AllyPing {
 
-    [BepInPlugin("com.morris1927.AllyPing", "AllyPing", "1.0.0")]
+    [BepInPlugin("com.morris1927.AllyPing", "AllyPing", "1.1.0")]
     public class AllyPing : BaseUnityPlugin {
         public static FieldInfo currentEnemy = typeof(BaseAI).GetField("currentEnemy", BindingFlags.NonPublic | BindingFlags.Instance);
         public static FieldInfo pingerController = typeof(PlayerCharacterMasterController).GetField("pingerController", BindingFlags.NonPublic | BindingFlags.Instance);

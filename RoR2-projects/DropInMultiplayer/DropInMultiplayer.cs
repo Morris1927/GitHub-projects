@@ -56,8 +56,8 @@ namespace DropInMultiplayer {
             }
             On.RoR2.NetworkUser.Start += (orig, self) => {
                 orig(self);
-                //if (NetworkServer.active)
-                    //Chat.AddMessage("Join the game by typing spawn_as");
+                if (NetworkServer.active && Run.instance != null)
+                    Chat.AddMessage("Join the game by typing 'spawn_as [name]' names are Commando, Huntress, Engi, Mage, Merc, Toolbot, Bandit");
             };
 
             On.RoR2.Run.SetupUserCharacterMaster += SetupUserCharacterMaster;

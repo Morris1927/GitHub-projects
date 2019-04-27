@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace ContinueGames {
+namespace SavedGames {
     [Serializable]
     public struct SaveData {
+
+        public string seed;
         public int difficulty;
         public float fixedTime;
         public int stageClearCount;
@@ -33,6 +35,10 @@ namespace ContinueGames {
 
     }
 
+    [Serializable]
+    public struct SerializableChest {
+
+    }
 
     [Serializable]
     public struct SerializableTransform {
@@ -46,6 +52,7 @@ namespace ContinueGames {
         public SerializableQuaternion rotation;
 
     }
+
     [Serializable]
     public struct SerializableVector3 {
 

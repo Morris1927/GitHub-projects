@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using BepInEx;
 using RoR2;
 using RoR2.Networking;
+using SavedGames;
 using UnityEngine;
 using UnityEngine.Networking;
 using Utilities;
 
 using ArgsHelper = Utilities.Generic.ArgsHelper;
 
-namespace ContinueGames
+namespace SavedGames
 {
 
     [BepInPlugin("com.morris1927.ContinueGames", "ContinueGames", "1.0.0")]
@@ -18,6 +19,9 @@ namespace ContinueGames
     {
 
         public static SavedGames instance { get; set; }
+
+        public static bool loadingScene;
+        public static ulong seed;
 
         public void Awake() {
             if (instance == null) {
@@ -28,6 +32,15 @@ namespace ContinueGames
             On.RoR2.Console.Awake += (orig, self) => {
                 Generic.CommandHelper.RegisterCommands(self);
                 orig(self);
+            };
+            On.RoR2.Run.Start += (orig, self) => {
+                self.seed = seed == 0 ? self.seed : seed;
+                orig(self);
+            };
+            On.RoR2.SceneDirector.PopulateScene += (orig, self) => {
+                if (!loadingScene) {
+                    orig(self);
+                }
             };
         }
 
@@ -56,6 +69,7 @@ namespace ContinueGames
         }
 
         private IEnumerator StartLoading(SaveData save) {
+            seed = ulong.Parse(save.seed);
             if (Run.instance == null) {
                 GameNetworkManager.singleton.desiredHost = new GameNetworkManager.HostDescription(new GameNetworkManager.HostDescription.HostingParameters {
                     listen = false,
@@ -86,6 +100,7 @@ namespace ContinueGames
         private static void SaveRun(ref SaveData save) {
             save.teamExp = (int)TeamManager.instance.GetTeamExperience(TeamIndex.Player);
 
+            save.seed = Run.instance.seed.ToString();
             save.difficulty = (int)Run.instance.selectedDifficulty;
             save.fixedTime = Run.instance.fixedTime;
             save.stageClearCount = Run.instance.stageClearCount;
@@ -102,7 +117,7 @@ namespace ContinueGames
             for (int i = 0; i < (int)ItemIndex.Count -1; i++) {
                 playerData.items[i] = inventory.GetItemCount((ItemIndex)i);
             }
-
+            
             playerData.equipItem0 = (int) inventory.GetEquipment(0).equipmentIndex;
             playerData.equipItem1 = (int) inventory.GetEquipment(1).equipmentIndex;
             playerData.equipItemCount = inventory.GetEquipmentSlotCount();
@@ -119,16 +134,31 @@ namespace ContinueGames
             }
 
             LoadRun(save);
-            
+
+            LoadSceneDirector.PopulateScene(save);
+            seed = 0;
         }
 
         private static void LoadRun(SaveData save) {
             TeamManager.instance.GiveTeamExperience(TeamIndex.Player, (ulong)save.teamExp);
-
             Run.instance.selectedDifficulty = (DifficultyIndex)save.difficulty;
             Run.instance.fixedTime = save.fixedTime;
             Run.instance.stageClearCount = save.stageClearCount - 1;
-            Run.instance.AdvanceStage(save.sceneName);
+
+            Run.instance.runRNG = new Xoroshiro128Plus(seed);
+            Run.instance.nextStageRng = new Xoroshiro128Plus(Run.instance.runRNG.nextUlong);
+            Run.instance.stageRngGenerator = new Xoroshiro128Plus(Run.instance.runRNG.nextUlong);
+            
+            int dummy;
+            for (int i = 0; i < Run.instance.stageClearCount + 1; i++) {
+                dummy = (int)Run.instance.stageRngGenerator.nextUlong;
+                dummy = Run.instance.nextStageRng.RangeInt(0,1);
+                dummy = Run.instance.nextStageRng.RangeInt(0,1);
+            }
+           // if (Run.instance.stageClearCount > 0) {
+                Run.instance.AdvanceStage(save.sceneName);
+            // }
+            
         }
 
         private static void LoadPlayer(PlayerData playerData) {

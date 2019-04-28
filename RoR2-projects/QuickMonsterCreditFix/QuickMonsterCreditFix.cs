@@ -9,12 +9,8 @@ namespace QuickMonsterCreditFix
     {
 
         public void Awake() {
-            On.RoR2.CombatDirector.AttemptSpawnOnTarget += (orig, self, gameobject) => {
-                bool test = orig(self, gameobject);
-                return test;
-            };
             On.RoR2.CombatDirector.Simulate += (orig, self, deltaTime) => {
-                self.monsterCredit = Mathf.Min(self.monsterCredit, 14400);
+                self.monsterCredit = Mathf.Min(self.monsterCredit, 14399);
                 orig(self, deltaTime);
             };
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -14,30 +15,32 @@ namespace SavedGames {
         public string sceneName;
         public int teamExp;
 
-        public List<PlayerData> playerList;
+        public List<PlayerData> players;
+        public List<ChestData> chests;
+        public List<BarrelData> barrels;
+        public List<ShrineData> shrines;
+        public List<PrinterData> printers;
+        public List<BrokenDroneData> brokenDrones;
+        public TeleporterData teleporter;
     }
 
     [Serializable]
-    public struct PlayerData {
-
-        public string username;
-
+    public class TeleporterData {
         public SerializableTransform transform;
 
-        public int[] items;
-
-        public int equipItem0;
-        public int equipItem1;
-        public int equipItemCount;
-
-        public string characterBodyName;
-
-
+        public float chargeTime;
     }
 
     [Serializable]
-    public struct SerializableChest {
+    public class BrokenDroneData {
+    }
 
+    [Serializable]
+    public class ShrineData {
+    }
+
+    [Serializable]
+    public class PrinterData {
     }
 
     [Serializable]
@@ -46,6 +49,10 @@ namespace SavedGames {
         public SerializableTransform(Vector3 position, Quaternion rotation) {
             this.position = new SerializableVector3(position);
             this.rotation = new SerializableQuaternion(rotation);
+        }
+        public SerializableTransform(Transform transform) {
+            this.position = new SerializableVector3(transform.position);
+            this.rotation = new SerializableQuaternion(transform.rotation);
         }
 
         public SerializableVector3 position;

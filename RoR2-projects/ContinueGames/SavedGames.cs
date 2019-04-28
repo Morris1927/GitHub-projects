@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using BepInEx;
 using RoR2;
 using RoR2.Networking;
@@ -8,6 +9,7 @@ using SavedGames;
 using UnityEngine;
 using UnityEngine.Networking;
 using Utilities;
+using UnityEditor;
 
 using ArgsHelper = Utilities.Generic.ArgsHelper;
 
@@ -19,9 +21,11 @@ namespace SavedGames
     {
 
         public static SavedGames instance { get; set; }
-
+        
         public static bool loadingScene;
-        public static ulong seed;
+        //public static ulong seed;
+
+        public static FieldInfo getDropPickup = typeof(ChestBehavior).GetField("dropPickup");
 
         public void Awake() {
             if (instance == null) {
@@ -33,12 +37,16 @@ namespace SavedGames
                 Generic.CommandHelper.RegisterCommands(self);
                 orig(self);
             };
-            On.RoR2.Run.Start += (orig, self) => {
-                self.seed = seed == 0 ? self.seed : seed;
-                orig(self);
-            };
+
+            foreach (var item in Resources.LoadAll<SpawnCard>("")) {
+                Debug.Log(item.name);
+            }
+            //On.RoR2.Run.Start += (orig, self) => {
+            //    self.seed = seed == 0 ? self.seed : seed;
+            //    orig(self);
+            //};
             On.RoR2.SceneDirector.PopulateScene += (orig, self) => {
-                if (!loadingScene) {
+                if (!loadingScene ) {
                     orig(self);
                 }
             };
@@ -69,7 +77,8 @@ namespace SavedGames
         }
 
         private IEnumerator StartLoading(SaveData save) {
-            seed = ulong.Parse(save.seed);
+            //seed = ulong.Parse(save.seed);
+            loadingScene = true;
             if (Run.instance == null) {
                 GameNetworkManager.singleton.desiredHost = new GameNetworkManager.HostDescription(new GameNetworkManager.HostDescription.HostingParameters {
                     listen = false,
@@ -85,16 +94,31 @@ namespace SavedGames
 
         private static void SaveGame(string saveFile) {
             SaveData save = new SaveData();
-            save.playerList = new List<PlayerData>();
+            save.players = new List<PlayerData>();
+            save.chests = new List<ChestData>();
+            save.barrels = new List<BarrelData>();
+
 
             foreach (var item in NetworkUser.readOnlyInstancesList) {
-                SavePlayer(item, ref save);
+                PlayerData.SavePlayer(item, ref save);
             }
+
+            foreach (var item in FindObjectsOfType<ChestBehavior>()) {
+                ChestData.SaveChest(item, ref save);
+            }
+            foreach (var item in FindObjectsOfType<BarrelInteraction>()) {
+                BarrelData.SaveBarrel(item, ref save);
+            }
+
             SaveRun(ref save);
 
             string json = TinyJson.JSONWriter.ToJson(save);
             Debug.Log(json);
             PlayerPrefs.SetString("Save" + saveFile, json);
+        }
+
+        private static void SaveChest(ChestBehavior item, ref SaveData save) {
+
         }
 
         private static void SaveRun(ref SaveData save) {
@@ -113,6 +137,8 @@ namespace SavedGames
             Inventory inventory = player.master.inventory;
             playerData.username = player.userName;
 
+            playerData.transform = new SerializableTransform(player.transform);
+            playerData.money = (int) player.master.money;
             playerData.items = new int[(int)ItemIndex.Count - 1];
             for (int i = 0; i < (int)ItemIndex.Count -1; i++) {
                 playerData.items[i] = inventory.GetItemCount((ItemIndex)i);
@@ -124,19 +150,28 @@ namespace SavedGames
 
             playerData.characterBodyName = player.master.bodyPrefab.name;
 
-            save.playerList.Add(playerData);
+            save.players.Add(playerData);
 
         }
 
         private static void LoadGame(SaveData save) {
-            foreach (var item in save.playerList) {
-                LoadPlayer(item);
-            }
 
             LoadRun(save);
 
-            LoadSceneDirector.PopulateScene(save);
-            seed = 0;
+            instance.StartCoroutine(instance.PopulateScene(save));
+            
+        }
+
+        IEnumerator PopulateScene(SaveData save) {
+            yield return new WaitForSeconds(2f);
+            LoadSceneDirector l = new LoadSceneDirector();
+            l.PopulateScene(save);
+
+            foreach (var item in save.players) {
+                item.LoadPlayer();
+            }
+
+            loadingScene = false;
         }
 
         private static void LoadRun(SaveData save) {
@@ -145,47 +180,21 @@ namespace SavedGames
             Run.instance.fixedTime = save.fixedTime;
             Run.instance.stageClearCount = save.stageClearCount - 1;
 
-            Run.instance.runRNG = new Xoroshiro128Plus(seed);
+            Run.instance.runRNG = new Xoroshiro128Plus(ulong.Parse(save.seed));
             Run.instance.nextStageRng = new Xoroshiro128Plus(Run.instance.runRNG.nextUlong);
             Run.instance.stageRngGenerator = new Xoroshiro128Plus(Run.instance.runRNG.nextUlong);
-            
+
             int dummy;
             for (int i = 0; i < Run.instance.stageClearCount + 1; i++) {
                 dummy = (int)Run.instance.stageRngGenerator.nextUlong;
-                dummy = Run.instance.nextStageRng.RangeInt(0,1);
-                dummy = Run.instance.nextStageRng.RangeInt(0,1);
+                dummy = Run.instance.nextStageRng.RangeInt(0, 1);
+                dummy = Run.instance.nextStageRng.RangeInt(0, 1);
             }
-           // if (Run.instance.stageClearCount > 0) {
-                Run.instance.AdvanceStage(save.sceneName);
-            // }
-            
+
+            Run.instance.AdvanceStage(save.sceneName);
+
         }
 
-        private static void LoadPlayer(PlayerData playerData) {
-            NetworkUser player = GetPlayerFromUsername(playerData.username);
-            if (player == null) {
-                Debug.Log("Could not find player: " + playerData.username);
-                return;
-            }
-
-            Inventory inventory = player.master?.inventory;
-
-            GameObject bodyPrefab = BodyCatalog.FindBodyPrefab(playerData.characterBodyName);
-            player.master.bodyPrefab = bodyPrefab;
-            player.master.Respawn(Vector3.zero, Quaternion.identity);
-
-            for (int i = 0; i < playerData.items.Length -1; i++) {
-                inventory.RemoveItem((ItemIndex)i, int.MaxValue);
-                inventory.GiveItem((ItemIndex)i, playerData.items[i]);
-            }
-
-            inventory.SetEquipmentIndex((EquipmentIndex)playerData.equipItem0);
-            if (playerData.equipItemCount == 2) {
-                inventory.SetActiveEquipmentSlot((byte)1);
-                inventory.SetEquipmentIndex((EquipmentIndex)playerData.equipItem1);
-            }
-            player.master.money = 15;
-        }
 
         public static NetworkUser GetPlayerFromUsername(string username) {
             foreach (var item in NetworkUser.readOnlyInstancesList) {

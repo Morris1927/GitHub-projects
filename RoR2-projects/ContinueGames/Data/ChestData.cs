@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 
-namespace SavedGames {
+namespace SavedGames.Data {
     [Serializable]
     public class ChestData {
 
@@ -15,7 +15,7 @@ namespace SavedGames {
 
         public bool open;
 
-        public static ChestData SaveChest(ChestBehavior chest, ref SaveData save) {
+        public static ChestData SaveChest(ChestBehavior chest) {
             ChestData chestData = new ChestData();
             EntityStateMachine stateMachine = chest.GetComponent<EntityStateMachine>();
 
@@ -27,7 +27,6 @@ namespace SavedGames {
             chestData.index = chest.GetFieldValue<PickupIndex>("dropPickup").value;
             chestData.isEquipment = chestData.index > (int)ItemIndex.Count ? true : false;
             chestData.cost = chest.GetComponent<PurchaseInteraction>().cost;
-            save.chests.Add(chestData);
             return chestData;
         }
 

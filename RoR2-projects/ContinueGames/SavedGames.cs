@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using BepInEx;
 using RoR2;
 using RoR2.Networking;
-using SavedGames;
 using UnityEngine;
-using UnityEngine.Networking;
 using Utilities;
-using UnityEditor;
+using SavedGames.Data;
 
 using ArgsHelper = Utilities.Generic.ArgsHelper;
 
@@ -23,9 +20,6 @@ namespace SavedGames
         public static SavedGames instance { get; set; }
         
         public static bool loadingScene;
-        //public static ulong seed;
-
-        public static FieldInfo getDropPickup = typeof(ChestBehavior).GetField("dropPickup");
 
         public void Awake() {
             if (instance == null) {
@@ -38,18 +32,12 @@ namespace SavedGames
                 orig(self);
             };
 
-            foreach (var item in Resources.LoadAll<SpawnCard>("")) {
-                Debug.Log(item.name);
-            }
-            //On.RoR2.Run.Start += (orig, self) => {
-            //    self.seed = seed == 0 ? self.seed : seed;
-            //    orig(self);
-            //};
             On.RoR2.SceneDirector.PopulateScene += (orig, self) => {
                 if (!loadingScene ) {
                     orig(self);
                 }
             };
+
         }
 
         [ConCommand(commandName = "load", flags = ConVarFlags.None, helpText = "Load game")]
@@ -77,19 +65,20 @@ namespace SavedGames
         }
 
         private IEnumerator StartLoading(SaveData save) {
-            //seed = ulong.Parse(save.seed);
+
             loadingScene = true;
             if (Run.instance == null) {
                 GameNetworkManager.singleton.desiredHost = new GameNetworkManager.HostDescription(new GameNetworkManager.HostDescription.HostingParameters {
                     listen = false,
                     maxPlayers = 1
                 });
-                yield return new WaitForSeconds(1f);
+                yield return new WaitUntil(() => PreGameController.instance != null);
                 PreGameController.instance?.StartLaunch();
-                yield return new WaitForSeconds(1f);
+                yield return new WaitUntil(() => Run.instance != null);
             }
-            
-            LoadGame(save);
+
+            instance.StartCoroutine(instance.PopulateScene(save));
+
         }
 
         private static void SaveGame(string saveFile) {
@@ -97,102 +86,78 @@ namespace SavedGames
             save.players = new List<PlayerData>();
             save.chests = new List<ChestData>();
             save.barrels = new List<BarrelData>();
-
+            save.printers = new List<PrinterData>();
+            save.brokenDrones = new List<BrokenDroneData>();
+            save.multiShops = new List<MultiShopData>();
+            save.chanceShrines = new List<ShrineChanceData>();
+            save.bloodShrines = new List<ShrineBloodData>();
 
             foreach (var item in NetworkUser.readOnlyInstancesList) {
-                PlayerData.SavePlayer(item, ref save);
+                save.players.Add(PlayerData.SavePlayer(item));
             }
 
             foreach (var item in FindObjectsOfType<ChestBehavior>()) {
-                ChestData.SaveChest(item, ref save);
+                save.chests.Add(ChestData.SaveChest(item));
             }
             foreach (var item in FindObjectsOfType<BarrelInteraction>()) {
-                BarrelData.SaveBarrel(item, ref save);
+                save.barrels.Add(BarrelData.SaveBarrel(item));
+            }
+            foreach (var item in FindObjectsOfType<ShopTerminalBehavior>()) {
+                if (item.name.Contains("Duplicator")) {
+                    save.printers.Add(PrinterData.SavePrinter(item));
+                }
+            }
+            foreach (var item in FindObjectsOfType<MultiShopController>()) {
+                save.multiShops.Add(MultiShopData.SaveMultiShop(item));
+            }
+            foreach (var item in FindObjectsOfType<ShrineChanceBehavior>()) {
+                save.chanceShrines.Add(ShrineChanceData.SaveShrineChance(item));
+            }
+            foreach (var item in FindObjectsOfType<ShrineBloodBehavior>()) {
+                save.bloodShrines.Add(ShrineBloodData.SaveShrineBlood(item));
             }
 
-            SaveRun(ref save);
+            save.teleporter = TeleporterData.SaveTeleporter(FindObjectOfType<TeleporterInteraction>());
+
+            save.run = RunData.SaveRun(Run.instance);
 
             string json = TinyJson.JSONWriter.ToJson(save);
             Debug.Log(json);
             PlayerPrefs.SetString("Save" + saveFile, json);
         }
 
-        private static void SaveChest(ChestBehavior item, ref SaveData save) {
-
-        }
-
-        private static void SaveRun(ref SaveData save) {
-            save.teamExp = (int)TeamManager.instance.GetTeamExperience(TeamIndex.Player);
-
-            save.seed = Run.instance.seed.ToString();
-            save.difficulty = (int)Run.instance.selectedDifficulty;
-            save.fixedTime = Run.instance.fixedTime;
-            save.stageClearCount = Run.instance.stageClearCount;
-            save.sceneName = Stage.instance.sceneDef.sceneName;
-        }
-
-        private static void SavePlayer(NetworkUser player, ref SaveData save) {
-            PlayerData playerData = new PlayerData();
-
-            Inventory inventory = player.master.inventory;
-            playerData.username = player.userName;
-
-            playerData.transform = new SerializableTransform(player.transform);
-            playerData.money = (int) player.master.money;
-            playerData.items = new int[(int)ItemIndex.Count - 1];
-            for (int i = 0; i < (int)ItemIndex.Count -1; i++) {
-                playerData.items[i] = inventory.GetItemCount((ItemIndex)i);
-            }
-            
-            playerData.equipItem0 = (int) inventory.GetEquipment(0).equipmentIndex;
-            playerData.equipItem1 = (int) inventory.GetEquipment(1).equipmentIndex;
-            playerData.equipItemCount = inventory.GetEquipmentSlotCount();
-
-            playerData.characterBodyName = player.master.bodyPrefab.name;
-
-            save.players.Add(playerData);
-
-        }
-
-        private static void LoadGame(SaveData save) {
-
-            LoadRun(save);
-
-            instance.StartCoroutine(instance.PopulateScene(save));
-            
-        }
-
         IEnumerator PopulateScene(SaveData save) {
+            save.run.LoadData();
+
+            // yield return new WaitWhile(() => Stage.instance == null);
             yield return new WaitForSeconds(2f);
-            LoadSceneDirector l = new LoadSceneDirector();
-            l.PopulateScene(save);
+
+            foreach (var item in save.chests) {
+                item.LoadChest();
+            }
+            foreach (var item in save.barrels) {
+                item.LoadBarrel();
+            }
+            foreach (var item in save.printers) {
+                item.LoadPrinter();
+            }
+            foreach (var item in save.multiShops) {
+                item.LoadMultiShop();
+            }
+            foreach (var item in save.chanceShrines) {
+                item.LoadShrineChance();
+            }
+            foreach (var item in save.bloodShrines) {
+                item.LoadShrineBlood();
+            }
+            save.teleporter.LoadTeleporter();
 
             foreach (var item in save.players) {
                 item.LoadPlayer();
             }
 
+
             loadingScene = false;
-        }
-
-        private static void LoadRun(SaveData save) {
-            TeamManager.instance.GiveTeamExperience(TeamIndex.Player, (ulong)save.teamExp);
-            Run.instance.selectedDifficulty = (DifficultyIndex)save.difficulty;
-            Run.instance.fixedTime = save.fixedTime;
-            Run.instance.stageClearCount = save.stageClearCount - 1;
-
-            Run.instance.runRNG = new Xoroshiro128Plus(ulong.Parse(save.seed));
-            Run.instance.nextStageRng = new Xoroshiro128Plus(Run.instance.runRNG.nextUlong);
-            Run.instance.stageRngGenerator = new Xoroshiro128Plus(Run.instance.runRNG.nextUlong);
-
-            int dummy;
-            for (int i = 0; i < Run.instance.stageClearCount + 1; i++) {
-                dummy = (int)Run.instance.stageRngGenerator.nextUlong;
-                dummy = Run.instance.nextStageRng.RangeInt(0, 1);
-                dummy = Run.instance.nextStageRng.RangeInt(0, 1);
-            }
-
-            Run.instance.AdvanceStage(save.sceneName);
-
         }
 
 

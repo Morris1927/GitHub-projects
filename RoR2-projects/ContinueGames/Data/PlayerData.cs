@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 
-namespace SavedGames {
+namespace SavedGames.Data {
     [Serializable]
     public class PlayerData {
 
@@ -22,7 +22,7 @@ namespace SavedGames {
 
         public bool alive;
 
-        public static PlayerData SavePlayer(NetworkUser player, ref SaveData save) {
+        public static PlayerData SavePlayer(NetworkUser player) {
             PlayerData playerData = new PlayerData();
 
             Inventory inventory = player.master.inventory;
@@ -43,7 +43,6 @@ namespace SavedGames {
 
             playerData.characterBodyName = player.master.bodyPrefab.name;
 
-            save.players.Add(playerData);
             return playerData;
         }
 

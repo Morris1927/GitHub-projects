@@ -1,5 +1,5 @@
 ﻿using RoR2;
-using SavedGames;
+using SavedGames.Data;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,6 +9,8 @@ using UnityEngine.Networking;
 
 namespace SavedGames
 {
+    // =========================== DEPRECATED ============================= //
+
     class LoadSceneDirector : MonoBehaviour {
 
         //public static FieldInfo getDropPickup = typeof(ChestBehavior).GetField("dropPickup");
@@ -20,21 +22,11 @@ namespace SavedGames
             foreach (var item in save.barrels) {
                 item.LoadBarrel();
             }
+            foreach (var item in save.printers) {
+                item.LoadPrinter();
+            }
+            save.teleporter.LoadTeleporter();
         }
 
-        private static void LoadChests(SaveData save) {
-
-        }
-
-        private static IEnumerator Test(ChestBehavior chest) {
-            yield return new WaitForSeconds(5f);
-
-        }
-
-        public GameObject DoSpawn(GameObject prefab, Vector3 position, Quaternion rotation) {
-            GameObject g = GameObject.Instantiate(prefab, position, rotation);
-            NetworkServer.Spawn(g);
-            return g;
-        }
     }
 }

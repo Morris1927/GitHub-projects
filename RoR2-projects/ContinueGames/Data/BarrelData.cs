@@ -3,7 +3,7 @@ using System;
 using System.Reflection;
 using UnityEngine;
 
-namespace SavedGames {
+namespace SavedGames.Data {
 
     [Serializable]
     public class BarrelData {
@@ -15,7 +15,7 @@ namespace SavedGames {
         public int goldReward;
         public int expReward;
 
-        public static BarrelData SaveBarrel(BarrelInteraction barrel, ref SaveData save) {
+        public static BarrelData SaveBarrel(BarrelInteraction barrel) {
             BarrelData barrelData = new BarrelData();
 
             if ((bool) getOpened.GetValue(barrel)) {
@@ -31,8 +31,6 @@ namespace SavedGames {
         public void LoadBarrel() {
             GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscBarrel1").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
             BarrelInteraction barrel = g.GetComponent<BarrelInteraction>();
-            barrel.goldReward = goldReward;
-            barrel.expReward = (uint)expReward;
         }
     }
 }

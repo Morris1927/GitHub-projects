@@ -4,43 +4,27 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace SavedGames {
+namespace SavedGames.Data {
     [Serializable]
     public struct SaveData {
 
-        public string seed;
-        public int difficulty;
-        public float fixedTime;
-        public int stageClearCount;
-        public string sceneName;
-        public int teamExp;
+
+        public RunData run;
 
         public List<PlayerData> players;
         public List<ChestData> chests;
         public List<BarrelData> barrels;
-        public List<ShrineData> shrines;
+        public List<ShrineChanceData> chanceShrines;
+        public List<ShrineBloodData> bloodShrines;
         public List<PrinterData> printers;
         public List<BrokenDroneData> brokenDrones;
+        public List<MultiShopData> multiShops;
+
         public TeleporterData teleporter;
     }
 
     [Serializable]
-    public class TeleporterData {
-        public SerializableTransform transform;
-
-        public float chargeTime;
-    }
-
-    [Serializable]
     public class BrokenDroneData {
-    }
-
-    [Serializable]
-    public class ShrineData {
-    }
-
-    [Serializable]
-    public class PrinterData {
     }
 
     [Serializable]

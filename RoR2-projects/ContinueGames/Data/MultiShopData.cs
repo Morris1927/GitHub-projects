@@ -14,6 +14,7 @@ namespace SavedGames.Data {
 
         public SerializableTransform transform;
         public List<int> itemIndexes = new List<int>();
+        public List<bool> hidden = new List<bool>();
 
         public int cost;
 
@@ -22,6 +23,7 @@ namespace SavedGames.Data {
             multiShopData.transform = new SerializableTransform(multiShop.transform);
             foreach (var item in (GameObject[]) getTerminalGameObjects.GetValue(multiShop)) {
                 multiShopData.itemIndexes.Add((int) item.GetComponent<ShopTerminalBehavior>().GetFieldValue<PickupIndex>("pickupIndex").itemIndex);
+                multiShopData.hidden.Add((bool)item.GetComponent<ShopTerminalBehavior>().pickupIndexIsHidden);
             }
             multiShopData.cost = multiShop.GetFieldValue<int>("cost");
             return multiShopData;
@@ -36,9 +38,10 @@ namespace SavedGames.Data {
         IEnumerator WaitForStart(MultiShopController multiShop) {
             yield return new WaitUntil(() => getTerminalGameObjects.GetValue(multiShop) != null);
             foreach (var item in (GameObject[]) getTerminalGameObjects.GetValue(multiShop)) {
-                item.GetComponent<ShopTerminalBehavior>().SetPickupIndex(new PickupIndex((ItemIndex)itemIndexes[itemIndexes.Count - 1]));
+                item.GetComponent<ShopTerminalBehavior>().SetPickupIndex(new PickupIndex((ItemIndex)itemIndexes[itemIndexes.Count - 1]), hidden[hidden.Count - 1]);
                 item.GetComponent<PurchaseInteraction>().cost = cost;
 
+                hidden.RemoveAt(hidden.Count - 1);
                 itemIndexes.RemoveAt(itemIndexes.Count -1);
             }
             multiShop.SetFieldValue("cost", cost);

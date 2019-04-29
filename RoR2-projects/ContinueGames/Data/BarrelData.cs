@@ -1,5 +1,6 @@
 ﻿using RoR2;
 using System;
+using System.Collections;
 using System.Reflection;
 using UnityEngine;
 
@@ -31,6 +32,12 @@ namespace SavedGames.Data {
         public void LoadBarrel() {
             GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscBarrel1").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
             BarrelInteraction barrel = g.GetComponent<BarrelInteraction>();
+            SavedGames.instance.StartCoroutine(FixPosition(barrel));
+        }
+
+        IEnumerator FixPosition(BarrelInteraction barrel) {
+            yield return new WaitUntil(() => barrel.transform.position != transform.position.GetVector3());
+            barrel.transform.position = transform.position.GetVector3();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using RoR2;
 using System;
+using System.Collections;
 using UnityEngine;
 
 namespace SavedGames.Data {
@@ -19,13 +20,13 @@ namespace SavedGames.Data {
             ChestData chestData = new ChestData();
             EntityStateMachine stateMachine = chest.GetComponent<EntityStateMachine>();
 
-            if (stateMachine.state.GetType().IsEquivalentTo(typeof(EntityStates.Barrel.Opened))) {
-                return null;
-            }
+            //if (stateMachine.state.GetType().IsEquivalentTo(typeof(EntityStates.Barrel.Opened))) {
+            //    return null;
+            //}
             chestData.open = stateMachine.state.GetType().IsEquivalentTo(typeof(EntityStates.Barrel.Opened)) ? true : false;
-            chestData.transform = new SerializableTransform(chest.transform);
+            chestData.transform = new SerializableTransform(chest.GetComponent<ModelLocator>().modelTransform);
             chestData.index = chest.GetFieldValue<PickupIndex>("dropPickup").value;
-            chestData.isEquipment = chestData.index > (int)ItemIndex.Count ? true : false;
+            chestData.isEquipment = chestData.index >= (int)ItemIndex.Count ? true : false;
             chestData.cost = chest.GetComponent<PurchaseInteraction>().cost;
             return chestData;
         }
@@ -41,9 +42,16 @@ namespace SavedGames.Data {
                 g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscChest1").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
                 chest = g.GetComponent<ChestBehavior>();
                 chest.SetFieldValue("dropPickup", new PickupIndex((ItemIndex)index));
+                SavedGames.instance.StartCoroutine(FixPosition(chest));
             }
             g.GetComponent<PurchaseInteraction>().cost = cost;
             chest.dropRoller = new UnityEngine.Events.UnityEvent();
+
+        }
+
+        IEnumerator FixPosition(ChestBehavior chest) {
+            yield return new WaitUntil(() => chest.transform.position != transform.position.GetVector3());
+            chest.transform.position = transform.position.GetVector3();
         }
 
     }

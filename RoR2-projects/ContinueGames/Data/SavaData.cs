@@ -14,11 +14,16 @@ namespace SavedGames.Data {
         public List<PlayerData> players;
         public List<ChestData> chests;
         public List<BarrelData> barrels;
-        public List<ShrineChanceData> chanceShrines;
-        public List<ShrineBloodData> bloodShrines;
         public List<PrinterData> printers;
         public List<BrokenDroneData> brokenDrones;
         public List<MultiShopData> multiShops;
+        public List<ShrineChanceData> chanceShrines;
+        public List<ShrineBloodData> bloodShrines;
+        public List<ShrineBossData> bossShrines;
+        public List<ShrineCombatData> combatShrines;
+        public List<ShrineHealingData> healingShrines;
+        public List<ShrineRestackData> orderShrines;
+        public List<ShrineGoldshoresAccessData> goldshoreShrines;
 
         public TeleporterData teleporter;
     }

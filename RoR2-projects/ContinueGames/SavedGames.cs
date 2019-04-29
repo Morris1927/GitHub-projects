@@ -9,16 +9,16 @@ using Utilities;
 using SavedGames.Data;
 
 using ArgsHelper = Utilities.Generic.ArgsHelper;
+using System.Reflection;
 
 namespace SavedGames
 {
 
     [BepInPlugin("com.morris1927.ContinueGames", "ContinueGames", "1.0.0")]
-    public class SavedGames : BaseUnityPlugin
-    {
+    public class SavedGames : BaseUnityPlugin {
 
         public static SavedGames instance { get; set; }
-        
+
         public static bool loadingScene;
 
         public void Awake() {
@@ -33,12 +33,29 @@ namespace SavedGames
             };
 
             On.RoR2.SceneDirector.PopulateScene += (orig, self) => {
-                if (!loadingScene ) {
+                if (!loadingScene) {
                     orig(self);
                 }
             };
 
         }
+
+        public void Update() {
+            if (Input.GetKeyDown(KeyCode.F5)) {
+                //Save
+                RoR2.Console.instance.SubmitCmd(NetworkUser.readOnlyLocalPlayersList[0], "save test");
+            }
+            if (Input.GetKeyDown(KeyCode.F8)) {
+                //Load
+                RoR2.Console.instance.SubmitCmd(NetworkUser.readOnlyLocalPlayersList[0], "load test");
+            }
+            if (Input.GetKeyDown(KeyCode.F6)) {
+                //Quick cheats
+                RoR2.Console.instance.SubmitCmd(NetworkUser.readOnlyLocalPlayersList[0], "give_item hoof 30; god; kill_all; no_enemies");
+            }
+
+        }
+
 
         [ConCommand(commandName = "load", flags = ConVarFlags.None, helpText = "Load game")]
         private static void CCLoad(ConCommandArgs args) {
@@ -87,10 +104,17 @@ namespace SavedGames
             save.chests = new List<ChestData>();
             save.barrels = new List<BarrelData>();
             save.printers = new List<PrinterData>();
-            save.brokenDrones = new List<BrokenDroneData>();
             save.multiShops = new List<MultiShopData>();
+
             save.chanceShrines = new List<ShrineChanceData>();
             save.bloodShrines = new List<ShrineBloodData>();
+            save.bossShrines = new List<ShrineBossData>();
+            save.combatShrines = new List<ShrineCombatData>();
+            save.goldshoreShrines = new List<ShrineGoldshoresAccessData>();
+            save.healingShrines = new List<ShrineHealingData>();
+            save.orderShrines = new List<ShrineRestackData>();
+
+            save.brokenDrones = new List<BrokenDroneData>();
 
             foreach (var item in NetworkUser.readOnlyInstancesList) {
                 save.players.Add(PlayerData.SavePlayer(item));
@@ -116,7 +140,18 @@ namespace SavedGames
             foreach (var item in FindObjectsOfType<ShrineBloodBehavior>()) {
                 save.bloodShrines.Add(ShrineBloodData.SaveShrineBlood(item));
             }
-
+            foreach (var item in FindObjectsOfType<ShrineBossBehavior>()) {
+                save.bossShrines.Add(ShrineBossData.SaveShrineBoss(item));
+            }
+            foreach (var item in FindObjectsOfType<ShrineCombatBehavior>()) {
+                save.combatShrines.Add(ShrineCombatData.SaveShrineCombat(item));
+            }
+            foreach (var item in FindObjectsOfType<ShrineHealingBehavior>()) {
+                save.healingShrines.Add(ShrineHealingData.SaveShrineHealing(item));
+            }
+            foreach (var item in FindObjectsOfType<ShrineRestackBehavior>()) {
+                save.orderShrines.Add(ShrineRestackData.SaveShrineRestack(item));
+            }
             save.teleporter = TeleporterData.SaveTeleporter(FindObjectOfType<TeleporterInteraction>());
 
             save.run = RunData.SaveRun(Run.instance);
@@ -149,6 +184,18 @@ namespace SavedGames
             }
             foreach (var item in save.bloodShrines) {
                 item.LoadShrineBlood();
+            }
+            foreach (var item in save.bossShrines) {
+                item.LoadShrineBoss();
+            }
+            foreach (var item in save.combatShrines) {
+                item.LoadShrineCombat();
+            }
+            foreach (var item in save.healingShrines) {
+                item.LoadShrineHealing();
+            }
+            foreach (var item in save.orderShrines) {
+                item.LoadShrineRestack();
             }
             save.teleporter.LoadTeleporter();
 

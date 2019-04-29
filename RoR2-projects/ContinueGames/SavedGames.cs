@@ -14,7 +14,7 @@ using System.Reflection;
 namespace SavedGames
 {
 
-    [BepInPlugin("com.morris1927.ContinueGames", "ContinueGames", "1.0.0")]
+    [BepInPlugin("com.morris1927.SavedGames", "SavedGames", "2.0.0")]
     public class SavedGames : BaseUnityPlugin {
 
         public static SavedGames instance { get; set; }
@@ -43,11 +43,11 @@ namespace SavedGames
         public void Update() {
             if (Input.GetKeyDown(KeyCode.F5)) {
                 //Save
-                RoR2.Console.instance.SubmitCmd(NetworkUser.readOnlyLocalPlayersList[0], "save test");
+                RoR2.Console.instance.SubmitCmd(null, "save test");
             }
             if (Input.GetKeyDown(KeyCode.F8)) {
                 //Load
-                RoR2.Console.instance.SubmitCmd(NetworkUser.readOnlyLocalPlayersList[0], "load test");
+                RoR2.Console.instance.SubmitCmd(null, "load test");
             }
             if (Input.GetKeyDown(KeyCode.F6)) {
                 //Quick cheats
@@ -101,6 +101,7 @@ namespace SavedGames
         private static void SaveGame(string saveFile) {
             SaveData save = new SaveData();
             save.players = new List<PlayerData>();
+            save.enemies = new List<EnemyData>();
             save.chests = new List<ChestData>();
             save.barrels = new List<BarrelData>();
             save.printers = new List<PrinterData>();
@@ -118,6 +119,15 @@ namespace SavedGames
 
             foreach (var item in NetworkUser.readOnlyInstancesList) {
                 save.players.Add(PlayerData.SavePlayer(item));
+            }
+
+            foreach (var item in FindObjectsOfType<CharacterMaster>()) {
+                if (item.GetBody() != null) {
+                    if (!item.GetBody().isPlayerControlled) {
+                        save.enemies.Add(EnemyData.SaveEnemy(item));
+
+                    }
+                }
             }
 
             foreach (var item in FindObjectsOfType<ChestBehavior>()) {
@@ -201,6 +211,9 @@ namespace SavedGames
 
             foreach (var item in save.players) {
                 item.LoadPlayer();
+            }
+            foreach (var item in save.enemies) {
+                item.LoadEnemy();
             }
 
 

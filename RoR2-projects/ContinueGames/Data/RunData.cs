@@ -33,7 +33,7 @@ namespace SavedGames.Data
             Run.instance.seed = ulong.Parse(seed);
             Run.instance.selectedDifficulty = (DifficultyIndex) difficulty;
             Run.instance.fixedTime = fixedTime;
-            Run.instance.stageClearCount = stageClearCount;
+            Run.instance.stageClearCount = stageClearCount - 1;
 
             Run.instance.runRNG = new Xoroshiro128Plus(ulong.Parse(seed));
             Run.instance.nextStageRng = new Xoroshiro128Plus(Run.instance.runRNG.nextUlong);

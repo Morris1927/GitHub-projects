@@ -12,6 +12,7 @@ namespace SavedGames.Data {
         public RunData run;
 
         public List<PlayerData> players;
+        public List<EnemyData> enemies;
         public List<ChestData> chests;
         public List<BarrelData> barrels;
         public List<PrinterData> printers;

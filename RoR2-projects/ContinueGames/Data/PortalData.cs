@@ -22,10 +22,11 @@ namespace SavedGames.Data
 
         public void LoadPortal() {
             switch (name) {
-                
                 case "RoR2/Scenes/bazaar": {
-                        GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscShopPortal").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
-                        NetworkServer.Spawn(g);
+                        if (!Stage.instance.sceneDef.sceneName.Contains("bazaar")) {
+                            GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscShopPortal").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+                            NetworkServer.Spawn(g);
+                        }
                         break;
                     }
                 case "RoR2/Scenes/goldshores": {

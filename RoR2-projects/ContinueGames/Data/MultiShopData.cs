@@ -34,6 +34,7 @@ namespace SavedGames.Data {
             }
             multiShopData.cost = multiShop.GetFieldValue<int>("cost");
             multiShopData.available = multiShop.GetFieldValue<bool>("available");
+            
             return multiShopData;
         }
 

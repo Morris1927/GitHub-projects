@@ -112,7 +112,9 @@ namespace SavedGames.Data {
             foreach (var item in Object.FindObjectsOfType<SceneExitController>()) {
                 save.portals.Add(PortalData.SavePortal(item));
             }
-            save.teleporter = TeleporterData.SaveTeleporter(Object.FindObjectOfType<TeleporterInteraction>());
+            if (TeleporterInteraction.instance) {
+                save.teleporter = TeleporterData.SaveTeleporter(TeleporterInteraction.instance);
+            }
 
             save.run = RunData.SaveRun(Run.instance);
 
@@ -171,7 +173,8 @@ namespace SavedGames.Data {
             foreach (var item in portals) {
                 item.LoadPortal();
             }
-            teleporter.LoadTeleporter();
+
+            teleporter?.LoadTeleporter();
 
             foreach (var item in players) {
                 item.LoadPlayer();

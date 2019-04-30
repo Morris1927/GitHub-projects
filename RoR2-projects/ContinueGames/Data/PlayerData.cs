@@ -1,10 +1,14 @@
 ﻿using RoR2;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SavedGames.Data {
     [Serializable]
     public class PlayerData {
+
+        //public static FieldInfo deployablesList = typeof(CharacterMaster).GetField()
+
 
         public string username;
 
@@ -13,6 +17,7 @@ namespace SavedGames.Data {
         public int money;
 
         public int[] items;
+        public List<DeployableData> deployables;
 
         public int equipItem0;
         public int equipItem1;
@@ -24,6 +29,7 @@ namespace SavedGames.Data {
 
         public static PlayerData SavePlayer(NetworkUser player) {
             PlayerData playerData = new PlayerData();
+            playerData.deployables = new List<DeployableData>();
 
             Inventory inventory = player.master.inventory;
             playerData.username = player.userName;
@@ -42,6 +48,14 @@ namespace SavedGames.Data {
             playerData.equipItemCount = inventory.GetEquipmentSlotCount();
 
             playerData.characterBodyName = player.master.bodyPrefab.name;
+
+            List<DeployableInfo> deployablesList = player.master.GetFieldValue<List<DeployableInfo>>("deployablesList");
+            if (deployablesList != null) {
+                foreach (var item in deployablesList) {
+                    playerData.deployables.Add(DeployableData.SaveDeployable(item.deployable));
+                }
+            }
+
 
             return playerData;
         }
@@ -75,7 +89,12 @@ namespace SavedGames.Data {
                 inventory.SetEquipmentIndex((EquipmentIndex)equipItem1);
             }
             player.master.money = (uint)money;
-            
+
+
+            foreach (var item in deployables) {
+                item.LoadDeployable(player.master);
+            }
+
         }
 
     }

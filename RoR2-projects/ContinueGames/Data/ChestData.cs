@@ -27,7 +27,7 @@ namespace SavedGames.Data {
             chestData.opened = stateMachine.state.GetType().IsEquivalentTo(typeof(EntityStates.Barrel.Opened)) ? true : false;
             chestData.transform = new SerializableTransform(chest.transform);
             chestData.index = chest.GetFieldValue<PickupIndex>("dropPickup").value;
-            chestData.isEquipment = chestData.index >= (int)ItemIndex.Count ? true : false;
+            chestData.isEquipment = chestData.index >= (int)ItemIndex.Count;
             chestData.cost = chest.GetComponent<PurchaseInteraction>().cost;
             chestData.costType = (int) chest.GetComponent<PurchaseInteraction>().costType;
 

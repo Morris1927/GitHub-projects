@@ -1,4 +1,5 @@
 ﻿using RoR2;
+using RoR2.CharacterAI;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -44,7 +45,12 @@ namespace SavedGames.Data
                 dummy = Run.instance.nextStageRng.RangeInt(0, 1);
                 dummy = Run.instance.nextStageRng.RangeInt(0, 1);
             }
-
+            foreach (var item in TeamComponent.GetTeamMembers(TeamIndex.Player)) {
+                CharacterBody body = item.GetComponent<CharacterBody>();
+                if (body) {
+                    if (!body.isPlayerControlled) item.GetComponent<HealthComponent>()?.Suicide();
+                }
+            }
             Run.instance.AdvanceStage(sceneName);
             Run.instance.stageClearCount = stageClearCount;
         }

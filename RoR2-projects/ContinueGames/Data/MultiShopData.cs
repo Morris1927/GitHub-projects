@@ -14,6 +14,8 @@ namespace SavedGames.Data {
 
         public SerializableTransform transform;
 
+        public string name;
+
         public List<int> itemIndexes = new List<int>();
         public List<bool> hidden = new List<bool>();
 
@@ -24,6 +26,8 @@ namespace SavedGames.Data {
         public static MultiShopData SaveMultiShop(MultiShopController multiShop) {
             MultiShopData multiShopData = new MultiShopData();
             multiShopData.transform = new SerializableTransform(multiShop.transform);
+            multiShopData.name = multiShop.name.Replace("(Clone)", "");
+
             foreach (var item in (GameObject[]) getTerminalGameObjects.GetValue(multiShop)) {
                 multiShopData.itemIndexes.Add((int) item.GetComponent<ShopTerminalBehavior>().GetFieldValue<PickupIndex>("pickupIndex").itemIndex);
                 multiShopData.hidden.Add((bool)item.GetComponent<ShopTerminalBehavior>().pickupIndexIsHidden);
@@ -34,7 +38,7 @@ namespace SavedGames.Data {
         }
 
         public void LoadMultiShop() {
-            GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscTripleShop").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/isc" + name).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
             MultiShopController multiShop = g.GetComponent<MultiShopController>();
             multiShop.Networkavailable = available;
             SavedGames.instance.StartCoroutine(WaitForStart(multiShop));

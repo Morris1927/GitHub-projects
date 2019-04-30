@@ -9,18 +9,21 @@ namespace SavedGames.Data {
 
         public SerializableTransform transform;
 
+        public string name;
+
         public int itemIndex;
 
         public static PrinterData SavePrinter(ShopTerminalBehavior printer) {
             PrinterData printerData = new PrinterData();
             printerData.transform = new SerializableTransform(printer.transform);
             printerData.itemIndex = (int) printer.CurrentPickupIndex().itemIndex;
+            printerData.name = printer.name.Replace("(Clone)", "");
 
             return printerData;
         }
 
         public void LoadPrinter() {
-            GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscDuplicator").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/isc" + name).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
             ShopTerminalBehavior printer = g.GetComponent<ShopTerminalBehavior>();
             SavedGames.instance.StartCoroutine(WaitForStart(printer));
         }

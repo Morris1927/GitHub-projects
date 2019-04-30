@@ -100,7 +100,6 @@ namespace SavedGames
             save.Load();
 
             loadingScene = false;
-
         }
 
         public static NetworkUser GetPlayerFromUsername(string username) {

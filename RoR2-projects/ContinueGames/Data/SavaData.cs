@@ -28,6 +28,8 @@ namespace SavedGames.Data {
         public List<ShrineHealingData> healingShrines;
         public List<ShrineRestackData> orderShrines;
         public List<ShrineGoldshoresAccessData> goldshoreShrines;
+        public List<ItemDropletData> itemDroplets;
+        public List<PortalData> portals;
 
         public TeleporterData teleporter;
 
@@ -39,6 +41,7 @@ namespace SavedGames.Data {
             save.barrels = new List<BarrelData>();
             save.printers = new List<PrinterData>();
             save.multiShops = new List<MultiShopData>();
+            save.brokenDrones = new List<BrokenDroneData>();
 
             save.chanceShrines = new List<ShrineChanceData>();
             save.bloodShrines = new List<ShrineBloodData>();
@@ -48,7 +51,8 @@ namespace SavedGames.Data {
             save.healingShrines = new List<ShrineHealingData>();
             save.orderShrines = new List<ShrineRestackData>();
 
-            save.brokenDrones = new List<BrokenDroneData>();
+            save.itemDroplets = new List<ItemDropletData>();
+            save.portals = new List<PortalData>();
 
             foreach (var item in NetworkUser.readOnlyInstancesList) {
                 save.players.Add(PlayerData.SavePlayer(item));
@@ -102,17 +106,29 @@ namespace SavedGames.Data {
             foreach (var item in Object.FindObjectsOfType<SummonMasterBehavior>()) {
                 save.brokenDrones.Add(BrokenDroneData.SaveBrokenDrone(item));
             }
+            foreach (var item in Object.FindObjectsOfType<GenericPickupController>()) {
+                save.itemDroplets.Add(ItemDropletData.SaveItemDroplet(item));
+            }
+            foreach (var item in Object.FindObjectsOfType<SceneExitController>()) {
+                save.portals.Add(PortalData.SavePortal(item));
+            }
             save.teleporter = TeleporterData.SaveTeleporter(Object.FindObjectOfType<TeleporterInteraction>());
 
             save.run = RunData.SaveRun(Run.instance);
 
             string json = TinyJson.JSONWriter.ToJson(save);
-            //Debug.Log(json);
+            Debug.Log(json);
             PlayerPrefs.SetString("Save" + saveFile, json);
         }
 
 
         public void Load() {
+            //Clear gold chests
+            foreach (var item in Object.FindObjectsOfType<ChestBehavior>()) {
+                Object.Destroy(item.gameObject);
+            }
+
+
             foreach (var item in chests) {
                 item.LoadChest();
             }
@@ -149,7 +165,12 @@ namespace SavedGames.Data {
             foreach (var item in brokenDrones) {
                 item.LoadBrokenDrone();
             }
-
+            foreach (var item in itemDroplets) {
+                item.LoadDroplet();
+            }
+            foreach (var item in portals) {
+                item.LoadPortal();
+            }
             teleporter.LoadTeleporter();
 
             foreach (var item in players) {

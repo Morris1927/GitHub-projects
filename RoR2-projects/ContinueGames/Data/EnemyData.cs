@@ -8,6 +8,7 @@ using UnityEngine.Networking;
 
 namespace SavedGames.Data
 {
+    [Serializable]
     public class EnemyData
     {
 
@@ -47,6 +48,11 @@ namespace SavedGames.Data
         }
 
         public void LoadEnemy() {
+
+            if (enemyName.Contains("EngiTurret") || enemyName.Contains("BeetleGuardAlly")) {
+                return;
+            }
+
             GameObject g = GameObject.Instantiate(MasterCatalog.FindMasterPrefab(enemyName + "Master"));
             NetworkServer.Spawn(g);
             CharacterMaster enemy = g.GetComponent<CharacterMaster>();

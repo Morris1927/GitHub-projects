@@ -78,7 +78,7 @@ namespace SavedGames
                 Debug.Log("Command failed, requires 1 argument: save <filename>");
                 return;
             }
-            SaveGame(ArgsHelper.GetValue(args.userArgs, 0));
+            SaveData.Save(ArgsHelper.GetValue(args.userArgs, 0));
         }
 
         private IEnumerator StartLoading(SaveData save) {
@@ -93,133 +93,15 @@ namespace SavedGames
                 PreGameController.instance?.StartLaunch();
                 yield return new WaitUntil(() => Run.instance != null);
             }
-
-            instance.StartCoroutine(instance.PopulateScene(save));
-
-        }
-
-        private static void SaveGame(string saveFile) {
-            SaveData save = new SaveData();
-            save.players = new List<PlayerData>();
-            save.enemies = new List<EnemyData>();
-            save.chests = new List<ChestData>();
-            save.barrels = new List<BarrelData>();
-            save.printers = new List<PrinterData>();
-            save.multiShops = new List<MultiShopData>();
-
-            save.chanceShrines = new List<ShrineChanceData>();
-            save.bloodShrines = new List<ShrineBloodData>();
-            save.bossShrines = new List<ShrineBossData>();
-            save.combatShrines = new List<ShrineCombatData>();
-            save.goldshoreShrines = new List<ShrineGoldshoresAccessData>();
-            save.healingShrines = new List<ShrineHealingData>();
-            save.orderShrines = new List<ShrineRestackData>();
-
-            save.brokenDrones = new List<BrokenDroneData>();
-
-            foreach (var item in NetworkUser.readOnlyInstancesList) {
-                save.players.Add(PlayerData.SavePlayer(item));
-            }
-
-            foreach (var item in FindObjectsOfType<CharacterMaster>()) {
-                if (item.GetBody() != null) {
-                    if (!item.GetBody().isPlayerControlled) {
-                        save.enemies.Add(EnemyData.SaveEnemy(item));
-
-                    }
-                }
-            }
-
-            foreach (var item in FindObjectsOfType<ChestBehavior>()) {
-                save.chests.Add(ChestData.SaveChest(item));
-            }
-            foreach (var item in FindObjectsOfType<BarrelInteraction>()) {
-                save.barrels.Add(BarrelData.SaveBarrel(item));
-            }
-            foreach (var item in FindObjectsOfType<ShopTerminalBehavior>()) {
-                if (item.name.Contains("Duplicator")) {
-                    save.printers.Add(PrinterData.SavePrinter(item));
-                }
-            }
-            foreach (var item in FindObjectsOfType<MultiShopController>()) {
-                save.multiShops.Add(MultiShopData.SaveMultiShop(item));
-            }
-            foreach (var item in FindObjectsOfType<ShrineChanceBehavior>()) {
-                save.chanceShrines.Add(ShrineChanceData.SaveShrineChance(item));
-            }
-            foreach (var item in FindObjectsOfType<ShrineBloodBehavior>()) {
-                save.bloodShrines.Add(ShrineBloodData.SaveShrineBlood(item));
-            }
-            foreach (var item in FindObjectsOfType<ShrineBossBehavior>()) {
-                save.bossShrines.Add(ShrineBossData.SaveShrineBoss(item));
-            }
-            foreach (var item in FindObjectsOfType<ShrineCombatBehavior>()) {
-                save.combatShrines.Add(ShrineCombatData.SaveShrineCombat(item));
-            }
-            foreach (var item in FindObjectsOfType<ShrineHealingBehavior>()) {
-                save.healingShrines.Add(ShrineHealingData.SaveShrineHealing(item));
-            }
-            foreach (var item in FindObjectsOfType<ShrineRestackBehavior>()) {
-                save.orderShrines.Add(ShrineRestackData.SaveShrineRestack(item));
-            }
-            save.teleporter = TeleporterData.SaveTeleporter(FindObjectOfType<TeleporterInteraction>());
-
-            save.run = RunData.SaveRun(Run.instance);
-
-            string json = TinyJson.JSONWriter.ToJson(save);
-            Debug.Log(json);
-            PlayerPrefs.SetString("Save" + saveFile, json);
-        }
-
-        IEnumerator PopulateScene(SaveData save) {
             save.run.LoadData();
 
-            // yield return new WaitWhile(() => Stage.instance == null);
             yield return new WaitForSeconds(2f);
 
-            foreach (var item in save.chests) {
-                item.LoadChest();
-            }
-            foreach (var item in save.barrels) {
-                item.LoadBarrel();
-            }
-            foreach (var item in save.printers) {
-                item.LoadPrinter();
-            }
-            foreach (var item in save.multiShops) {
-                item.LoadMultiShop();
-            }
-            foreach (var item in save.chanceShrines) {
-                item.LoadShrineChance();
-            }
-            foreach (var item in save.bloodShrines) {
-                item.LoadShrineBlood();
-            }
-            foreach (var item in save.bossShrines) {
-                item.LoadShrineBoss();
-            }
-            foreach (var item in save.combatShrines) {
-                item.LoadShrineCombat();
-            }
-            foreach (var item in save.healingShrines) {
-                item.LoadShrineHealing();
-            }
-            foreach (var item in save.orderShrines) {
-                item.LoadShrineRestack();
-            }
-            save.teleporter.LoadTeleporter();
-
-            foreach (var item in save.players) {
-                item.LoadPlayer();
-            }
-            foreach (var item in save.enemies) {
-                item.LoadEnemy();
-            }
-
+            save.Load();
 
             loadingScene = false;
-        }
 
+        }
 
         public static NetworkUser GetPlayerFromUsername(string username) {
             foreach (var item in NetworkUser.readOnlyInstancesList) {

@@ -8,10 +8,12 @@ namespace SavedGames.Data {
 
         public SerializableTransform transform;
 
+        public bool available;
+
         public static ShrineBossData SaveShrineBoss(ShrineBossBehavior shrine) {
             ShrineBossData shrineBossData = new ShrineBossData();
             shrineBossData.transform = new SerializableTransform(shrine.transform);
-
+            shrineBossData.available = shrine.GetComponent<PurchaseInteraction>().available;
             return shrineBossData;
         }
 
@@ -19,6 +21,7 @@ namespace SavedGames.Data {
             GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscShrineBoss").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
             ShrineBossBehavior shrineBoss = g.GetComponent<ShrineBossBehavior>();
 
+            shrineBoss.GetComponent<PurchaseInteraction>().SetAvailable(available);
         }
 
     }

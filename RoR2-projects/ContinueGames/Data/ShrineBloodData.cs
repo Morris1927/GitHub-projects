@@ -8,6 +8,8 @@ namespace SavedGames.Data {
 
         public SerializableTransform transform;
 
+        public bool available;
+
         public int purchaseCount;
         public int cost;
 
@@ -16,6 +18,8 @@ namespace SavedGames.Data {
             shrineBloodData.transform = new SerializableTransform(shrine.transform);
             shrineBloodData.purchaseCount = shrine.GetFieldValue<int>("purchaseCount");
             shrineBloodData.cost = shrine.GetComponent<PurchaseInteraction>().cost;
+            shrineBloodData.available = shrine.GetComponent<PurchaseInteraction>().available;
+
             return shrineBloodData;
         }
 
@@ -23,7 +27,9 @@ namespace SavedGames.Data {
             GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscShrineBlood").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
             ShrineBloodBehavior shrineBlood = g.GetComponent<ShrineBloodBehavior>();
             shrineBlood.SetFieldValue("purchaseCount", purchaseCount);
-            g.GetComponent<PurchaseInteraction>().cost = cost;
+            shrineBlood.GetComponent<PurchaseInteraction>().cost = cost;
+
+            shrineBlood.GetComponent<PurchaseInteraction>().SetAvailable(available);
         }
 
     }

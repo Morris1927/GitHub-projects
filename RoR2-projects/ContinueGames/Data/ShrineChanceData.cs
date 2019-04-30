@@ -8,6 +8,8 @@ namespace SavedGames.Data {
 
         public SerializableTransform transform;
 
+        public bool available;
+
         public int successfulPurchaseCount;
         public int cost;
         
@@ -16,6 +18,7 @@ namespace SavedGames.Data {
             shrineChanceData.transform = new SerializableTransform(shrine.transform);
             shrineChanceData.successfulPurchaseCount = shrine.GetFieldValue<int>("successfulPurchaseCount");
             shrineChanceData.cost = shrine.GetComponent<PurchaseInteraction>().cost;
+            shrineChanceData.available = shrine.GetComponent<PurchaseInteraction>().available;
             return shrineChanceData;
         }
 
@@ -24,6 +27,9 @@ namespace SavedGames.Data {
             ShrineChanceBehavior shrineChance = g.GetComponent<ShrineChanceBehavior>();
             shrineChance.SetFieldValue("successfulPurchaseCount", successfulPurchaseCount);
             g.GetComponent<PurchaseInteraction>().cost = cost;
+
+            g.GetComponent<PurchaseInteraction>().SetAvailable(available);
+
         }
 
     }

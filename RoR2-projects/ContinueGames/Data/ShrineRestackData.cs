@@ -8,16 +8,21 @@ namespace SavedGames.Data {
 
         public SerializableTransform transform;
 
+        public bool available;
+
         public static ShrineRestackData SaveShrineRestack(ShrineRestackBehavior shrine) {
             ShrineRestackData shrineRestackData = new ShrineRestackData();
             shrineRestackData.transform = new SerializableTransform(shrine.transform);
+            shrineRestackData.available = shrine.GetComponent<PurchaseInteraction>().available;
 
             return shrineRestackData;
         }
 
         public void LoadShrineRestack() {
             GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscShrineRestack").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
-            ShrineRestackBehavior shrineBoss = g.GetComponent<ShrineRestackBehavior>();
+            ShrineRestackBehavior shrine = g.GetComponent<ShrineRestackBehavior>();
+
+            shrine.GetComponent<PurchaseInteraction>().SetAvailable(available);
 
         }
 

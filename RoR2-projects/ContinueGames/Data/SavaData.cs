@@ -1,12 +1,15 @@
-﻿using System;
+﻿using RoR2;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
+using Object = UnityEngine.Object;
+
 namespace SavedGames.Data {
     [Serializable]
-    public struct SaveData {
+    public class SaveData {
 
 
         public RunData run;
@@ -27,10 +30,137 @@ namespace SavedGames.Data {
         public List<ShrineGoldshoresAccessData> goldshoreShrines;
 
         public TeleporterData teleporter;
-    }
 
-    [Serializable]
-    public class BrokenDroneData {
+        public static void Save(string saveFile) {
+            SaveData save = new SaveData();
+            save.players = new List<PlayerData>();
+            save.enemies = new List<EnemyData>();
+            save.chests = new List<ChestData>();
+            save.barrels = new List<BarrelData>();
+            save.printers = new List<PrinterData>();
+            save.multiShops = new List<MultiShopData>();
+
+            save.chanceShrines = new List<ShrineChanceData>();
+            save.bloodShrines = new List<ShrineBloodData>();
+            save.bossShrines = new List<ShrineBossData>();
+            save.combatShrines = new List<ShrineCombatData>();
+            save.goldshoreShrines = new List<ShrineGoldshoresAccessData>();
+            save.healingShrines = new List<ShrineHealingData>();
+            save.orderShrines = new List<ShrineRestackData>();
+
+            save.brokenDrones = new List<BrokenDroneData>();
+
+            foreach (var item in NetworkUser.readOnlyInstancesList) {
+                save.players.Add(PlayerData.SavePlayer(item));
+            }
+
+            foreach (var item in Object.FindObjectsOfType<CharacterMaster>()) {
+                if (item.GetBody() != null) {
+                    if (!item.GetBody().isPlayerControlled) {
+                        save.enemies.Add(EnemyData.SaveEnemy(item));
+
+                    }
+                }
+            }
+            foreach (var item in Object.FindObjectsOfType<ChestBehavior>()) {
+                save.chests.Add(ChestData.SaveChest(item));
+            }
+            foreach (var item in Object.FindObjectsOfType<BarrelInteraction>()) {
+                save.barrels.Add(BarrelData.SaveBarrel(item));
+            }
+            foreach (var item in Object.FindObjectsOfType<ShopTerminalBehavior>()) {
+                if (item.name.Contains("Duplicator")) {
+                    save.printers.Add(PrinterData.SavePrinter(item));
+                }
+            }
+            foreach (var item in Object.FindObjectsOfType<MultiShopController>()) {
+                save.multiShops.Add(MultiShopData.SaveMultiShop(item));
+            }
+            foreach (var item in Object.FindObjectsOfType<ShrineChanceBehavior>()) {
+                save.chanceShrines.Add(ShrineChanceData.SaveShrineChance(item));
+            }
+            foreach (var item in Object.FindObjectsOfType<ShrineBloodBehavior>()) {
+                save.bloodShrines.Add(ShrineBloodData.SaveShrineBlood(item));
+            }
+            foreach (var item in Object.FindObjectsOfType<ShrineBossBehavior>()) {
+                save.bossShrines.Add(ShrineBossData.SaveShrineBoss(item));
+            }
+            foreach (var item in Object.FindObjectsOfType<ShrineCombatBehavior>()) {
+                save.combatShrines.Add(ShrineCombatData.SaveShrineCombat(item));
+            }
+            foreach (var item in Object.FindObjectsOfType<ShrineHealingBehavior>()) {
+                save.healingShrines.Add(ShrineHealingData.SaveShrineHealing(item));
+            }
+            foreach (var item in Object.FindObjectsOfType<ShrineRestackBehavior>()) {
+                save.orderShrines.Add(ShrineRestackData.SaveShrineRestack(item));
+            }
+            foreach (var item in Object.FindObjectsOfType<PortalStatueBehavior>()) {
+                if (item.name.Contains("Goldshores")) {
+                    save.goldshoreShrines.Add(ShrineGoldshoresAccessData.SaveShrineGoldshores(item));
+                }
+            }
+            foreach (var item in Object.FindObjectsOfType<SummonMasterBehavior>()) {
+                save.brokenDrones.Add(BrokenDroneData.SaveBrokenDrone(item));
+            }
+            save.teleporter = TeleporterData.SaveTeleporter(Object.FindObjectOfType<TeleporterInteraction>());
+
+            save.run = RunData.SaveRun(Run.instance);
+
+            string json = TinyJson.JSONWriter.ToJson(save);
+            //Debug.Log(json);
+            PlayerPrefs.SetString("Save" + saveFile, json);
+        }
+
+
+        public void Load() {
+            foreach (var item in chests) {
+                item.LoadChest();
+            }
+            foreach (var item in barrels) {
+                item.LoadBarrel();
+            }
+            foreach (var item in printers) {
+                item.LoadPrinter();
+            }
+            foreach (var item in multiShops) {
+                item.LoadMultiShop();
+            }
+            foreach (var item in chanceShrines) {
+                item.LoadShrineChance();
+            }
+            foreach (var item in bloodShrines) {
+                item.LoadShrineBlood();
+            }
+            foreach (var item in bossShrines) {
+                item.LoadShrineBoss();
+            }
+            foreach (var item in combatShrines) {
+                item.LoadShrineCombat();
+            }
+            foreach (var item in healingShrines) {
+                item.LoadShrineHealing();
+            }
+            foreach (var item in orderShrines) {
+                item.LoadShrineRestack();
+            }
+            foreach (var item in goldshoreShrines) {
+                item.LoadShrineGoldshores();
+            }
+            foreach (var item in brokenDrones) {
+                item.LoadBrokenDrone();
+            }
+
+            teleporter.LoadTeleporter();
+
+            foreach (var item in players) {
+                item.LoadPlayer();
+            }
+            foreach (var item in enemies) {
+                item.LoadEnemy();
+            }
+        }
+
+
     }
 
     [Serializable]

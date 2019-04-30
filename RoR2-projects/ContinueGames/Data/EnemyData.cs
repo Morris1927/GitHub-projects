@@ -23,6 +23,8 @@ namespace SavedGames.Data
         public float health;
         public float shields;
 
+        public bool isBoss;
+        
 
         public static EnemyData SaveEnemy(CharacterMaster enemy) {
             EnemyData enemyData = new EnemyData();
@@ -40,35 +42,41 @@ namespace SavedGames.Data
             enemyData.equipmentIndex = (int) inventory.GetEquipmentIndex();
             enemyData.health = (float) enemy.GetBody()?.healthComponent?.health;
             enemyData.shields = (float)enemy.GetBody()?.healthComponent?.shield;
-
+            enemyData.isBoss = enemy.isBoss;
             return enemyData;
         }
 
         public void LoadEnemy() {
-            //SavedGames.instance.StartCoroutine(Test());
             GameObject g = GameObject.Instantiate(MasterCatalog.FindMasterPrefab(enemyName + "Master"));
             NetworkServer.Spawn(g);
             CharacterMaster enemy = g.GetComponent<CharacterMaster>();
             Inventory inventory = enemy.inventory;
-            enemy.SpawnBody(BodyCatalog.FindBodyPrefab(enemyName + "Body"), transform.position.GetVector3(), transform.rotation.GetQuaternion());
-            HealthComponent healthComponent = enemy.GetBody().healthComponent;
+            if (enemyName == "BeetleQueen")
+                enemyName = "BeetleQueen2";
 
-            enemy.teamIndex = TeamIndex.Monster;
+            enemy.SpawnBody(BodyCatalog.FindBodyPrefab(enemyName + "Body"), transform.position.GetVector3(), transform.rotation.GetQuaternion());
+
+            enemy.teamIndex = (TeamIndex) teamIndex;
             for (int i = 0; i < (int)ItemIndex.Count - 1; i++) {
                 inventory.GiveItem((ItemIndex)i, items[i]);
             }
             inventory.SetEquipmentIndex((EquipmentIndex)equipmentIndex);
 
-            healthComponent.health = health;
-            healthComponent.shield = shields;
+            enemy.isBoss = isBoss;
+            if (isBoss) {
+                BossGroup.instance.AddMember(enemy);
+            }
 
-            SavedGames.instance.StartCoroutine(Test(healthComponent));
+            SavedGames.instance.StartCoroutine(WaitForStart(enemy));
         }
 
-        IEnumerator Test(HealthComponent healthComponent) {
-            yield return new WaitUntil(() => healthComponent.health != health);
+        IEnumerator WaitForStart(CharacterMaster enemy) {
+            yield return null;
+            HealthComponent healthComponent = enemy.GetBody().healthComponent;
+
             healthComponent.health = health;
             healthComponent.shield = shields;
         }
+
     }
 }

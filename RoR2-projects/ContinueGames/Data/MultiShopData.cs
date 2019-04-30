@@ -13,10 +13,13 @@ namespace SavedGames.Data {
         public static FieldInfo getTerminalGameObjects = typeof(MultiShopController).GetField("terminalGameObjects", BindingFlags.NonPublic | BindingFlags.Instance);
 
         public SerializableTransform transform;
+
         public List<int> itemIndexes = new List<int>();
         public List<bool> hidden = new List<bool>();
 
         public int cost;
+
+        public bool available;
 
         public static MultiShopData SaveMultiShop(MultiShopController multiShop) {
             MultiShopData multiShopData = new MultiShopData();
@@ -26,23 +29,26 @@ namespace SavedGames.Data {
                 multiShopData.hidden.Add((bool)item.GetComponent<ShopTerminalBehavior>().pickupIndexIsHidden);
             }
             multiShopData.cost = multiShop.GetFieldValue<int>("cost");
+            multiShopData.available = multiShop.GetFieldValue<bool>("available");
             return multiShopData;
         }
 
         public void LoadMultiShop() {
             GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscTripleShop").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
             MultiShopController multiShop = g.GetComponent<MultiShopController>();
+            multiShop.Networkavailable = available;
             SavedGames.instance.StartCoroutine(WaitForStart(multiShop));
         }
 
         IEnumerator WaitForStart(MultiShopController multiShop) {
-            yield return new WaitUntil(() => getTerminalGameObjects.GetValue(multiShop) != null);
+            yield return null; 
             foreach (var item in (GameObject[]) getTerminalGameObjects.GetValue(multiShop)) {
                 item.GetComponent<ShopTerminalBehavior>().SetPickupIndex(new PickupIndex((ItemIndex)itemIndexes[itemIndexes.Count - 1]), hidden[hidden.Count - 1]);
                 item.GetComponent<PurchaseInteraction>().cost = cost;
 
                 hidden.RemoveAt(hidden.Count - 1);
                 itemIndexes.RemoveAt(itemIndexes.Count -1);
+                item.GetComponent<PurchaseInteraction>().SetAvailable(available);
             }
             multiShop.SetFieldValue("cost", cost);
         }

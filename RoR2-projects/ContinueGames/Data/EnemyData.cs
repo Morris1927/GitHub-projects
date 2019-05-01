@@ -49,7 +49,7 @@ namespace SavedGames.Data
 
         public void LoadEnemy() {
 
-            if (enemyName.Contains("EngiTurret") || enemyName.Contains("BeetleGuardAlly")) {
+            if (enemyName.Contains("EngiTurret") || enemyName.Contains("BeetleGuardAlly") || enemyName.Contains("ShopkeeperMaster")) {
                 return;
             }
 

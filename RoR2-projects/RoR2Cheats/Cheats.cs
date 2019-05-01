@@ -251,6 +251,7 @@ namespace RoR2Cheats {
 
             if (args.Count == 0) {
                 Debug.Log(Run.instance.fixedTime);
+                return;
             }
 
             string stringTime = ArgsHelper.GetValue(args.userArgs, 0);

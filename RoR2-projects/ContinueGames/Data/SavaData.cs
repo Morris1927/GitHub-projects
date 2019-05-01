@@ -30,6 +30,8 @@ namespace SavedGames.Data {
         public List<ShrineGoldshoresAccessData> goldshoreShrines;
         public List<ItemDropletData> itemDroplets;
         public List<PortalData> portals;
+        public List<BazaarPodData> bazaarPods;
+
 
         public TeleporterData teleporter;
 
@@ -116,7 +118,7 @@ namespace SavedGames.Data {
                 save.teleporter = TeleporterData.SaveTeleporter(TeleporterInteraction.instance);
             }
 
-            save.run = RunData.SaveRun(Run.instance);
+            save.run = RunData.SaveRun(Object.FindObjectOfType<Run>());
 
             string json = TinyJson.JSONWriter.ToJson(save);
             Debug.Log(json);

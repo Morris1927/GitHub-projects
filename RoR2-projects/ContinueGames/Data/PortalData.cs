@@ -21,6 +21,8 @@ namespace SavedGames.Data
         }
 
         public void LoadPortal() {
+            return;
+
             switch (name) {
                 case "RoR2/Scenes/bazaar": {
                         if (!Stage.instance.sceneDef.sceneName.Contains("bazaar")) {
@@ -30,13 +32,13 @@ namespace SavedGames.Data
                         break;
                     }
                 case "RoR2/Scenes/goldshores": {
-                        GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscGoldshoresPortal").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
-                        NetworkServer.Spawn(g);
+                        //GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscGoldshoresPortal").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+                        //NetworkServer.Spawn(g);
                         break;
                     }
                 case "RoR2/Scenes/mysteryspace": {
-                        GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscMSPortal").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
-                        NetworkServer.Spawn(g);
+                        //GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscMSPortal").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+                        //NetworkServer.Spawn(g);
                         break;
                     }
             }

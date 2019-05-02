@@ -48,11 +48,11 @@ namespace SavedGames.Data {
         IEnumerator WaitForStart(MultiShopController multiShop) {
             yield return null; 
             foreach (var item in (GameObject[]) getTerminalGameObjects.GetValue(multiShop)) {
-                item.GetComponent<ShopTerminalBehavior>().SetPickupIndex(new PickupIndex((ItemIndex)itemIndexes[itemIndexes.Count - 1]), hidden[hidden.Count - 1]);
+                item.GetComponent<ShopTerminalBehavior>().SetPickupIndex(new PickupIndex((ItemIndex)itemIndexes[0]), hidden[0]);
                 item.GetComponent<PurchaseInteraction>().cost = cost;
 
-                hidden.RemoveAt(hidden.Count - 1);
-                itemIndexes.RemoveAt(itemIndexes.Count -1);
+                hidden.RemoveAt(0);
+                itemIndexes.RemoveAt(0);
                 item.GetComponent<PurchaseInteraction>().SetAvailable(available);
             }
             multiShop.SetFieldValue("cost", cost);

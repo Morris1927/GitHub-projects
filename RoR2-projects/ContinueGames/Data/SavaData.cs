@@ -31,7 +31,7 @@ namespace SavedGames.Data {
         public List<ItemDropletData> itemDroplets;
         public List<PortalData> portals;
         public List<BazaarPodData> bazaarPods;
-
+        public List<BeaconData> beacons;
 
         public TeleporterData teleporter;
 
@@ -55,6 +55,7 @@ namespace SavedGames.Data {
 
             save.itemDroplets = new List<ItemDropletData>();
             save.portals = new List<PortalData>();
+            save.beacons = new List<BeaconData>();
 
             foreach (var item in NetworkUser.readOnlyInstancesList) {
                 save.players.Add(PlayerData.SavePlayer(item));
@@ -109,10 +110,17 @@ namespace SavedGames.Data {
                 save.brokenDrones.Add(BrokenDroneData.SaveBrokenDrone(item));
             }
             foreach (var item in Object.FindObjectsOfType<GenericPickupController>()) {
-                save.itemDroplets.Add(ItemDropletData.SaveItemDroplet(item));
+                if (item.enabled) {
+                    save.itemDroplets.Add(ItemDropletData.SaveItemDroplet(item));
+                }
             }
             foreach (var item in Object.FindObjectsOfType<SceneExitController>()) {
                 save.portals.Add(PortalData.SavePortal(item));
+            }
+            foreach (var item in Object.FindObjectsOfType<PurchaseInteraction>()) {
+                if (item.name.Contains("GoldshoresBeacon")) {
+                    save.beacons.Add(BeaconData.SaveBeacon(item));
+                }
             }
             if (TeleporterInteraction.instance) {
                 save.teleporter = TeleporterData.SaveTeleporter(TeleporterInteraction.instance);
@@ -130,6 +138,15 @@ namespace SavedGames.Data {
             //Clear gold chests
             foreach (var item in Object.FindObjectsOfType<ChestBehavior>()) {
                 Object.Destroy(item.gameObject);
+            }
+            //Clear Goldshores beacons
+            foreach (var item in Object.FindObjectsOfType<PurchaseInteraction>()) {
+                if (item.name.Contains("GoldshoresBeacon")) {
+                    Object.Destroy(item.gameObject);
+                }
+            }
+            if (GoldshoresMissionController.instance) {
+                GoldshoresMissionController.instance.beaconInstanceList.Clear();
             }
 
 
@@ -175,7 +192,9 @@ namespace SavedGames.Data {
             foreach (var item in portals) {
                 item.LoadPortal();
             }
-
+            foreach (var item in beacons) {
+                item.LoadBeacon();
+            }
             teleporter?.LoadTeleporter();
 
             foreach (var item in players) {

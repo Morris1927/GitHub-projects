@@ -24,6 +24,9 @@ namespace SavedGames.Data
         public float health;
         public float shields;
 
+        public int expReward;
+        public int goldReward;
+
         public bool isBoss;
         
 
@@ -42,12 +45,21 @@ namespace SavedGames.Data
 
             enemyData.equipmentIndex = (int) inventory.GetEquipmentIndex();
             enemyData.health = (float) enemy.GetBody()?.healthComponent?.health;
-            enemyData.shields = (float)enemy.GetBody()?.healthComponent?.shield;
+            enemyData.shields = (float) enemy.GetBody()?.healthComponent?.shield;
+
+            enemyData.expReward = (int)enemy.GetBody().GetComponent<DeathRewards>().expReward;
+            enemyData.goldReward = (int)enemy.GetBody().GetComponent<DeathRewards>().goldReward;
+
             enemyData.isBoss = enemy.isBoss;
             return enemyData;
         }
 
         public void LoadEnemy() {
+
+            if (enemyName.Contains("TitanGold")) {
+                GoldshoresMissionController.instance.GetComponent<EntityStateMachine>().SetNextState(new EntityStates.Missions.Goldshores.GoldshoresBossfight());
+                return;
+            }
 
             if (enemyName.Contains("EngiTurret") || enemyName.Contains("BeetleGuardAlly") || enemyName.Contains("ShopkeeperMaster")) {
                 return;
@@ -82,7 +94,11 @@ namespace SavedGames.Data
 
             healthComponent.health = health;
             healthComponent.shield = shields;
-        }
 
+            DeathRewards deathRewards = enemy.GetBody().GetComponent<DeathRewards>();
+
+            deathRewards.expReward = (uint) expReward;
+            deathRewards.goldReward = (uint) goldReward;
+        }
     }
 }

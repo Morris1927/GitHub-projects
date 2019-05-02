@@ -72,6 +72,7 @@ namespace SavedGames
             SaveData save = TinyJson.JSONParser.FromJson<SaveData>(saveString);
             instance.StartCoroutine(instance.StartLoading(save));
         }
+
         [ConCommand(commandName = "save", flags = ConVarFlags.None, helpText = "Save game")]
         private static void CCSave(ConCommandArgs args) {
             if (args.Count != 1) {
@@ -79,6 +80,12 @@ namespace SavedGames
                 return;
             }
             SaveData.Save(ArgsHelper.GetValue(args.userArgs, 0));
+        }
+
+        private void ClearStage() {
+            foreach (var item in FindObjectsOfType<PurchaseInteraction>()) {
+                Destroy(item.gameObject);
+            }
         }
 
         private IEnumerator StartLoading(SaveData save) {
@@ -95,14 +102,25 @@ namespace SavedGames
             }
             save.run.LoadData();
 
-            yield return new WaitForSeconds(2f);
+            FieldInfo getSpawnedAnyPlayer = typeof(Stage).GetField("spawnedAnyPlayer", BindingFlags.NonPublic | BindingFlags.Instance);
+            //yield return new WaitUntil(() => FindObjectsOfType<CharacterBody>().Length != 0);
+            //yield return new WaitUntil(() => Stage.instance != null);
+            //yield return null;
+            //getSpawnedAnyPlayer.SetValue(Stage.instance, false);
+            //yield return null;
+            //yield return new WaitUntil(() => (bool) getSpawnedAnyPlayer.GetValue(Stage.instance));
+            //yield return new WaitUntil(() => );
+            //yield return new WaitForFixedUpdate();
+            //yield return null; 
 
+            yield return new WaitForSeconds(Stage.instance == null ? 1f : 0.75f);
             save.Load();
-
+            
             loadingScene = false;
         }
 
         public static NetworkUser GetPlayerFromUsername(string username) {
+
             foreach (var item in NetworkUser.readOnlyInstancesList) {
                 if (username == item.userName) {
                     return item;

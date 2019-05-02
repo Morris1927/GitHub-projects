@@ -35,6 +35,9 @@ namespace SavedGames.Data {
         }
 
         public void LoadChest() {
+            if (name.Contains("HumanFan")) {
+                return;
+            }
             GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/isc" + name).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
             ChestBehavior chest = g.GetComponent<ChestBehavior>();
             if (isEquipment) {

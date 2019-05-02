@@ -34,8 +34,9 @@ namespace SavedGames.Data
 
 
         public void LoadData() {
-            Run newRun = UnityEngine.Object.FindObjectOfType<Run>();
+            Run newRun = Run.instance;
             TeamManager.instance.GiveTeamExperience(TeamIndex.Player, (ulong)teamExp);
+            TeamManager.instance.SetTeamLevel(TeamIndex.Monster, 1);
             newRun.seed = ulong.Parse(seed);
             newRun.selectedDifficulty = (DifficultyIndex) difficulty;
             newRun.fixedTime = fixedTime;

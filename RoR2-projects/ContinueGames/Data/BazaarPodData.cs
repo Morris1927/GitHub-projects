@@ -24,11 +24,11 @@ namespace SavedGames.Data {
         }
 
         public void LoadPod() {
-            var g = Object.Instantiate(Resources.Load<GameObject>(Path), transform.position.GetVector3(), transform.rotation.GetQuaternion());
-            var pod = g.GetComponent<ShopTerminalBehavior>();
-            var purchaseInteraction = g.GetComponent<PurchaseInteraction>();
+            var gameobject = Object.Instantiate(Resources.Load<GameObject>(Path), transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var pod = gameobject.GetComponent<ShopTerminalBehavior>();
+            var purchaseInteraction = gameobject.GetComponent<PurchaseInteraction>();
 
-            g.transform.localScale = Vector3.one;
+            gameobject.transform.localScale = Vector3.one;
 
             purchaseInteraction.SetAvailable(available);
             purchaseInteraction.cost = cost;

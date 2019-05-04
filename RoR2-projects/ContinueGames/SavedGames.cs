@@ -34,10 +34,10 @@ namespace SavedGames
             }
 
             loadKey = Config.Wrap<int>(
-                new ConfigDefinition("Keybinds", "LoadKey", ""),
+                new ConfigDefinition("Keybinds", "LoadKey"),
                 (int) KeyCode.F5);
             saveKey = Config.Wrap<int>(
-                new ConfigDefinition("Keybinds", "SaveKey", ""),
+                new ConfigDefinition("Keybinds", "SaveKey"),
                 (int) KeyCode.F8);
 
 
@@ -55,21 +55,24 @@ namespace SavedGames
         }
 
         public void Update() {
-            if (Input.GetKeyDown((KeyCode) loadKey.Value)) {
+            HandleInputs();
+
+        }
+
+        private void HandleInputs() {
+            if (Input.GetKeyDown((KeyCode)loadKey.Value)) {
                 //Save
-                RoR2.Console.instance.SubmitCmd(null, "save test");
+                RoR2.Console.instance.SubmitCmd(null, "save quicksave");
             }
-            if (Input.GetKeyDown((KeyCode) saveKey.Value)) {
+            if (Input.GetKeyDown((KeyCode)saveKey.Value)) {
                 //Load
-                RoR2.Console.instance.SubmitCmd(null, "load test");
+                RoR2.Console.instance.SubmitCmd(null, "load quicksave ");
             }
             if (Input.GetKeyDown(KeyCode.F6)) {
                 //Quick cheats
                 RoR2.Console.instance.SubmitCmd(NetworkUser.readOnlyLocalPlayersList[0], "give_item hoof 30; god; kill_all; no_enemies");
             }
-
         }
-
 
         [ConCommand(commandName = "load", flags = ConVarFlags.None, helpText = "Load game")]
         private static void CCLoad(ConCommandArgs args) {

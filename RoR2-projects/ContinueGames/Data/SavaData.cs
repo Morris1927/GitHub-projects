@@ -31,6 +31,7 @@ namespace SavedGames.Data {
         public List<ItemDropletData> itemDroplets;
         public List<PortalData> portals;
         public List<BazaarPodData> bazaarPods;
+        public List<LunarCauldronData> lunarCauldrons;
         public List<BeaconData> beacons;
 
         public TeleporterData teleporter;
@@ -51,6 +52,7 @@ namespace SavedGames.Data {
             save.combatShrines = new List<ShrineCombatData>();
             save.goldshoreShrines = new List<ShrineGoldshoresAccessData>();
             save.bazaarPods = new List<BazaarPodData>();
+            save.lunarCauldrons = new List<LunarCauldronData>();
             save.healingShrines = new List<ShrineHealingData>();
             save.orderShrines = new List<ShrineRestackData>();
 
@@ -82,6 +84,9 @@ namespace SavedGames.Data {
                 }
                 if (item.name.Contains("LunarShopTerminal")) {
                     save.bazaarPods.Add(BazaarPodData.SavePod(item));
+                }
+                if (item.name.Contains("LunarCauldron")) {
+                    save.lunarCauldrons.Add(LunarCauldronData.SaveLunarCauldron(item));
                 }
             }
             foreach (var item in Object.FindObjectsOfType<MultiShopController>()) {
@@ -155,6 +160,9 @@ namespace SavedGames.Data {
                 if (item.name.Contains("LunarShopTerminal")) {
                     Object.Destroy(item.gameObject);
                 }
+                if (item.name.Contains("LunarCauldron")) {
+                    Object.Destroy(item.gameObject);
+                }
             }
             if (GoldshoresMissionController.instance) {
                 GoldshoresMissionController.instance.beaconInstanceList.Clear();
@@ -207,6 +215,9 @@ namespace SavedGames.Data {
             }
             foreach (var item in bazaarPods) {
                 item.LoadPod();
+            }
+            foreach (var item in lunarCauldrons) {
+                item.LoadLunarCauldron();
             }
             teleporter?.LoadTeleporter();
 

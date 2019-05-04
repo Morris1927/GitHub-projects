@@ -65,9 +65,11 @@ namespace SavedGames.Data
             }
 
             var gameobject = GameObject.Instantiate(MasterCatalog.FindMasterPrefab(enemyName + "Master"));
-            NetworkServer.Spawn(gameobject);
             var enemy = gameobject.GetComponent<CharacterMaster>();
             var inventory = enemy.inventory;
+
+            NetworkServer.Spawn(gameobject);
+
             if (enemyName == "BeetleQueen")
                 enemyName = "BeetleQueen2";
 

@@ -80,6 +80,10 @@ namespace SavedGames
                 Debug.Log("Command failed, requires 1 argument: load <filename>");
                 return;
             }
+            if (loadingScene) {
+                return;
+            }
+
 
             string saveString = PlayerPrefs.GetString("Save" + ArgsHelper.GetValue(args.userArgs, 0));
             if (saveString == "") {

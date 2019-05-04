@@ -102,17 +102,6 @@ namespace SavedGames
             }
             save.run.LoadData();
 
-            FieldInfo getSpawnedAnyPlayer = typeof(Stage).GetField("spawnedAnyPlayer", BindingFlags.NonPublic | BindingFlags.Instance);
-            //yield return new WaitUntil(() => FindObjectsOfType<CharacterBody>().Length != 0);
-            //yield return new WaitUntil(() => Stage.instance != null);
-            //yield return null;
-            //getSpawnedAnyPlayer.SetValue(Stage.instance, false);
-            //yield return null;
-            //yield return new WaitUntil(() => (bool) getSpawnedAnyPlayer.GetValue(Stage.instance));
-            //yield return new WaitUntil(() => );
-            //yield return new WaitForFixedUpdate();
-            //yield return null; 
-
             yield return new WaitForSeconds(Stage.instance == null ? 1f : 0.75f);
             save.Load();
             

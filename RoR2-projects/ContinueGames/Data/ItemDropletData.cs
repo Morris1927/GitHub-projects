@@ -16,7 +16,7 @@ namespace SavedGames.Data
         public bool isEquipment;
 
         public static ItemDropletData SaveItemDroplet(GenericPickupController pickupDroplet) {
-            ItemDropletData itemDropletData = new ItemDropletData();
+            var itemDropletData = new ItemDropletData();
             itemDropletData.transform = new SerializableTransform(pickupDroplet.transform);
             itemDropletData.itemIndex = (int) pickupDroplet.pickupIndex.value;
             itemDropletData.isEquipment = pickupDroplet.pickupIndex.value >= (int) ItemIndex.Count;

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace SavedGames.Data {
     [Serializable]
     public class ShrineChanceData {
-
+        private const string Path = "SpawnCards/InteractableSpawnCard/iscShrineChance";
         public SerializableTransform transform;
 
         public bool available;
@@ -14,21 +14,26 @@ namespace SavedGames.Data {
         public int cost;
         
         public static ShrineChanceData SaveShrineChance(ShrineChanceBehavior shrine) {
-            ShrineChanceData shrineChanceData = new ShrineChanceData();
+            var shrineChanceData = new ShrineChanceData();
+            var purchaseInteraction = shrine.GetComponent<PurchaseInteraction>();
+
             shrineChanceData.transform = new SerializableTransform(shrine.transform);
             shrineChanceData.successfulPurchaseCount = shrine.GetFieldValue<int>("successfulPurchaseCount");
-            shrineChanceData.cost = shrine.GetComponent<PurchaseInteraction>().cost;
-            shrineChanceData.available = shrine.GetComponent<PurchaseInteraction>().available;
+            shrineChanceData.cost = purchaseInteraction.cost;
+            shrineChanceData.available = purchaseInteraction.available;
+
             return shrineChanceData;
         }
 
         public void LoadShrineChance() {
-            GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscShrineChance").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
-            ShrineChanceBehavior shrineChance = g.GetComponent<ShrineChanceBehavior>();
-            shrineChance.SetFieldValue("successfulPurchaseCount", successfulPurchaseCount);
-            g.GetComponent<PurchaseInteraction>().cost = cost;
+            var gameobject = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var shrineChance = gameobject.GetComponent<ShrineChanceBehavior>();
+            var purchaseInteraction = shrineChance.GetComponent<PurchaseInteraction>();
 
-            g.GetComponent<PurchaseInteraction>().SetAvailable(available);
+            shrineChance.SetFieldValue("successfulPurchaseCount", successfulPurchaseCount);
+
+            purchaseInteraction.cost = cost;
+            purchaseInteraction.SetAvailable(available);
 
         }
 

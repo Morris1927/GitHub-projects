@@ -5,7 +5,7 @@ using UnityEngine;
 namespace SavedGames.Data {
     [Serializable]
     public class ShrineGoldshoresAccessData {
-
+        private const string Path = "SpawnCards/InteractableSpawnCard/iscShrineGoldshoresAccess";
         public SerializableTransform transform;
 
         public int portalIndex;
@@ -14,10 +14,12 @@ namespace SavedGames.Data {
         public int cost;
 
         public static ShrineGoldshoresAccessData SaveShrineGoldshores(PortalStatueBehavior shrine) {
-            ShrineGoldshoresAccessData shrineGoldshoresAccessData = new ShrineGoldshoresAccessData();
+            var shrineGoldshoresAccessData = new ShrineGoldshoresAccessData();
+            var purchaseInteraction = shrine.GetComponent<PurchaseInteraction>();
+
             shrineGoldshoresAccessData.transform = new SerializableTransform(shrine.transform);
-            shrineGoldshoresAccessData.cost = shrine.GetComponent<PurchaseInteraction>().cost;
-            shrineGoldshoresAccessData.available = shrine.GetComponent<PurchaseInteraction>().available;
+            shrineGoldshoresAccessData.cost = purchaseInteraction.cost;
+            shrineGoldshoresAccessData.available = purchaseInteraction.available;
 
             shrineGoldshoresAccessData.portalIndex = (int) shrine.portalType;
 
@@ -25,12 +27,13 @@ namespace SavedGames.Data {
         }
 
         public void LoadShrineGoldshores() {
-            GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscShrineGoldshoresAccess").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
-            PortalStatueBehavior goldShrine = g.GetComponent<PortalStatueBehavior>();
+            var gameobject = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var goldShrine = gameobject.GetComponent<PortalStatueBehavior>();
+            var purchaseInteraction = gameobject.GetComponent<PurchaseInteraction>();
 
-            goldShrine.GetComponent<PurchaseInteraction>().cost = cost;
+
+            purchaseInteraction.cost = cost;
             goldShrine.portalType = (PortalStatueBehavior.PortalType) portalIndex;
-
 
         }
 

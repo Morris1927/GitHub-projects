@@ -9,7 +9,7 @@ namespace SavedGames.Data {
 
     [Serializable]
     public class MultiShopData {
-
+        private const string Path = "SpawnCards/InteractableSpawnCard/isc";
         public static FieldInfo getTerminalGameObjects = typeof(MultiShopController).GetField("terminalGameObjects", BindingFlags.NonPublic | BindingFlags.Instance);
 
         public SerializableTransform transform;
@@ -24,14 +24,17 @@ namespace SavedGames.Data {
         public bool available;
 
         public static MultiShopData SaveMultiShop(MultiShopController multiShop) {
-            MultiShopData multiShopData = new MultiShopData();
+            var multiShopData = new MultiShopData();
+            var shopTerminal = multiShop.GetComponent<ShopTerminalBehavior>();
+
             multiShopData.transform = new SerializableTransform(multiShop.transform);
             multiShopData.name = multiShop.name.Replace("(Clone)", "");
 
             foreach (var item in (GameObject[]) getTerminalGameObjects.GetValue(multiShop)) {
-                multiShopData.itemIndexes.Add((int) item.GetComponent<ShopTerminalBehavior>().GetFieldValue<PickupIndex>("pickupIndex").itemIndex);
-                multiShopData.hidden.Add((bool)item.GetComponent<ShopTerminalBehavior>().pickupIndexIsHidden);
+                multiShopData.itemIndexes.Add((int) shopTerminal.GetFieldValue<PickupIndex>("pickupIndex").itemIndex);
+                multiShopData.hidden.Add((bool)  shopTerminal.pickupIndexIsHidden);
             }
+
             multiShopData.cost = multiShop.GetFieldValue<int>("cost");
             multiShopData.available = multiShop.GetFieldValue<bool>("available");
             
@@ -39,22 +42,31 @@ namespace SavedGames.Data {
         }
 
         public void LoadMultiShop() {
-            GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/isc" + name).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
-            MultiShopController multiShop = g.GetComponent<MultiShopController>();
+            var gameobject = Resources.Load<SpawnCard>(Path + name).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var multiShop = gameobject.GetComponent<MultiShopController>();
+
             multiShop.Networkavailable = available;
+
             SavedGames.instance.StartCoroutine(WaitForStart(multiShop));
+
         }
 
         IEnumerator WaitForStart(MultiShopController multiShop) {
             yield return null; 
+
             foreach (var item in (GameObject[]) getTerminalGameObjects.GetValue(multiShop)) {
-                item.GetComponent<ShopTerminalBehavior>().SetPickupIndex(new PickupIndex((ItemIndex)itemIndexes[0]), hidden[0]);
-                item.GetComponent<PurchaseInteraction>().cost = cost;
+                var purchaseInteraction = item.GetComponent<PurchaseInteraction>();
+                var shopTerminal = item.GetComponent<ShopTerminalBehavior>();
+
+                shopTerminal.SetPickupIndex(new PickupIndex((ItemIndex)itemIndexes[0]), hidden[0]);
 
                 hidden.RemoveAt(0);
                 itemIndexes.RemoveAt(0);
-                item.GetComponent<PurchaseInteraction>().SetAvailable(available);
+
+                purchaseInteraction.cost = cost;
+                purchaseInteraction.SetAvailable(available);
             }
+
             multiShop.SetFieldValue("cost", cost);
         }
 

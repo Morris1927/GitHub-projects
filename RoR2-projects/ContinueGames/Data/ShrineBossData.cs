@@ -5,23 +5,25 @@ using UnityEngine;
 namespace SavedGames.Data {
     [Serializable]
     public class ShrineBossData {
-
+        private const string Path = "SpawnCards/InteractableSpawnCard/iscShrineBoss";
         public SerializableTransform transform;
 
         public bool available;
 
         public static ShrineBossData SaveShrineBoss(ShrineBossBehavior shrine) {
-            ShrineBossData shrineBossData = new ShrineBossData();
+            var shrineBossData = new ShrineBossData();
             shrineBossData.transform = new SerializableTransform(shrine.transform);
             shrineBossData.available = shrine.GetComponent<PurchaseInteraction>().available;
+
             return shrineBossData;
         }
 
         public void LoadShrineBoss() {
-            GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscShrineBoss").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
-            ShrineBossBehavior shrineBoss = g.GetComponent<ShrineBossBehavior>();
+            var gameobject = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var shrineBoss = gameobject.GetComponent<ShrineBossBehavior>();
+            var purchaseInteraction = shrineBoss.GetComponent<PurchaseInteraction>();
 
-            shrineBoss.GetComponent<PurchaseInteraction>().SetAvailable(available);
+            purchaseInteraction.SetAvailable(available);
         }
 
     }

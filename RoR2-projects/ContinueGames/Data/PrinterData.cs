@@ -6,7 +6,7 @@ using UnityEngine;
 namespace SavedGames.Data {
     [Serializable]
     public class PrinterData {
-
+        private const string Path = "SpawnCards/InteractableSpawnCard/isc";
         public SerializableTransform transform;
 
         public string name;
@@ -15,6 +15,7 @@ namespace SavedGames.Data {
 
         public static PrinterData SavePrinter(ShopTerminalBehavior printer) {
             PrinterData printerData = new PrinterData();
+
             printerData.transform = new SerializableTransform(printer.transform);
             printerData.itemIndex = (int) printer.CurrentPickupIndex().itemIndex;
             printerData.name = printer.name.Replace("(Clone)", "");
@@ -23,8 +24,8 @@ namespace SavedGames.Data {
         }
 
         public void LoadPrinter() {
-            GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/isc" + name).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
-            ShopTerminalBehavior printer = g.GetComponent<ShopTerminalBehavior>();
+            var gameobject = Resources.Load<SpawnCard>(Path + name).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var printer = gameobject.GetComponent<ShopTerminalBehavior>();
             SavedGames.instance.StartCoroutine(WaitForStart(printer));
         }
 

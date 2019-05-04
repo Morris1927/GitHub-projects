@@ -5,25 +5,28 @@ using UnityEngine;
 namespace SavedGames.Data {
     [Serializable]
     public class ShrineCombatData {
-
+        private const string Path = "SpawnCards/InteractableSpawnCard/iscShrineCombat";
         public SerializableTransform transform;
 
         public bool available;
 
 
         public static ShrineCombatData SaveShrineCombat(ShrineCombatBehavior shrine) {
-            ShrineCombatData shrineCombatData = new ShrineCombatData();
+            var shrineCombatData = new ShrineCombatData();
+            var purchaseInteraction = shrine.GetComponent<PurchaseInteraction>();
+
             shrineCombatData.transform = new SerializableTransform(shrine.transform);
-            shrineCombatData.available = shrine.GetComponent<PurchaseInteraction>().available;
+            shrineCombatData.available = purchaseInteraction.available;
 
             return shrineCombatData;
         }
 
         public void LoadShrineCombat() {
-            GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscShrineCombat").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
-            ShrineCombatBehavior shrine = g.GetComponent<ShrineCombatBehavior>();
+            var gameobject = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var shrine = gameobject.GetComponent<ShrineCombatBehavior>();
+            var purchaseInteraction = shrine.GetComponent<PurchaseInteraction>();
 
-            shrine.GetComponent<PurchaseInteraction>().SetAvailable(available);
+            purchaseInteraction.SetAvailable(available);
 
         }
 

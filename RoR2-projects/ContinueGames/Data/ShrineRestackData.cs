@@ -5,24 +5,28 @@ using UnityEngine;
 namespace SavedGames.Data {
     [Serializable]
     public class ShrineRestackData {
+        private const string Path = "SpawnCards/InteractableSpawnCard/iscShrineRestack";
 
         public SerializableTransform transform;
 
         public bool available;
 
         public static ShrineRestackData SaveShrineRestack(ShrineRestackBehavior shrine) {
-            ShrineRestackData shrineRestackData = new ShrineRestackData();
+            var shrineRestackData = new ShrineRestackData();
+            var purchaseInteraction = shrine.GetComponent<PurchaseInteraction>();
+
             shrineRestackData.transform = new SerializableTransform(shrine.transform);
-            shrineRestackData.available = shrine.GetComponent<PurchaseInteraction>().available;
+            shrineRestackData.available = purchaseInteraction.available;
 
             return shrineRestackData;
         }
 
         public void LoadShrineRestack() {
-            GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscShrineRestack").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
-            ShrineRestackBehavior shrine = g.GetComponent<ShrineRestackBehavior>();
+            var gameobject = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var shrine = gameobject.GetComponent<ShrineRestackBehavior>();
+            var purchaseInteraction = shrine.GetComponent<PurchaseInteraction>();
 
-            shrine.GetComponent<PurchaseInteraction>().SetAvailable(available);
+            purchaseInteraction.SetAvailable(available);
 
         }
 

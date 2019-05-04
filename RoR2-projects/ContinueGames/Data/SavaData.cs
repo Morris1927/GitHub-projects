@@ -36,7 +36,7 @@ namespace SavedGames.Data {
         public TeleporterData teleporter;
 
         public static void Save(string saveFile) {
-            SaveData save = new SaveData();
+            var save = new SaveData();
             save.players = new List<PlayerData>();
             save.enemies = new List<EnemyData>();
             save.chests = new List<ChestData>();

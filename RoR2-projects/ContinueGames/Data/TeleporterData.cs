@@ -8,7 +8,7 @@ using UnityEngine.Networking;
 namespace SavedGames.Data {
     [Serializable]
     public class TeleporterData {
-
+        private const string Path = "SpawnCards/InteractableSpawnCard/iscTeleporter";
         public static PropertyInfo getActivationState = typeof(TeleporterInteraction).GetProperty("activationState", BindingFlags.NonPublic | BindingFlags.Instance);
 
 
@@ -25,7 +25,8 @@ namespace SavedGames.Data {
 
 
         public static TeleporterData SaveTeleporter(TeleporterInteraction teleporter) {
-            TeleporterData teleporterData = new TeleporterData();
+            var teleporterData = new TeleporterData();
+
             teleporterData.transform = new SerializableTransform(teleporter.transform);
             teleporterData.remainingCharge = teleporter.remainingChargeTimer;
             teleporterData.activationState = (int) getActivationState.GetValue(teleporter);
@@ -40,11 +41,11 @@ namespace SavedGames.Data {
         public void LoadTeleporter() {
             typeof(TeleporterInteraction).GetProperty("instance", BindingFlags.Public | BindingFlags.Static).SetValue(null, null);
 
-            GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscTeleporter").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
-            TeleporterInteraction teleporter = g.GetComponent<TeleporterInteraction>();
+            var gameobject = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var teleporter = gameobject.GetComponent<TeleporterInteraction>();
 
             if (activationState == 2) {
-                BossGroup bossGroup = GameObject.Instantiate(Resources.Load<BossGroup>("Prefabs/NetworkedObjects/BossGroup"));
+                var bossGroup = GameObject.Instantiate(Resources.Load<BossGroup>("Prefabs/NetworkedObjects/BossGroup"));
                 NetworkServer.Spawn(bossGroup.gameObject);
                 bossGroup.dropPosition = teleporter.bossDirector.dropPosition;
                 teleporter.bossDirector.SetProperyValue("bossGroup", bossGroup);
@@ -54,14 +55,17 @@ namespace SavedGames.Data {
                 teleporter.bossDirector.monsterCredit = float.MinValue;
                 activationState = 2;
             }
+
             teleporter.remainingChargeTimer = remainingCharge;
             getActivationState.SetValue(teleporter, activationState);
             teleporter.SetFieldValue("previousActivationState", 1);
+
             SavedGames.instance.StartCoroutine(Test(teleporter));
         }
 
         IEnumerator Test(TeleporterInteraction teleporter) {
             yield return null;
+
             teleporter.shrineBonusStacks = bossShrineStacks;
             teleporter.Network_shouldAttemptToSpawnShopPortal = blueOrb;
             teleporter.Network_shouldAttemptToSpawnGoldshoresPortal = goldOrb;

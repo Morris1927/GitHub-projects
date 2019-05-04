@@ -10,7 +10,7 @@ namespace SavedGames.Data
 {
     public class BeaconData
     {
-
+        private const string Path = "SpawnCards/InteractableSpawnCard/iscGoldshoresBeacon";
         public SerializableTransform transform;
 
 
@@ -20,6 +20,7 @@ namespace SavedGames.Data
 
         public static BeaconData SaveBeacon(PurchaseInteraction beacon) {
             var beaconData = new BeaconData();
+
             beaconData.transform = new SerializableTransform(beacon.transform);
             beaconData.available = beacon.available;
             beaconData.cost = beacon.cost;
@@ -28,18 +29,20 @@ namespace SavedGames.Data
         }
 
         public void LoadBeacon() {
-            GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscGoldshoresBeacon").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
-            PurchaseInteraction beacon = g.GetComponent<PurchaseInteraction>();
+            var gameobject = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var beacon = gameobject.GetComponent<PurchaseInteraction>();
+
             beacon.available = available;
             beacon.cost = cost;
-            GoldshoresMissionController.instance.beaconInstanceList.Add(g);
+            GoldshoresMissionController.instance.beaconInstanceList.Add(gameobject);
+
             if (!available) {
-                SavedGames.instance.StartCoroutine(Test(g));//beacon.GetComponent<EntityStateMachine>().SetNextState(new Ready());
+                SavedGames.instance.StartCoroutine(WaitForTitanSpawn(gameobject));//beacon.GetComponent<EntityStateMachine>().SetNextState(new Ready());
             }
 
         }
 
-        IEnumerator Test(GameObject g) {
+        IEnumerator WaitForTitanSpawn(GameObject g) {
             yield return new WaitForSeconds(5f);
             g.GetComponent<EntityStateMachine>().SetNextState(new Ready());
         }

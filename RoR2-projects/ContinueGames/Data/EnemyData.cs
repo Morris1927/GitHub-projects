@@ -35,8 +35,8 @@ namespace SavedGames.Data
         
 
         public static EnemyData SaveEnemy(CharacterMaster enemy) {
-            EnemyData enemyData = new EnemyData();
-            Inventory inventory = enemy.inventory;
+            var enemyData = new EnemyData();
+            var inventory = enemy.inventory;
 
             enemyData.transform = new SerializableTransform(enemy.GetBody().transform);
             enemyData.enemyName = enemy.name.Replace("Master(Clone)", "");
@@ -60,19 +60,14 @@ namespace SavedGames.Data
 
         public void LoadEnemy() {
 
-            //if (enemyName.Contains("TitanGold")) {
-            //    GoldshoresMissionController.instance.GetComponent<EntityStateMachine>().SetNextState(new EntityStates.Missions.Goldshores.GoldshoresBossfight());
-            //    return;
-            //}
-
             if (enemyName.Contains("EngiTurret") || enemyName.Contains("BeetleGuardAlly") || enemyName.Contains("ShopkeeperMaster")) {
                 return;
             }
 
-            GameObject g = GameObject.Instantiate(MasterCatalog.FindMasterPrefab(enemyName + "Master"));
-            NetworkServer.Spawn(g);
-            CharacterMaster enemy = g.GetComponent<CharacterMaster>();
-            Inventory inventory = enemy.inventory;
+            var gameobject = GameObject.Instantiate(MasterCatalog.FindMasterPrefab(enemyName + "Master"));
+            NetworkServer.Spawn(gameobject);
+            var enemy = gameobject.GetComponent<CharacterMaster>();
+            var inventory = enemy.inventory;
             if (enemyName == "BeetleQueen")
                 enemyName = "BeetleQueen2";
 
@@ -87,9 +82,10 @@ namespace SavedGames.Data
             enemy.isBoss = isBoss;
 
             if (enemyName.Contains("TitanGold")) {
-                GoldshoresBossfight bossFight = new GoldshoresBossfight();
-                GameObject bossGroupGameObject = Object.Instantiate(Resources.Load<GameObject>("Prefabs/NetworkedObjects/Bossgroup"));
-                BossGroup bossGroup = bossGroupGameObject.GetComponent<BossGroup>();
+                var bossFight = new GoldshoresBossfight();
+                var bossGroupGameObject = Object.Instantiate(Resources.Load<GameObject>("Prefabs/NetworkedObjects/Bossgroup"));
+                var bossGroup = bossGroupGameObject.GetComponent<BossGroup>();
+
                 bossGroup.bossDropChance = 1f;
                 bossGroup.dropPosition = GoldshoresMissionController.instance.bossSpawnPosition;
 
@@ -97,6 +93,7 @@ namespace SavedGames.Data
                 bossFight.SetFieldValue("bossGroup", bossGroup);
                 bossFight.SetFieldValue("hasSpawnedBoss", true);
                 bossFight.SetFieldValue("bossInstanceBody", enemy.GetBody());
+
                 enemy.GetBody().AddBuff(BuffIndex.Immune);
 
                 GoldshoresMissionController.instance.GetComponent<EntityStateMachine>().SetNextState(bossFight);
@@ -109,12 +106,12 @@ namespace SavedGames.Data
 
         IEnumerator WaitForStart(CharacterMaster enemy) {
             yield return null;
-            HealthComponent healthComponent = enemy.GetBody().healthComponent;
+            var healthComponent = enemy.GetBody().healthComponent;
 
             healthComponent.health = health;
             healthComponent.shield = shields;
 
-            DeathRewards deathRewards = enemy.GetBody().GetComponent<DeathRewards>();
+            var deathRewards = enemy.GetBody().GetComponent<DeathRewards>();
 
             deathRewards.expReward = (uint) expReward;
             deathRewards.goldReward = (uint) goldReward;

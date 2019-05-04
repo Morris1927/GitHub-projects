@@ -6,7 +6,7 @@ using UnityEngine;
 namespace SavedGames.Data {
     [Serializable]
     public class ChestData {
-
+        private const string Path = "SpawnCards/InteractableSpawnCard/isc";
         public SerializableTransform transform;
 
         public string name;
@@ -20,16 +20,19 @@ namespace SavedGames.Data {
         public bool opened;
 
         public static ChestData SaveChest(ChestBehavior chest) {
-            ChestData chestData = new ChestData();
-            EntityStateMachine stateMachine = chest.GetComponent<EntityStateMachine>();
+            var chestData = new ChestData();
+            var stateMachine = chest.GetComponent<EntityStateMachine>();
+            var purchaseInteraction = chest.GetComponent<PurchaseInteraction>();
 
             chestData.name = chest.name.Replace("(Clone)", "");
-            chestData.opened = stateMachine.state.GetType().IsEquivalentTo(typeof(EntityStates.Barrel.Opened)) ? true : false;
             chestData.transform = new SerializableTransform(chest.transform);
+
             chestData.index = chest.GetFieldValue<PickupIndex>("dropPickup").value;
             chestData.isEquipment = chestData.index >= (int)ItemIndex.Count;
-            chestData.cost = chest.GetComponent<PurchaseInteraction>().cost;
-            chestData.costType = (int) chest.GetComponent<PurchaseInteraction>().costType;
+
+            chestData.opened = stateMachine.state.GetType().IsEquivalentTo(typeof(EntityStates.Barrel.Opened)) ? true : false;
+            chestData.cost = purchaseInteraction.cost;
+            chestData.costType = (int)purchaseInteraction.costType;
 
             return chestData;
         }
@@ -38,17 +41,21 @@ namespace SavedGames.Data {
             if (name.Contains("HumanFan")) {
                 return;
             }
-            GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/isc" + name).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
-            ChestBehavior chest = g.GetComponent<ChestBehavior>();
+            var gameobject = Resources.Load<SpawnCard>(Path + name).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var chest = gameobject.GetComponent<ChestBehavior>();
+            var purchaseInteraction = gameobject.GetComponent<PurchaseInteraction>();
+
             if (isEquipment) {
                 chest.SetFieldValue("dropPickup", new PickupIndex((EquipmentIndex)index - (int)ItemIndex.Count));
             } else {
                 chest.SetFieldValue("dropPickup", new PickupIndex((ItemIndex)index));
             }
 
-            g.GetComponent<PurchaseInteraction>().cost = cost;
-            g.GetComponent<PurchaseInteraction>().costType = (CostType) costType;
+            purchaseInteraction.cost = cost;
+            purchaseInteraction.costType = (CostType) costType;
+
             chest.dropRoller = new UnityEngine.Events.UnityEvent();
+
             SavedGames.instance.StartCoroutine(WaitForStart(chest));
         }
 

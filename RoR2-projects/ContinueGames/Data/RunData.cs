@@ -20,12 +20,11 @@ namespace SavedGames.Data
         public int teamExp;
 
         public static RunData SaveRun(Run run) {
-            RunData runData = new RunData();
+            var runData = new RunData();
 
             runData.seed = run.seed.ToString();
             runData.difficulty = (int)run.selectedDifficulty;
             runData.fixedTime = run.GetRunStopwatch();
-            //runData.stopwatchTime = run.NetworkrunStopwatch.offsetFromFixedTime;
             runData.stageClearCount = run.stageClearCount;
             runData.sceneName = Stage.instance.sceneDef.sceneName;
 
@@ -34,7 +33,7 @@ namespace SavedGames.Data
 
 
         public void LoadData() {
-            Run newRun = Run.instance;
+            var newRun = Run.instance;
             TeamManager.instance.GiveTeamExperience(TeamIndex.Player, (ulong)teamExp);
             TeamManager.instance.SetTeamLevel(TeamIndex.Monster, 1);
             newRun.seed = ulong.Parse(seed);
@@ -56,8 +55,10 @@ namespace SavedGames.Data
                 dummy = newRun.nextStageRng.RangeInt(0, 1);
                 dummy = newRun.nextStageRng.RangeInt(0, 1);
             }
+
+            //Clearing drones to avoid them carrying over to the new loaded run
             foreach (var item in TeamComponent.GetTeamMembers(TeamIndex.Player)) {
-                CharacterBody body = item.GetComponent<CharacterBody>();
+                var body = item.GetComponent<CharacterBody>();
                 if (body) {
                     if (!body.isPlayerControlled) item.GetComponent<HealthComponent>()?.Suicide();
                 }

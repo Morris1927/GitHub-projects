@@ -5,7 +5,7 @@ using UnityEngine;
 namespace SavedGames.Data {
     [Serializable]
     public class ShrineBloodData {
-
+        private const string Path = "SpawnCards/InteractableSpawnCard/iscShrineBlood";
         public SerializableTransform transform;
 
         public bool available;
@@ -14,22 +14,25 @@ namespace SavedGames.Data {
         public int cost;
 
         public static ShrineBloodData SaveShrineBlood(ShrineBloodBehavior shrine) {
-            ShrineBloodData shrineBloodData = new ShrineBloodData();
+            var shrineBloodData = new ShrineBloodData();
+            var purchaseInteraction = shrine.GetComponent<PurchaseInteraction>();
             shrineBloodData.transform = new SerializableTransform(shrine.transform);
             shrineBloodData.purchaseCount = shrine.GetFieldValue<int>("purchaseCount");
-            shrineBloodData.cost = shrine.GetComponent<PurchaseInteraction>().cost;
-            shrineBloodData.available = shrine.GetComponent<PurchaseInteraction>().available;
+            shrineBloodData.cost = purchaseInteraction.cost;
+            shrineBloodData.available = purchaseInteraction.available;
 
             return shrineBloodData;
         }
 
         public void LoadShrineBlood() {
-            GameObject g = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscShrineBlood").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
-            ShrineBloodBehavior shrineBlood = g.GetComponent<ShrineBloodBehavior>();
-            shrineBlood.SetFieldValue("purchaseCount", purchaseCount);
-            shrineBlood.GetComponent<PurchaseInteraction>().cost = cost;
+            var gameobject = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var shrineBlood = gameobject.GetComponent<ShrineBloodBehavior>();
+            var purchaseInteraction = shrineBlood.GetComponent<PurchaseInteraction>();
 
-            shrineBlood.GetComponent<PurchaseInteraction>().SetAvailable(available);
+            shrineBlood.SetFieldValue("purchaseCount", purchaseCount);
+
+            purchaseInteraction.cost = cost;
+            purchaseInteraction.SetAvailable(available);
         }
 
     }

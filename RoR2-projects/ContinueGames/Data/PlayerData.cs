@@ -28,16 +28,16 @@ namespace SavedGames.Data {
         public bool alive;
 
         public static PlayerData SavePlayer(NetworkUser player) {
-            PlayerData playerData = new PlayerData();
+            var playerData = new PlayerData();
+            var inventory = player.master.inventory;
+
             playerData.deployables = new List<DeployableData>();
 
-            Inventory inventory = player.master.inventory;
-            playerData.username = player.userName;
-
-            playerData.alive = player.master.alive;
-
             playerData.transform = new SerializableTransform(player.GetCurrentBody().transform);
+            playerData.username = player.userName;
+            playerData.alive = player.master.alive;
             playerData.money = (int)player.master.money;
+
             playerData.items = new int[(int)ItemIndex.Count - 1];
             for (int i = 0; i < (int)ItemIndex.Count - 1; i++) {
                 playerData.items[i] = inventory.GetItemCount((ItemIndex)i);
@@ -49,7 +49,7 @@ namespace SavedGames.Data {
 
             playerData.characterBodyName = player.master.bodyPrefab.name;
 
-            List<DeployableInfo> deployablesList = player.master.GetFieldValue<List<DeployableInfo>>("deployablesList");
+            var deployablesList = player.master.GetFieldValue<List<DeployableInfo>>("deployablesList");
             if (deployablesList != null) {
                 foreach (var item in deployablesList) {
                     playerData.deployables.Add(DeployableData.SaveDeployable(item.deployable));
@@ -62,15 +62,15 @@ namespace SavedGames.Data {
 
 
         public void LoadPlayer() {
-            NetworkUser player = SavedGames.GetPlayerFromUsername(username);
+            var player = SavedGames.GetPlayerFromUsername(username);
             if (player == null) {
                 Debug.Log("Could not find player: " + username);
                 return;
             }
 
-            Inventory inventory = player.master?.inventory;
+            var inventory = player.master.inventory;
+            var bodyPrefab = BodyCatalog.FindBodyPrefab(characterBodyName);
 
-            GameObject bodyPrefab = BodyCatalog.FindBodyPrefab(characterBodyName);
             player.master.bodyPrefab = bodyPrefab;
             if (alive) {
                 player.master.Respawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
@@ -88,6 +88,7 @@ namespace SavedGames.Data {
                 inventory.SetActiveEquipmentSlot((byte)1);
                 inventory.SetEquipmentIndex((EquipmentIndex)equipItem1);
             }
+
             player.master.money = (uint)money;
 
 

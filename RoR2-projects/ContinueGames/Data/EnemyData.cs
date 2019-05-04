@@ -5,6 +5,10 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
+using EntityStates.Missions.Goldshores;
+
+using Object = UnityEngine.Object;
+using MonoMod.ModInterop;
 
 namespace SavedGames.Data
 {
@@ -56,10 +60,10 @@ namespace SavedGames.Data
 
         public void LoadEnemy() {
 
-            if (enemyName.Contains("TitanGold")) {
-                GoldshoresMissionController.instance.GetComponent<EntityStateMachine>().SetNextState(new EntityStates.Missions.Goldshores.GoldshoresBossfight());
-                return;
-            }
+            //if (enemyName.Contains("TitanGold")) {
+            //    GoldshoresMissionController.instance.GetComponent<EntityStateMachine>().SetNextState(new EntityStates.Missions.Goldshores.GoldshoresBossfight());
+            //    return;
+            //}
 
             if (enemyName.Contains("EngiTurret") || enemyName.Contains("BeetleGuardAlly") || enemyName.Contains("ShopkeeperMaster")) {
                 return;
@@ -81,7 +85,22 @@ namespace SavedGames.Data
             inventory.SetEquipmentIndex((EquipmentIndex)equipmentIndex);
 
             enemy.isBoss = isBoss;
-            if (isBoss) {
+
+            if (enemyName.Contains("TitanGold")) {
+                GoldshoresBossfight bossFight = new GoldshoresBossfight();
+                GameObject bossGroupGameObject = Object.Instantiate(Resources.Load<GameObject>("Prefabs/NetworkedObjects/Bossgroup"));
+                BossGroup bossGroup = bossGroupGameObject.GetComponent<BossGroup>();
+                bossGroup.bossDropChance = 1f;
+                bossGroup.dropPosition = GoldshoresMissionController.instance.bossSpawnPosition;
+
+                bossGroup.AddMember(enemy);
+                bossFight.SetFieldValue("bossGroup", bossGroup);
+                bossFight.SetFieldValue("hasSpawnedBoss", true);
+                bossFight.SetFieldValue("bossInstanceBody", enemy.GetBody());
+                enemy.GetBody().AddBuff(BuffIndex.Immune);
+
+                GoldshoresMissionController.instance.GetComponent<EntityStateMachine>().SetNextState(bossFight);
+            } else if(isBoss) {
                 BossGroup.instance.AddMember(enemy);
             }
 

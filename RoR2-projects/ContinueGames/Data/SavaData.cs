@@ -50,6 +50,7 @@ namespace SavedGames.Data {
             save.bossShrines = new List<ShrineBossData>();
             save.combatShrines = new List<ShrineCombatData>();
             save.goldshoreShrines = new List<ShrineGoldshoresAccessData>();
+            save.bazaarPods = new List<BazaarPodData>();
             save.healingShrines = new List<ShrineHealingData>();
             save.orderShrines = new List<ShrineRestackData>();
 
@@ -78,6 +79,9 @@ namespace SavedGames.Data {
             foreach (var item in Object.FindObjectsOfType<ShopTerminalBehavior>()) {
                 if (item.name.Contains("Duplicator")) {
                     save.printers.Add(PrinterData.SavePrinter(item));
+                }
+                if (item.name.Contains("LunarShopTerminal")) {
+                    save.bazaarPods.Add(BazaarPodData.SavePod(item));
                 }
             }
             foreach (var item in Object.FindObjectsOfType<MultiShopController>()) {
@@ -128,6 +132,7 @@ namespace SavedGames.Data {
 
             save.run = RunData.SaveRun(Object.FindObjectOfType<Run>());
 
+
             string json = TinyJson.JSONWriter.ToJson(save);
             Debug.Log(json);
             PlayerPrefs.SetString("Save" + saveFile, json);
@@ -145,10 +150,15 @@ namespace SavedGames.Data {
                     Object.Destroy(item.gameObject);
                 }
             }
+            //Clear Bazaar pods
+            foreach (var item in Object.FindObjectsOfType<ShopTerminalBehavior>()) {
+                if (item.name.Contains("LunarShopTerminal")) {
+                    Object.Destroy(item.gameObject);
+                }
+            }
             if (GoldshoresMissionController.instance) {
                 GoldshoresMissionController.instance.beaconInstanceList.Clear();
             }
-
 
             foreach (var item in chests) {
                 item.LoadChest();
@@ -194,6 +204,9 @@ namespace SavedGames.Data {
             }
             foreach (var item in beacons) {
                 item.LoadBeacon();
+            }
+            foreach (var item in bazaarPods) {
+                item.LoadPod();
             }
             teleporter?.LoadTeleporter();
 

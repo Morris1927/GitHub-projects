@@ -32,10 +32,10 @@ namespace SavedGames.Data {
             var g = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
             var barrel = g.GetComponent<BarrelInteraction>();
 
-            SavedGames.instance.StartCoroutine(FixPosition(barrel));
+            SavedGames.instance.StartCoroutine(WaitForStart(barrel));
         }
 
-        IEnumerator FixPosition(BarrelInteraction barrel) {
+        IEnumerator WaitForStart(BarrelInteraction barrel) {
             yield return null;
             if (opened) {
                 barrel.SetFieldValue("opened", opened);

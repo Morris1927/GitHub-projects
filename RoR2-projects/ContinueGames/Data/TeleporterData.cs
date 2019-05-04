@@ -60,10 +60,10 @@ namespace SavedGames.Data {
             getActivationState.SetValue(teleporter, activationState);
             teleporter.SetFieldValue("previousActivationState", 1);
 
-            SavedGames.instance.StartCoroutine(Test(teleporter));
+            SavedGames.instance.StartCoroutine(WaitForStart(teleporter));
         }
 
-        IEnumerator Test(TeleporterInteraction teleporter) {
+        IEnumerator WaitForStart(TeleporterInteraction teleporter) {
             yield return null;
 
             teleporter.shrineBonusStacks = bossShrineStacks;

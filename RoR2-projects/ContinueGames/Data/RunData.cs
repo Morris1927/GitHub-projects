@@ -36,13 +36,16 @@ namespace SavedGames.Data
             var newRun = Run.instance;
             TeamManager.instance.GiveTeamExperience(TeamIndex.Player, (ulong)teamExp);
             TeamManager.instance.SetTeamLevel(TeamIndex.Monster, 1);
+
             newRun.seed = ulong.Parse(seed);
             newRun.selectedDifficulty = (DifficultyIndex) difficulty;
             newRun.fixedTime = fixedTime;
-            Run.RunStopwatch stopwatchTest = newRun.GetFieldValue<Run.RunStopwatch>("runStopwatch");
-            stopwatchTest.offsetFromFixedTime = 0f;// sceneName.Contains("bazaar") ? 0f : fixedTime;
-            stopwatchTest.isPaused = false;
-            newRun.SetFieldValue("runStopwatch", stopwatchTest);
+
+            var stopwatch = newRun.GetFieldValue<Run.RunStopwatch>("runStopwatch");
+            stopwatch.offsetFromFixedTime = 0f;
+            stopwatch.isPaused = false;
+
+            newRun.SetFieldValue("runStopwatch", stopwatch);
             
 
             newRun.runRNG = new Xoroshiro128Plus(ulong.Parse(seed));
@@ -66,8 +69,6 @@ namespace SavedGames.Data
 
             newRun.AdvanceStage(sceneName);
             newRun.stageClearCount = stageClearCount;
-            //Run.instance.NetworkrunStopwatch.SetFieldValue("offsetFromFixedTime", stopwatchTime);
-
         }
 
 

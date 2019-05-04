@@ -1,6 +1,7 @@
 ﻿using RoR2;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace SavedGames.Data {
     public class BazaarPodData {
@@ -27,7 +28,7 @@ namespace SavedGames.Data {
             var gameobject = Object.Instantiate(Resources.Load<GameObject>(Path), transform.position.GetVector3(), transform.rotation.GetQuaternion());
             var pod = gameobject.GetComponent<ShopTerminalBehavior>();
             var purchaseInteraction = gameobject.GetComponent<PurchaseInteraction>();
-
+            NetworkServer.Spawn(gameobject);
             gameobject.transform.localScale = Vector3.one;
 
             purchaseInteraction.SetAvailable(available);

@@ -86,6 +86,8 @@ namespace SavedGames.Data
                 var bossGroupGameObject = Object.Instantiate(Resources.Load<GameObject>("Prefabs/NetworkedObjects/Bossgroup"));
                 var bossGroup = bossGroupGameObject.GetComponent<BossGroup>();
 
+                NetworkServer.Spawn(bossGroupGameObject);
+
                 bossGroup.bossDropChance = 1f;
                 bossGroup.dropPosition = GoldshoresMissionController.instance.bossSpawnPosition;
 

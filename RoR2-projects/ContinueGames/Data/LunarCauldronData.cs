@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace SavedGames.Data
 {
@@ -35,7 +36,7 @@ namespace SavedGames.Data
         public void LoadLunarCauldron() {
             var gameobject = GameObject.Instantiate(Resources.Load<GameObject>(Path), transform.position.GetVector3(), transform.rotation.GetQuaternion());
             var lunarCauldron = gameobject.GetComponent<ShopTerminalBehavior>();
-
+            NetworkServer.Spawn(gameobject);
             SavedGames.instance.StartCoroutine(WaitForStart(lunarCauldron));
         }
 

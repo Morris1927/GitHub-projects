@@ -1,4 +1,5 @@
 ﻿using RoR2;
+using System.Collections;
 using UnityEngine;
 
 namespace SavedGames.Data {
@@ -29,15 +30,22 @@ namespace SavedGames.Data {
 
             g.transform.localScale = Vector3.one;
 
-            if (itemIndex >= (int) ItemIndex.Count) {
-                pod.SetPickupIndex(new PickupIndex((EquipmentIndex)itemIndex - (int) ItemIndex.Count));
+            purchaseInteraction.SetAvailable(available);
+            purchaseInteraction.cost = cost;
+            SavedGames.instance.StartCoroutine(WaitForStart(pod));
+        }
+
+
+        IEnumerator WaitForStart(ShopTerminalBehavior pod) {
+            yield return null;
+
+            if (itemIndex >= (int)ItemIndex.Count) {
+                pod.SetPickupIndex(new PickupIndex((EquipmentIndex)itemIndex - (int)ItemIndex.Count));
             } else {
                 pod.SetPickupIndex(new PickupIndex((ItemIndex)itemIndex));
             }
 
-            purchaseInteraction.SetAvailable(available);
-            purchaseInteraction.cost = cost;
-        }
 
+        }
     }
 }

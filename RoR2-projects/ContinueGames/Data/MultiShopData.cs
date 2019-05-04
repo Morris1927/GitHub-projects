@@ -25,12 +25,13 @@ namespace SavedGames.Data {
 
         public static MultiShopData SaveMultiShop(MultiShopController multiShop) {
             var multiShopData = new MultiShopData();
-            var shopTerminal = multiShop.GetComponent<ShopTerminalBehavior>();
 
             multiShopData.transform = new SerializableTransform(multiShop.transform);
             multiShopData.name = multiShop.name.Replace("(Clone)", "");
 
             foreach (var item in (GameObject[]) getTerminalGameObjects.GetValue(multiShop)) {
+                var shopTerminal = item.GetComponent<ShopTerminalBehavior>();
+
                 multiShopData.itemIndexes.Add((int) shopTerminal.GetFieldValue<PickupIndex>("pickupIndex").itemIndex);
                 multiShopData.hidden.Add((bool)  shopTerminal.pickupIndexIsHidden);
             }

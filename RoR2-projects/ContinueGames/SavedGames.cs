@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using BepInEx;
+using BepInEx.Configuration;
+
 using RoR2;
 using RoR2.Networking;
 using UnityEngine;
@@ -21,12 +23,24 @@ namespace SavedGames
 
         public static bool loadingScene;
 
+        public static ConfigWrapper<int> loadKey { get; set; }
+        public static ConfigWrapper<int> saveKey { get; set; }
+
         public void Awake() {
             if (instance == null) {
                 instance = this;
             } else {
                 Destroy(this);
             }
+
+            loadKey = Config.Wrap<int>(
+                new ConfigDefinition("Keybinds", "LoadKey", ""),
+                (int) KeyCode.F5);
+            saveKey = Config.Wrap<int>(
+                new ConfigDefinition("Keybinds", "SaveKey", ""),
+                (int) KeyCode.F8);
+
+
             On.RoR2.Console.Awake += (orig, self) => {
                 Generic.CommandHelper.RegisterCommands(self);
                 orig(self);
@@ -41,11 +55,11 @@ namespace SavedGames
         }
 
         public void Update() {
-            if (Input.GetKeyDown(KeyCode.F5)) {
+            if (Input.GetKeyDown((KeyCode) loadKey.Value)) {
                 //Save
                 RoR2.Console.instance.SubmitCmd(null, "save test");
             }
-            if (Input.GetKeyDown(KeyCode.F8)) {
+            if (Input.GetKeyDown((KeyCode) saveKey.Value)) {
                 //Load
                 RoR2.Console.instance.SubmitCmd(null, "load test");
             }

@@ -37,6 +37,8 @@ namespace SavedGames.Data
         public static EnemyData SaveEnemy(CharacterMaster enemy) {
             var enemyData = new EnemyData();
             var inventory = enemy.inventory;
+            var healthComponent = enemy.GetBody().healthComponent;
+            var deathRewards = enemy.GetBody().GetComponent<DeathRewards>();
 
             enemyData.transform = new SerializableTransform(enemy.GetBody().transform);
             enemyData.enemyName = enemy.name.Replace("Master(Clone)", "");
@@ -48,11 +50,13 @@ namespace SavedGames.Data
             }
 
             enemyData.equipmentIndex = (int) inventory.GetEquipmentIndex();
-            enemyData.health = (float) enemy.GetBody()?.healthComponent?.health;
-            enemyData.shields = (float) enemy.GetBody()?.healthComponent?.shield;
+            enemyData.health = (float) healthComponent.health;
+            enemyData.shields = (float) healthComponent.shield;
 
-            enemyData.expReward = (int)enemy.GetBody().GetComponent<DeathRewards>().expReward;
-            enemyData.goldReward = (int)enemy.GetBody().GetComponent<DeathRewards>().goldReward;
+            if (deathRewards != null) {
+                enemyData.expReward = (int) deathRewards.expReward;
+                enemyData.goldReward = (int) deathRewards.goldReward;
+            }
 
             enemyData.isBoss = enemy.isBoss;
             return enemyData;
@@ -117,8 +121,10 @@ namespace SavedGames.Data
 
             var deathRewards = enemy.GetBody().GetComponent<DeathRewards>();
 
-            deathRewards.expReward = (uint) expReward;
-            deathRewards.goldReward = (uint) goldReward;
+            if (deathRewards != null) {
+                deathRewards.expReward = (uint) expReward;
+                deathRewards.goldReward = (uint) goldReward;
+            }
         }
     }
 }

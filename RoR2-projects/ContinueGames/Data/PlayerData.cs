@@ -1,5 +1,6 @@
 ﻿using RoR2;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,6 +16,9 @@ namespace SavedGames.Data {
         public SerializableTransform transform;
 
         public int money;
+        public int health;
+        public int shields;
+
 
         public int[] items;
         public List<DeployableData> deployables;
@@ -30,6 +34,8 @@ namespace SavedGames.Data {
         public static PlayerData SavePlayer(NetworkUser player) {
             var playerData = new PlayerData();
             var inventory = player.master.inventory;
+            var healthComponent = player.GetCurrentBody().GetComponent<HealthComponent>();
+
 
             playerData.deployables = new List<DeployableData>();
 
@@ -37,6 +43,8 @@ namespace SavedGames.Data {
             playerData.username = player.userName;
             playerData.alive = player.master.alive;
             playerData.money = (int)player.master.money;
+            playerData.health = (int)healthComponent.health;
+            playerData.shields = (int)healthComponent.shield;
 
             playerData.items = new int[(int)ItemIndex.Count - 1];
             for (int i = 0; i < (int)ItemIndex.Count - 1; i++) {
@@ -69,13 +77,14 @@ namespace SavedGames.Data {
             }
 
             var inventory = player.master.inventory;
+            var healthComponent = player.GetCurrentBody().GetComponent<HealthComponent>();
             var bodyPrefab = BodyCatalog.FindBodyPrefab(characterBodyName);
 
             player.master.bodyPrefab = bodyPrefab;
             if (alive) {
                 player.master.Respawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
             } else {
-                player.GetCurrentBody()?.healthComponent?.Suicide();
+                healthComponent?.Suicide();
             }
 
             for (int i = 0; i < items.Length - 1; i++) {
@@ -96,7 +105,15 @@ namespace SavedGames.Data {
                 item.LoadDeployable(player.master);
             }
 
+            SavedGames.instance.StartCoroutine(WaitForStart(player));
         }
 
+        IEnumerator WaitForStart(NetworkUser player) {
+            yield return null;
+            var healthComponent = player.GetCurrentBody().healthComponent;
+
+            healthComponent.health = health;
+            healthComponent.shield = shields;
+        }
     }
 }

@@ -20,6 +20,7 @@ namespace SavedGames.Data {
         public List<BarrelData> barrels;
         public List<PrinterData> printers;
         public List<BrokenDroneData> brokenDrones;
+        public List<FanData> fans;
         public List<MultiShopData> multiShops;
         public List<ShrineChanceData> chanceShrines;
         public List<ShrineBloodData> bloodShrines;
@@ -45,6 +46,7 @@ namespace SavedGames.Data {
             save.printers = new List<PrinterData>();
             save.multiShops = new List<MultiShopData>();
             save.brokenDrones = new List<BrokenDroneData>();
+            save.fans = new List<FanData>();
 
             save.chanceShrines = new List<ShrineChanceData>();
             save.bloodShrines = new List<ShrineBloodData>();
@@ -130,6 +132,9 @@ namespace SavedGames.Data {
                 if (item.name.Contains("GoldshoresBeacon")) {
                     save.beacons.Add(BeaconData.SaveBeacon(item));
                 }
+                if (item.name.Contains("HumanFan")) {
+                    save.fans.Add(FanData.SaveFan(item));
+                }
             }
             if (TeleporterInteraction.instance) {
                 save.teleporter = TeleporterData.SaveTeleporter(TeleporterInteraction.instance);
@@ -145,28 +150,7 @@ namespace SavedGames.Data {
 
 
         public void Load() {
-            //Clear gold chests
-            foreach (var item in Object.FindObjectsOfType<ChestBehavior>()) {
-                Object.Destroy(item.gameObject);
-            }
-            //Clear Goldshores beacons
-            foreach (var item in Object.FindObjectsOfType<PurchaseInteraction>()) {
-                if (item.name.Contains("GoldshoresBeacon")) {
-                    Object.Destroy(item.gameObject);
-                }
-            }
-            //Clear Bazaar pods
-            foreach (var item in Object.FindObjectsOfType<ShopTerminalBehavior>()) {
-                if (item.name.Contains("LunarShopTerminal")) {
-                    Object.Destroy(item.gameObject);
-                }
-                if (item.name.Contains("LunarCauldron")) {
-                    Object.Destroy(item.gameObject);
-                }
-            }
-            if (GoldshoresMissionController.instance) {
-                GoldshoresMissionController.instance.beaconInstanceList.Clear();
-            }
+            ClearStage();
 
             foreach (var item in chests) {
                 item.LoadChest();
@@ -179,6 +163,9 @@ namespace SavedGames.Data {
             }
             foreach (var item in multiShops) {
                 item.LoadMultiShop();
+            }
+            foreach (var item in fans) {
+                item.LoadFan();
             }
             foreach (var item in chanceShrines) {
                 item.LoadShrineChance();
@@ -224,12 +211,35 @@ namespace SavedGames.Data {
             foreach (var item in players) {
                 item.LoadPlayer();
             }
-            foreach (var item in enemies) {
+            foreach (var item in enemies) {                                     
                 item.LoadEnemy();
             }
         }
 
-
+        private static void ClearStage() {
+            //Clear gold chests
+            foreach (var item in Object.FindObjectsOfType<ChestBehavior>()) {
+                Object.Destroy(item.gameObject);
+            }
+            //Clear Goldshores beacons
+            foreach (var item in Object.FindObjectsOfType<PurchaseInteraction>()) {
+                if (item.name.Contains("GoldshoresBeacon")) {
+                    Object.Destroy(item.gameObject);
+                }
+            }
+            //Clear Bazaar pods
+            foreach (var item in Object.FindObjectsOfType<ShopTerminalBehavior>()) {
+                if (item.name.Contains("LunarShopTerminal")) {
+                    Object.Destroy(item.gameObject);
+                }
+                if (item.name.Contains("LunarCauldron")) {
+                    Object.Destroy(item.gameObject);
+                }
+            }
+            if (GoldshoresMissionController.instance) {
+                GoldshoresMissionController.instance.beaconInstanceList.Clear();
+            }
+        }
     }
 
     [Serializable]

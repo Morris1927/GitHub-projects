@@ -31,8 +31,9 @@ namespace SavedGames.Data {
             var goldShrine = gameobject.GetComponent<PortalStatueBehavior>();
             var purchaseInteraction = gameobject.GetComponent<PurchaseInteraction>();
 
+            purchaseInteraction.Networkcost = cost;
+            purchaseInteraction.SetAvailable(available);
 
-            purchaseInteraction.cost = cost;
             goldShrine.portalType = (PortalStatueBehavior.PortalType) portalIndex;
 
         }

@@ -27,6 +27,7 @@ namespace SavedGames.Data
             runData.fixedTime = run.GetRunStopwatch();
             runData.stageClearCount = run.stageClearCount;
             runData.sceneName = Stage.instance.sceneDef.sceneName;
+            runData.teamExp = (int) TeamManager.instance.GetTeamExperience(TeamIndex.Player);
 
             return runData;
         }
@@ -34,6 +35,7 @@ namespace SavedGames.Data
 
         public void LoadData() {
             var newRun = Run.instance;
+            TeamManager.instance.SetTeamLevel(TeamIndex.Player, 0);
             TeamManager.instance.GiveTeamExperience(TeamIndex.Player, (ulong)teamExp);
             TeamManager.instance.SetTeamLevel(TeamIndex.Monster, 1);
 

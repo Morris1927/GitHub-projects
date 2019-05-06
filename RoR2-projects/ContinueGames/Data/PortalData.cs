@@ -11,11 +11,15 @@ namespace SavedGames.Data
         public SerializableTransform transform;
 
         public string name;
+        public bool useRunNextStageScene;
+
 
         public static PortalData SavePortal(SceneExitController portal) {
             var portalData = new PortalData();
             portalData.transform = new SerializableTransform(portal.transform);
             portalData.name = portal.destinationScene.SceneName;
+            portalData.useRunNextStageScene = portal.useRunNextStageScene;
+            
 
             return portalData;
         }
@@ -34,6 +38,7 @@ namespace SavedGames.Data
                         if (Stage.instance.sceneDef.sceneName.Contains("goldshores")) {
                             var gameobject = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscGoldshoresPortal").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
                             NetworkServer.Spawn(gameobject);
+                            gameobject.GetComponent<SceneExitController>().useRunNextStageScene = useRunNextStageScene;
                         }
                         break;
                     }

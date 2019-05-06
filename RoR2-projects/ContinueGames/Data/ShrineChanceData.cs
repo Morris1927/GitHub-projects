@@ -32,7 +32,7 @@ namespace SavedGames.Data {
 
             shrineChance.SetFieldValue("successfulPurchaseCount", successfulPurchaseCount);
 
-            purchaseInteraction.cost = cost;
+            purchaseInteraction.Networkcost = cost;
             purchaseInteraction.SetAvailable(available);
 
         }

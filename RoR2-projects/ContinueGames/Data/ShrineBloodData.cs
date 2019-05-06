@@ -31,7 +31,7 @@ namespace SavedGames.Data {
 
             shrineBlood.SetFieldValue("purchaseCount", purchaseCount);
 
-            purchaseInteraction.cost = cost;
+            purchaseInteraction.Networkcost = cost;
             purchaseInteraction.SetAvailable(available);
         }
 

@@ -51,7 +51,7 @@ namespace SavedGames.Data {
                 chest.SetFieldValue("dropPickup", new PickupIndex((ItemIndex)index));
             }
 
-            purchaseInteraction.cost = cost;
+            purchaseInteraction.Networkcost = cost;
             purchaseInteraction.costType = (CostType) costType;
 
             chest.dropRoller = new UnityEngine.Events.UnityEvent();

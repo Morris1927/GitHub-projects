@@ -87,7 +87,7 @@ namespace SavedGames.Data {
                 healthComponent?.Suicide();
             }
 
-            for (int i = 0; i < items.Length - 1; i++) {
+            for (int i = 0; i < items.Length; i++) {
                 inventory.RemoveItem((ItemIndex)i, int.MaxValue);
                 inventory.GiveItem((ItemIndex)i, items[i]);
             }
@@ -112,7 +112,7 @@ namespace SavedGames.Data {
             yield return null;
             var healthComponent = player.GetCurrentBody().healthComponent;
 
-            healthComponent.health = health;
+            healthComponent.health = health + 1;
             healthComponent.shield = shields;
         }
     }

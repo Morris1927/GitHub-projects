@@ -25,7 +25,7 @@ namespace SavedGames.Data {
             var gameobject = Resources.Load<SpawnCard>(Path + name).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
             var drone = gameobject.GetComponent<SummonMasterBehavior>();
 
-            drone.GetComponent<PurchaseInteraction>().cost = cost;
+            drone.GetComponent<PurchaseInteraction>().Networkcost = cost;
 
             SavedGames.instance.StartCoroutine(WaitForStart(drone));
         }

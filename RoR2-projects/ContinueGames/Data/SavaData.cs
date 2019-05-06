@@ -144,7 +144,7 @@ namespace SavedGames.Data {
 
 
             string json = TinyJson.JSONWriter.ToJson(save);
-            Debug.Log(json);
+            //Debug.Log(json);
             PlayerPrefs.SetString("Save" + saveFile, json);
         }
 
@@ -211,7 +211,7 @@ namespace SavedGames.Data {
             foreach (var item in players) {
                 item.LoadPlayer();
             }
-            foreach (var item in enemies) {                                     
+            foreach (var item in enemies) {
                 item.LoadEnemy();
             }
         }

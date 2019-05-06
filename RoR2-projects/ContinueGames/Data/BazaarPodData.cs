@@ -32,7 +32,7 @@ namespace SavedGames.Data {
             gameobject.transform.localScale = Vector3.one;
 
             purchaseInteraction.SetAvailable(available);
-            purchaseInteraction.cost = cost;
+            purchaseInteraction.Networkcost = cost;
             SavedGames.instance.StartCoroutine(WaitForStart(pod));
         }
 

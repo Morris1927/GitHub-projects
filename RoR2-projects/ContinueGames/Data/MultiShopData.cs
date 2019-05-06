@@ -46,6 +46,7 @@ namespace SavedGames.Data {
             var gameobject = Resources.Load<SpawnCard>(Path + name).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
             var multiShop = gameobject.GetComponent<MultiShopController>();
 
+            multiShop.Networkcost = cost;
             multiShop.Networkavailable = available;
 
             SavedGames.instance.StartCoroutine(WaitForStart(multiShop));
@@ -64,7 +65,7 @@ namespace SavedGames.Data {
                 hidden.RemoveAt(0);
                 itemIndexes.RemoveAt(0);
 
-                purchaseInteraction.cost = cost;
+                purchaseInteraction.Networkcost = cost;
                 purchaseInteraction.SetAvailable(available);
             }
 

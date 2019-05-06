@@ -33,13 +33,13 @@ namespace SavedGames
                 Destroy(this);
             }
 
+            //Config.Wrap
             loadKey = Config.Wrap<int>(
-                new ConfigDefinition("Keybinds", "LoadKey"),
+                "Keybinds", "LoadKey", null,
                 (int) KeyCode.F5);
             saveKey = Config.Wrap<int>(
-                new ConfigDefinition("Keybinds", "SaveKey"),
+                "Keybinds", "SaveKey", null,
                 (int) KeyCode.F8);
-
 
             On.RoR2.Console.Awake += (orig, self) => {
                 Generic.CommandHelper.RegisterCommands(self);
@@ -50,6 +50,7 @@ namespace SavedGames
                 if (!loadingScene) {
                     orig(self);
                 }
+                loadingScene = false;
             };
 
         }
@@ -103,12 +104,6 @@ namespace SavedGames
             SaveData.Save(ArgsHelper.GetValue(args.userArgs, 0));
         }
 
-        private void ClearStage() {
-            foreach (var item in FindObjectsOfType<PurchaseInteraction>()) {
-                Destroy(item.gameObject);
-            }
-        }
-
         private IEnumerator StartLoading(SaveData save) {
 
             loadingScene = true;
@@ -123,7 +118,7 @@ namespace SavedGames
             }
             save.run.LoadData();
 
-            yield return new WaitForSeconds(Stage.instance == null ? 1f : 0.75f);
+            yield return new WaitForSeconds(Stage.instance == null ? 1.5f : 0.75f);
             save.Load();
             
             loadingScene = false;

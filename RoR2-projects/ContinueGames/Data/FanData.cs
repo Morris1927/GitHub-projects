@@ -33,8 +33,8 @@ namespace SavedGames.Data {
             var purchaseInteraction = gameobject.GetComponent<PurchaseInteraction>();
             var jumpVolume = purchaseInteraction.GetComponentInChildren<JumpVolume>(true);
 
-            purchaseInteraction.cost = cost;
-            purchaseInteraction.available = available;
+            purchaseInteraction.Networkcost = cost;
+            purchaseInteraction.SetAvailable(available);
             if (!available) {
                 var stateMachine = gameobject.GetComponent<EntityStateMachine>();
                 stateMachine.SetNextState(new EntityStates.Barrel.ActivateFan());

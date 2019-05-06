@@ -32,8 +32,8 @@ namespace SavedGames.Data
             var gameobject = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
             var beacon = gameobject.GetComponent<PurchaseInteraction>();
 
-            beacon.available = available;
-            beacon.cost = cost;
+            beacon.SetAvailable(available);
+            beacon.Networkcost = cost;
             GoldshoresMissionController.instance.beaconInstanceList.Add(gameobject);
 
             if (!available) {

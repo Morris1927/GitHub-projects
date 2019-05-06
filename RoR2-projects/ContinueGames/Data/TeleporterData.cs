@@ -57,8 +57,7 @@ namespace SavedGames.Data {
             }
 
             teleporter.remainingChargeTimer = remainingCharge;
-            getActivationState.SetValue(teleporter, activationState);
-            teleporter.SetFieldValue("previousActivationState", 1);
+
 
             SavedGames.instance.StartCoroutine(WaitForStart(teleporter));
         }
@@ -70,6 +69,9 @@ namespace SavedGames.Data {
             teleporter.Network_shouldAttemptToSpawnShopPortal = blueOrb;
             teleporter.Network_shouldAttemptToSpawnGoldshoresPortal = goldOrb;
             teleporter.Network_shouldAttemptToSpawnMSPortal = celestialOrb;
+
+            getActivationState.SetValue(teleporter, activationState);
+            teleporter.SetFieldValue("previousActivationState", 1);
 
         }
     }

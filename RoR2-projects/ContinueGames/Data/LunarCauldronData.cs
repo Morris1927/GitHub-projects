@@ -52,7 +52,7 @@ namespace SavedGames.Data
                 lunarCauldron.SetPickupIndex(new PickupIndex((ItemIndex)itemIndex));
             }
 
-            purchaseInteraction.cost = cost;
+            purchaseInteraction.Networkcost = cost;
             purchaseInteraction.costType = (CostType)costType;
 
         }

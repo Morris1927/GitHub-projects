@@ -86,7 +86,7 @@ namespace SavedGames
             }
 
 
-            string saveString = PlayerPrefs.GetString("Save." + ArgsHelper.GetValue(args.userArgs, 0));
+            string saveString = PlayerPrefs.GetString("Save" + ArgsHelper.GetValue(args.userArgs, 0));
             if (saveString == "") {
                 Debug.Log("Save does not exist.");
                 return;

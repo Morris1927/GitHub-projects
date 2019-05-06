@@ -333,6 +333,15 @@ namespace RoR2Cheats {
 
         private static NetworkUser GetNetUserFromString(string playerString) {
             int result = 0;
+
+
+
+           // List<NetworkUser> userList = new List<NetworkUser>(NetworkUser.readOnlyInstancesList);
+           //
+           // var player = userList.Find((x) => x.iduserName.Equals(playerString));
+           // return player;
+
+
             if (playerString != "") {
                 if (int.TryParse(playerString, out result)) {
                     if (result < NetworkUser.readOnlyInstancesList.Count && result >= 0) {

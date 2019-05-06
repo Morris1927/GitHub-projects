@@ -69,10 +69,10 @@ namespace SavedGames
                 //Load
                 RoR2.Console.instance.SubmitCmd(null, "load quicksave ");
             }
-            if (Input.GetKeyDown(KeyCode.F6)) {
-                //Quick cheats
-                RoR2.Console.instance.SubmitCmd(NetworkUser.readOnlyLocalPlayersList[0], "give_item hoof 30; god; kill_all; no_enemies");
-            }
+          //  if (Input.GetKeyDown(KeyCode.F6)) {
+          //      //Quick cheats
+          //      RoR2.Console.instance.SubmitCmd(NetworkUser.readOnlyLocalPlayersList[0], "give_item hoof 30; god; kill_all; no_enemies");
+          //  }
         }
 
         [ConCommand(commandName = "load", flags = ConVarFlags.None, helpText = "Load game")]
@@ -86,7 +86,7 @@ namespace SavedGames
             }
 
 
-            string saveString = PlayerPrefs.GetString("Save" + ArgsHelper.GetValue(args.userArgs, 0));
+            string saveString = PlayerPrefs.GetString("Save." + ArgsHelper.GetValue(args.userArgs, 0));
             if (saveString == "") {
                 Debug.Log("Save does not exist.");
                 return;

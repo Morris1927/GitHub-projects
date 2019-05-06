@@ -28,8 +28,8 @@ namespace SavedGames.Data {
             var gameobject = Object.Instantiate(Resources.Load<GameObject>(Path), transform.position.GetVector3(), transform.rotation.GetQuaternion());
             var pod = gameobject.GetComponent<ShopTerminalBehavior>();
             var purchaseInteraction = gameobject.GetComponent<PurchaseInteraction>();
-            NetworkServer.Spawn(gameobject);
             gameobject.transform.localScale = Vector3.one;
+            NetworkServer.Spawn(gameobject);
 
             purchaseInteraction.SetAvailable(available);
             purchaseInteraction.Networkcost = cost;

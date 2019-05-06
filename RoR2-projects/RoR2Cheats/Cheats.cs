@@ -506,5 +506,90 @@ namespace RoR2Cheats {
         private static void ResetEnemyTeamLevel() {
             TeamManager.instance.SetTeamLevel(TeamIndex.Monster, 1);
         }
+        
+        [ConCommand(commandName = "true_kill", flags = ConVarFlags.ExecuteOnServer, helpText = "Truly kill a player")]
+		private static void CCTrueKill(ConCommandArgs args)
+		{
+			if (args.Count > 0)
+			{
+				NetworkUser.readOnlyInstancesList[int.Parse(args[0])].master.TrueKill();
+				return;
+			}
+			args.sender.master.TrueKill();
+		}
+        
+        [ConCommand(commandName = "add_blue", flags = ConVarFlags.ExecuteOnServer, helpText = "Teleporter will attempt to spawn a blue portal on completion")]
+		private static void AddBlueOrb(ConCommandArgs args)
+		{
+			TeleporterInteraction.instance.shouldAttemptToSpawnShopPortal = true;
+		}
+
+		[ConCommand(commandName = "add_gold", flags = ConVarFlags.ExecuteOnServer, helpText = "Teleporter will attempt to spawn a gold portal on completion")]
+		private static void AddGoldOrb(ConCommandArgs args)
+		{
+			TeleporterInteraction.instance.shouldAttemptToSpawnGoldshoresPortal = true;
+		}
+
+		[ConCommand(commandName = "add_celestial", flags = ConVarFlags.ExecuteOnServer, helpText = "Teleporter will attempt to spawn a celestial portal on completion")]
+		private static void AddCelestialOrb(ConCommandArgs args)
+		{
+			TeleporterInteraction.instance.shouldAttemptToSpawnMSPortal = true;
+		}
+        
+		[ConCommand(commandName = "become_neutral", flags = ConVarFlags.ExecuteOnServer, helpText = "Become neutrally-aligned. Players and monsters can attack you")]
+		private static void BecomeNeutral(ConCommandArgs args)
+		{
+			CharacterMaster master;
+			if (args.Count == 1)
+			{
+				master = NetworkUser.readOnlyInstancesList[int.Parse(args[0])].master;
+			}
+			else
+			{
+				master = args.sender.master;
+			}
+			master.teamIndex = TeamIndex.Neutral;
+		}
+        
+		[ConCommand(commandName = "become_monster", flags = ConVarFlags.ExecuteOnServer, helpText = "Become monster-aligned. Players and neutral entities can attack you")]
+		private static void BecomeMonster(ConCommandArgs args)
+		{
+			CharacterMaster master;
+			if (args.Count == 1)
+			{
+				master = NetworkUser.readOnlyInstancesList[int.Parse(args[0])].master;
+			}
+			else
+			{
+				master = args.sender.master;
+			}
+			master.teamIndex = TeamIndex.Monster;
+		}
+
+		[ConCommand(commandName = "become_player", flags = ConVarFlags.ExecuteOnServer, helpText = "Become player-aligned. Monsters and neutral entities can attack you")]
+		private static void BecomePLayer(ConCommandArgs args)
+		{
+			CharacterMaster master;
+			if (args.Count == 1)
+			{
+				master = NetworkUser.readOnlyInstancesList[int.Parse(args[0])].master;
+			}
+			else
+			{
+				master = args.sender.master;
+			}
+			master.teamIndex = TeamIndex.Player;
+		}
+        
+        [ConCommand(commandName = "respawn", flags = ConVarFlags.ExecuteOnServer, helpText = "Respawn a player")]
+		private static void RespawnPlayer(ConCommandArgs args)
+		{
+			if (args.Count == 1)
+			{
+				NetworkUser.readOnlyInstancesList[int.Parse(args[0])].master.Respawn(args.sender.master.GetBody().transform.position, args.sender.master.GetBody().transform.rotation, false);
+				return;
+			}
+			args.sender.master.Respawn(new Vector3(0f, 0f, 0f), args.sender.master.transform.rotation, false);
+		}
     }
 }

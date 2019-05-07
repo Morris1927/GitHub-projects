@@ -15,11 +15,12 @@ using ArgsHelper = Utilities.Generic.ArgsHelper;
 
 namespace RoR2Cheats {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.morris1927.RoR2Cheats", "RoR2Cheats", "2.2.1")]
+    [BepInPlugin("com.morris1927.RoR2Cheats", "RoR2Cheats", "2.3.0")]
     public class Cheats : BaseUnityPlugin {
         
         private static ConfigWrapperJson<float> sprintFovMultiplierConfig { get; set; }
         private static ConfigWrapperJson<float> fovConfig { get; set; }
+
         public static float sprintFovMultiplier { get { return sprintFovMultiplierConfig.Value; } set { sprintFovMultiplierConfig.Value = value; } }
         public static float fov { get { return fovConfig.Value; } set { fovConfig.Value = value; } }
 
@@ -28,6 +29,195 @@ namespace RoR2Cheats {
         public static bool godMode = false;
 
         public static bool noEnemies = false;
+
+        public static List<List<string>> masterList = new List<List<string>>() {
+            new List<string> { "AncientWispMaster", "AncientWisp"},
+            new List<string> { "BeetleGuardAllyMaster", "BeetleGuardAlly"},
+            new List<string> { "BeetleGuardMaster", "BeetleGuard"},
+            new List<string> { "BeetleMaster", "Beetle"},
+            new List<string> { "BeetleQueenMaster", "BeetleQueen"},
+            new List<string> { "BellMaster", "Bell"},
+            new List<string> { "BisonMaster", "Bison"},
+            new List<string> { "ClayBossMaster", "ClayBoss"},
+            new List<string> { "ClaymanMaster", "Clayman"},
+            new List<string> { "CommandoMaster", "Commando"},
+            new List<string> { "CommandoMonsterMaster", "CommandoMonster"},
+            new List<string> { "Drone1Master", "Drone1"},
+            new List<string> { "Drone2Master", "Drone2"},
+            new List<string> { "DroneBackupMaster", "DroneBackup"},
+            new List<string> { "DroneMissileMaster", "DroneMissile"},
+            new List<string> { "ElectricWormMaster", "ElectricWorm"},
+            new List<string> { "EngiBeamTurretMaster", "EngiBeamTurret"},
+            new List<string> { "EngiTurretMaster", "EngiTurret"},
+            new List<string> { "GolemMaster", "Golem"},
+            new List<string> { "GreaterWispMaster", "GreaterWisp"},
+            new List<string> { "HermitCrabMaster", "HermitCrab"},
+            new List<string> { "ImpBossMaster", "ImpBoss"},
+            new List<string> { "ImpMaster", "Imp"},
+            new List<string> { "JellyfishMaster", "Jellyfish"},
+            new List<string> { "LemurianBruiserMaster", "LemurianBruiser"},
+            new List<string> { "LemurianBruiserMasterFire", "LemurianBruiserFire"},
+            new List<string> { "LemurianBruiserMasterIce", "LemurianBruiserIce"},
+            new List<string> { "LemurianMaster", "Lemurian"},
+            new List<string> { "MagmaWormMaster", "MagmaWorm"},
+            new List<string> { "MegaDroneMaster", "MegaDrone"},
+            new List<string> { "MercMonsterMaster", "MercMonster"},
+            new List<string> { "ShopkeeperMaster", "Shopkeeper"},
+            new List<string> { "SquidTurretMaster", "SquidTurret"},
+            new List<string> { "TitanGoldMaster", "TitanGold"},
+            new List<string> { "TitanMaster", "Titan"},
+            new List<string> { "Turret1Master", "Turret1"},
+            new List<string> { "VagrantMaster", "Vagrant"},
+            new List<string> { "WispMaster", "Wisp" }
+
+        };
+
+        public static List<List<string>> masterLink = new List<List<string>>() {
+            new List<string> { "AncientWispBody", "AncientWispMaster", "AncientWisp"},
+            new List<string> { "BeetleGuardAllyBody", "BeetleGuardAllyMaster", "BeetleGuardAlly"},
+            new List<string> { "BeetleGuardBody", "BeetleGuardMaster", "BeetleGuard"},
+            new List<string> { "BeetleBody", "BeetleMaster", "Beetle"},
+            new List<string> { "BeetleQueen2Body", "BeetleQueenMaster", "BeetleQueen"},
+            new List<string> { "BellBody", "BellMaster", "Bell"},
+            new List<string> { "BisonBody", "BisonMaster", "Bison"},
+            new List<string> { "ClayBossBody", "ClayBossMaster", "ClayBoss"},
+            new List<string> { "ClayBody", "ClaymanMaster", "Clayman"},
+            new List<string> { "CommandoBody", "CommandoMaster", "Commando"},
+            new List<string> { "CommandoBody", "CommandoMonsterMaster", "CommandoMonster"},
+            new List<string> { "CommandoPerformanceTestBody", "CommandoMonsterMaster", "CommandoPerformanceTest"},
+            new List<string> { "Drone1Body", "Drone1Master", "Drone1"},
+            new List<string> { "Drone2Body", "Drone2Master", "Drone2"},
+            new List<string> { "BackupDroneBody", "DroneBackupMaster", "DroneBackup"},
+            new List<string> { "MissileDroneBody", "DroneMissileMaster", "DroneMissile"},
+            new List<string> { "ElectricWormBody", "ElectricWormMaster", "ElectricWorm"},
+            new List<string> { "EngiBeamTurretBody", "EngiBeamTurretMaster", "EngiBeamTurret"},
+            new List<string> { "EngiTurretBody", "EngiTurretMaster", "EngiTurret"},
+            new List<string> { "GolemBody", "GolemMaster", "Golem"},
+            new List<string> { "GreaterWispBody", "GreaterWispMaster", "GreaterWisp"},
+            new List<string> { "HermitCrabBody", "HermitCrabMaster", "HermitCrab"},
+            new List<string> { "ImpBossBody", "ImpBossMaster", "ImpBoss"},
+            new List<string> { "ImpBody", "ImpMaster", "Imp"},
+            new List<string> { "JellyfishBody", "JellyfishMaster", "Jellyfish"},
+            new List<string> { "LemurianBruiserBody", "LemurianBruiserMaster", "LemurianBruiser"},
+            new List<string> { "LemurianBruiserBody", "LemurianBruiserMasterFire", "LemurianBruiserFire"},
+            new List<string> { "LemurianBruiserBody", "LemurianBruiserMasterIce", "LemurianBruiserIce"},
+            new List<string> { "LemurianBody", "LemurianMaster", "Lemurian"},
+            new List<string> { "MagmaWormBody", "MagmaWormMaster", "MagmaWorm"},
+            new List<string> { "MegaDroneBody", "MegaDroneMaster", "MegaDrone"},
+            new List<string> { "MercBody", "MercMonsterMaster", "MercMonster"},
+            new List<string> { "ShopkeeperBody", "ShopkeeperMaster", "Shopkeeper"},
+            new List<string> { "SquidTurretBody", "SquidTurretMaster", "SquidTurret"},
+            new List<string> { "TitanGoldBody", "TitanGoldMaster", "TitanGold"},
+            new List<string> { "TitanBody", "TitanMaster", "Titan"},
+            new List<string> { "Turret1Body", "Turret1Master", "Turret1"},
+            new List<string> { "VagrantBody", "VagrantMaster", "Vagrant"},
+            new List<string> { "WispBody", "WispMaster", "Wisp" }
+
+        };
+
+
+        public static List<List<string>> bodyList = new List<List<string>> {
+            new List<string> { "AssassinBody", "Assassin"},
+            new List<string> { "CommandoBody", "Commando"},
+            new List<string> { "HuntressBody", "Huntress"},
+            new List<string> { "EngiBody", "Engi", "Engineer"},
+            new List<string> { "ToolbotBody", "Toolbot", "MULT", "MUL-T"},
+            new List<string> { "MercBody", "Merc", "Mercenary"},
+            new List<string> { "MageBody", "Mage", "Artificer"},
+            new List<string> { "BanditBody", "Bandit"},
+            new List<string> { "SniperBody", "Sniper"},
+            new List<string> { "HANDBody", "HAND", "HAN-D"},
+
+            new List<string> { "AltarSkeletonBody", "AltarSkeleton"},
+            new List<string> { "AncientWispBody", "AncientWisp"},
+            new List<string> { "BackupDroneBody", "BackupDrone"},
+            new List<string> { "BackupDroneOldBody", "BackupDroneOld"},
+            new List<string> { "BeetleBody", "Beetle"},
+            new List<string> { "BeetleGuardAllyBody", "BeetleGuardAlly"},
+            new List<string> { "BeetleGuardBody", "BeetleGuard"},
+            new List<string> { "BeetleQueen2Body", "BeetleQueen2"},
+            new List<string> { "BeetleQueen3Body", "BeetleQueen3"},
+            new List<string> { "BeetleQueenBody", "BeetleQueen"},
+            new List<string> { "BellBody", "Bell"},
+            new List<string> { "BirdsharkBody", "Birdshark"},
+            new List<string> { "BisonBody", "Bison"},
+            new List<string> { "BomberBody", "Bomber"},
+            new List<string> { "ClayBody", "Clay"},
+            new List<string> { "ClayBossBody", "ClayBoss"},
+            new List<string> { "CommandoPerformanceTestBody", "CommandoPerformanceTest"},
+            new List<string> { "Drone1Body", "Drone1"},
+            new List<string> { "Drone2Body", "Drone2"},
+            new List<string> { "ElectricWormBody", "ElectricWorm"},
+            new List<string> { "EnforcerBody", "Enforcer"},
+            new List<string> { "EngiBeamTurretBody", "EngiBeamTurret"},
+            new List<string> { "EngiTurretBody", "EngiTurret"},
+            new List<string> { "ExplosivePotDestructibleBody", "ExplosivePotDestructible"},
+            new List<string> { "FusionCellDestructibleBody", "FusionCellDestructible"},
+            new List<string> { "GolemBody", "Golem"},
+            new List<string> { "GolemBodyInvincible", "GolemInvincible"},
+            new List<string> { "GreaterWispBody", "GreaterWisp"},
+            new List<string> { "HaulerBody", "Hauler"},
+            new List<string> { "HermitCrabBody", "HermitCrab"},
+            new List<string> { "ImpBody", "Imp"},
+            new List<string> { "ImpBossBody", "ImpBoss"},
+            new List<string> { "JellyfishBody", "Jellyfish"},
+            new List<string> { "LemurianBody", "Lemurian"},
+            new List<string> { "LemurianBruiserBody", "LemurianBruiser"},
+            new List<string> { "MagmaWormBody", "MagmaWorm"},
+            new List<string> { "MegaDroneBody", "MegaDrone"},
+            new List<string> { "MissileDroneBody", "MissileDrone"},
+            new List<string> { "PaladinBody", "Paladin"},
+            new List<string> { "Pot2Body", "Pot2"},
+            new List<string> { "PotMobile2Body", "PotMobile2"},
+            new List<string> { "PotMobileBody", "PotMobile"},
+            new List<string> { "ShopkeeperBody", "Shopkeeper"},
+            new List<string> { "SpectatorBody", "Spectator"},
+            new List<string> { "SpectatorSlowBody", "SpectatorSlow"},
+            new List<string> { "SquidTurretBody", "SquidTurret"},
+            new List<string> { "TimeCrystalBody", "TimeCrystal"},
+            new List<string> { "TitanBody", "Titan"},
+            new List<string> { "TitanGoldBody", "TitanGold"},
+            new List<string> { "Turret1Body", "Turret1"},
+            new List<string> { "VagrantBody", "Vagrant"},
+            new List<string> { "WispBody", "Wisp" }
+        };
+
+        public static string GetBodyNameFromString(string name) {
+
+            foreach (var bodyLists in bodyList) {
+                foreach (var tempName in bodyLists) {
+                    if (tempName.Equals(name, StringComparison.OrdinalIgnoreCase)) {
+                        return bodyLists[0];
+                    }
+                }
+            }
+
+            return name;
+        }
+        public static string GetMasterNameFromString(string name) {
+
+            foreach (var masterLists in masterList) {
+                foreach (var tempName in masterLists) {
+                    if (tempName.Equals(name, StringComparison.OrdinalIgnoreCase)) {
+                        return masterLists[0];
+                    }
+                }
+            }
+
+            return name;
+        }
+
+        public static string GetBodyMasterLink(string name, int id) {
+            foreach (var masterLists in masterLink) {
+                foreach (var tempName in masterLists) {
+                    if (tempName.Equals(name, StringComparison.OrdinalIgnoreCase)) {
+                        return masterLists[id];
+                    }
+                }
+            }
+            return name;
+        }
+
 
         public void Awake() {
             
@@ -43,7 +233,6 @@ namespace RoR2Cheats {
                 "Your base FOV",
                 60f
             );
-
             Hooks.InitializeHooks();
             NetworkHandler.RegisterNetworkHandlerAttributes();
 
@@ -303,7 +492,7 @@ namespace RoR2Cheats {
             string bodyString = ArgsHelper.GetValue(args.userArgs, 0);
             string playerString = ArgsHelper.GetValue(args.userArgs, 1);
 
-            bodyString = bodyString.Contains("Body") ? bodyString : bodyString + "Body";
+            bodyString = GetBodyNameFromString(bodyString);//bodyString.Contains("Body") ? bodyString : bodyString + "Body";
 
             NetworkUser player = GetNetUserFromString(playerString);
 
@@ -333,14 +522,6 @@ namespace RoR2Cheats {
 
         private static NetworkUser GetNetUserFromString(string playerString) {
             int result = 0;
-
-
-
-           // List<NetworkUser> userList = new List<NetworkUser>(NetworkUser.readOnlyInstancesList);
-           //
-           // var player = userList.Find((x) => x.iduserName.Equals(playerString));
-           // return player;
-
 
             if (playerString != "") {
                 if (int.TryParse(playerString, out result)) {
@@ -418,6 +599,7 @@ namespace RoR2Cheats {
         [ConCommand(commandName = "kill_all", flags = ConVarFlags.ExecuteOnServer, helpText = "Kill all enemies (not you, don't worry. Unless you talk ^@#$ behind my back. Watch out.)")]
         private static void CCKillAll(ConCommandArgs args) {
             int count = 0;
+
             foreach (CharacterMaster cm in FindObjectsOfType<CharacterMaster>()) {
                 if (cm.teamIndex == TeamIndex.Monster) {
                     CharacterBody cb = cm.GetBody();
@@ -446,11 +628,11 @@ namespace RoR2Cheats {
             string teamString = ArgsHelper.GetValue(args.userArgs, 2);
             string braindeadString = ArgsHelper.GetValue(args.userArgs, 3);
 
-            prefabString = prefabString.Replace("Master", "");
-            prefabString = prefabString.Replace("Body", "");
+            string bodyString = GetBodyMasterLink(prefabString, 0); //prefabString.Replace("Master", "");
+            string masterString = GetBodyMasterLink(prefabString, 1); //prefabString.Replace("Body", "");
 
-            prefab = MasterCatalog.FindMasterPrefab(prefabString + "Master");
-            body = BodyCatalog.FindBodyPrefab(prefabString + "Body");
+            prefab = MasterCatalog.FindMasterPrefab(masterString);
+            body = BodyCatalog.FindBodyPrefab(bodyString);
             if (prefab == null) {
                 List<string> array = new List<string>();
                 foreach (var item in MasterCatalog.allMasters) {
@@ -494,7 +676,7 @@ namespace RoR2Cheats {
         private static void CCSpawnBody(ConCommandArgs args) {
             string prefabString = ArgsHelper.GetValue(args.userArgs, 0);
 
-            prefabString = prefabString.Contains("Body") ? prefabString : prefabString + "Body";
+            prefabString = GetBodyNameFromString(prefabString);
 
             GameObject body = BodyCatalog.FindBodyPrefab(prefabString);
             if (body == null) {

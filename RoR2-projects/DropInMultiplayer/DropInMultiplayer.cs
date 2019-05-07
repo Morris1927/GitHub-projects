@@ -34,6 +34,85 @@ namespace DropInMultiplayer {
             "BanditBody",
         };
 
+        public static List<List<string>> bodyList = new List<List<string>> {
+            new List<string> { "AssassinBody", "Assassin"},
+            new List<string> { "CommandoBody", "Commando"},
+            new List<string> { "HuntressBody", "Huntress"},
+            new List<string> { "EngiBody", "Engi", "Engineer"},
+            new List<string> { "ToolbotBody", "Toolbot", "MULT", "MUL-T"},
+            new List<string> { "MercBody", "Merc", "Mercenary"},
+            new List<string> { "MageBody", "Mage", "Artificer"},
+            new List<string> { "BanditBody", "Bandit"},
+            new List<string> { "SniperBody", "Sniper"},
+            new List<string> { "HANDBody", "HAND", "HAN-D"},
+
+            new List<string> { "AltarSkeletonBody", "AltarSkeleton"},
+            new List<string> { "AncientWispBody", "AncientWisp"},
+            new List<string> { "BackupDroneBody", "BackupDrone"},
+            new List<string> { "BackupDroneOldBody", "BackupDroneOld"},
+            new List<string> { "BeetleBody", "Beetle"},
+            new List<string> { "BeetleGuardAllyBody", "BeetleGuardAlly"},
+            new List<string> { "BeetleGuardBody", "BeetleGuard"},
+            new List<string> { "BeetleQueen2Body", "BeetleQueen2"},
+            new List<string> { "BeetleQueen3Body", "BeetleQueen3"},
+            new List<string> { "BeetleQueenBody", "BeetleQueen"},
+            new List<string> { "BellBody", "Bell"},
+            new List<string> { "BirdsharkBody", "Birdshark"},
+            new List<string> { "BisonBody", "Bison"},
+            new List<string> { "BomberBody", "Bomber"},
+            new List<string> { "ClayBody", "Clay"},
+            new List<string> { "ClayBossBody", "ClayBoss"},
+            new List<string> { "CommandoPerformanceTestBody", "CommandoPerformanceTest"},
+            new List<string> { "Drone1Body", "Drone1"},
+            new List<string> { "Drone2Body", "Drone2"},
+            new List<string> { "ElectricWormBody", "ElectricWorm"},
+            new List<string> { "EnforcerBody", "Enforcer"},
+            new List<string> { "EngiBeamTurretBody", "EngiBeamTurret"},
+            new List<string> { "EngiTurretBody", "EngiTurret"},
+            new List<string> { "ExplosivePotDestructibleBody", "ExplosivePotDestructible"},
+            new List<string> { "FusionCellDestructibleBody", "FusionCellDestructible"},
+            new List<string> { "GolemBody", "Golem"},
+            new List<string> { "GolemBodyInvincible", "GolemInvincible"},
+            new List<string> { "GreaterWispBody", "GreaterWisp"},
+            new List<string> { "HaulerBody", "Hauler"},
+            new List<string> { "HermitCrabBody", "HermitCrab"},
+            new List<string> { "ImpBody", "Imp"},
+            new List<string> { "ImpBossBody", "ImpBoss"},
+            new List<string> { "JellyfishBody", "Jellyfish"},
+            new List<string> { "LemurianBody", "Lemurian"},
+            new List<string> { "LemurianBruiserBody", "LemurianBruiser"},
+            new List<string> { "MagmaWormBody", "MagmaWorm"},
+            new List<string> { "MegaDroneBody", "MegaDrone"},
+            new List<string> { "MissileDroneBody", "MissileDrone"},
+            new List<string> { "PaladinBody", "Paladin"},
+            new List<string> { "Pot2Body", "Pot2"},
+            new List<string> { "PotMobile2Body", "PotMobile2"},
+            new List<string> { "PotMobileBody", "PotMobile"},
+            new List<string> { "ShopkeeperBody", "Shopkeeper"},
+            new List<string> { "SpectatorBody", "Spectator"},
+            new List<string> { "SpectatorSlowBody", "SpectatorSlow"},
+            new List<string> { "SquidTurretBody", "SquidTurret"},
+            new List<string> { "TimeCrystalBody", "TimeCrystal"},
+            new List<string> { "TitanBody", "Titan"},
+            new List<string> { "TitanGoldBody", "TitanGold"},
+            new List<string> { "Turret1Body", "Turret1"},
+            new List<string> { "VagrantBody", "Vagrant"},
+            new List<string> { "WispBody", "Wisp" }
+        };
+
+        public static string GetBodyNameFromString(string name) {
+
+            foreach (var bodyLists in bodyList) {
+                foreach (var tempName in bodyLists) {
+                    if (tempName.Equals(name, StringComparison.OrdinalIgnoreCase)) {
+                        return bodyLists[0];
+                    }
+                }
+            }
+
+            return name;
+        }
+
         public void Awake() {
 
             ImmediateSpawn = Config.Wrap("Enable/Disable", "ImmediateSpawn", "Enables or disables immediate spawning as you join", false);
@@ -73,7 +152,7 @@ namespace DropInMultiplayer {
             List<string> split = new List<string>(self.text.Split(Char.Parse(" ")));
             string commandName = ArgsHelper.GetValue(split, 0);
 
-            if (commandName.Equals("spawn_as", StringComparison.CurrentCultureIgnoreCase)) {
+            if (commandName.Equals("spawn_as", StringComparison.OrdinalIgnoreCase)) {
 
 
                 string bodyString = ArgsHelper.GetValue(split, 1);
@@ -100,9 +179,7 @@ namespace DropInMultiplayer {
             }
 
 
-            bodyString = bodyString.Replace("Master", "");
-            bodyString = bodyString.Replace("Body", "");
-            bodyString = bodyString + "Body";
+            bodyString = GetBodyNameFromString(bodyString);
 
             GameObject bodyPrefab = BodyCatalog.FindBodyPrefab(bodyString);
             if (bodyPrefab == null) {
@@ -117,6 +194,7 @@ namespace DropInMultiplayer {
 
             if (NormalSurvivorsOnly.Value) {
                 if (!survivorList.Contains(bodyString)) {
+                    Chat.AddMessage("Can only spawn as survivors");
                     return;
                 }
             }

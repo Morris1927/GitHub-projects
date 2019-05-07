@@ -244,20 +244,6 @@ namespace RoR2Cheats {
             }
         }
 
-
-
-        [ConCommand(commandName = "suicide", flags = ConVarFlags.ExecuteOnServer, helpText = "kys")]
-        private static void CCSuicide(ConCommandArgs args) {
-            string playerString = ArgsHelper.GetValue(args.userArgs, 0);
-
-            NetworkUser user = GetNetUserFromString(playerString);
-            user = user ?? args.sender;
-
-            user.GetCurrentBody()?.healthComponent?.Suicide();
-
-
-        }
-
         [ConCommand(commandName = "god", flags = ConVarFlags.ExecuteOnServer, helpText = "Godmode")]
         private static void CCGodModeToggle(ConCommandArgs args) {
             godMode = !godMode;
@@ -648,7 +634,6 @@ namespace RoR2Cheats {
             NetworkServer.Spawn(gameObject);
             master.SpawnBody(body, args.sender.master.GetBody().transform.position, Quaternion.identity);
 
-
             EliteIndex eliteIndex = EliteIndex.None;
             if (Enum.TryParse<EliteIndex>(eliteString, true, out eliteIndex)) {
                 if ((int)eliteIndex > (int)EliteIndex.None && (int)eliteIndex < (int)EliteIndex.Count) {
@@ -698,89 +683,69 @@ namespace RoR2Cheats {
             TeamManager.instance.SetTeamLevel(TeamIndex.Monster, 1);
         }
         
-        [ConCommand(commandName = "true_kill", flags = ConVarFlags.ExecuteOnServer, helpText = "Truly kill a player")]
+        [ConCommand(commandName = "true_kill", flags = ConVarFlags.ExecuteOnServer, helpText = "Truly kill a player, ignoring revival effects")]
 		private static void CCTrueKill(ConCommandArgs args)
 		{
-			if (args.Count > 0)
-			{
-				NetworkUser.readOnlyInstancesList[int.Parse(args[0])].master.TrueKill();
-				return;
-			}
-			args.sender.master.TrueKill();
+            string playerString = ArgsHelper.GetValue(args.userArgs, 0);
+
+            NetworkUser player = GetNetUserFromString(playerString);
+            player = player ?? args.sender;
+
+            player.master.TrueKill();
 		}
         
         [ConCommand(commandName = "add_blue", flags = ConVarFlags.ExecuteOnServer, helpText = "Teleporter will attempt to spawn a blue portal on completion")]
-		private static void AddBlueOrb(ConCommandArgs args)
+		private static void CCAddBlueOrb(ConCommandArgs args)
 		{
-			TeleporterInteraction.instance.shouldAttemptToSpawnShopPortal = true;
+            if (TeleporterInteraction.instance)
+			    TeleporterInteraction.instance.Network_shouldAttemptToSpawnShopPortal = true;
 		}
 
 		[ConCommand(commandName = "add_gold", flags = ConVarFlags.ExecuteOnServer, helpText = "Teleporter will attempt to spawn a gold portal on completion")]
-		private static void AddGoldOrb(ConCommandArgs args)
+		private static void CCAddGoldOrb(ConCommandArgs args)
 		{
-			TeleporterInteraction.instance.shouldAttemptToSpawnGoldshoresPortal = true;
+            if (TeleporterInteraction.instance)
+                TeleporterInteraction.instance.Network_shouldAttemptToSpawnGoldshoresPortal = true;
 		}
 
 		[ConCommand(commandName = "add_celestial", flags = ConVarFlags.ExecuteOnServer, helpText = "Teleporter will attempt to spawn a celestial portal on completion")]
-		private static void AddCelestialOrb(ConCommandArgs args)
+		private static void CCAddCelestialOrb(ConCommandArgs args)
 		{
-			TeleporterInteraction.instance.shouldAttemptToSpawnMSPortal = true;
-		}
-        
-		[ConCommand(commandName = "become_neutral", flags = ConVarFlags.ExecuteOnServer, helpText = "Become neutrally-aligned. Players and monsters can attack you")]
-		private static void BecomeNeutral(ConCommandArgs args)
-		{
-			CharacterMaster master;
-			if (args.Count == 1)
-			{
-				master = NetworkUser.readOnlyInstancesList[int.Parse(args[0])].master;
-			}
-			else
-			{
-				master = args.sender.master;
-			}
-			master.teamIndex = TeamIndex.Neutral;
-		}
-        
-		[ConCommand(commandName = "become_monster", flags = ConVarFlags.ExecuteOnServer, helpText = "Become monster-aligned. Players and neutral entities can attack you")]
-		private static void BecomeMonster(ConCommandArgs args)
-		{
-			CharacterMaster master;
-			if (args.Count == 1)
-			{
-				master = NetworkUser.readOnlyInstancesList[int.Parse(args[0])].master;
-			}
-			else
-			{
-				master = args.sender.master;
-			}
-			master.teamIndex = TeamIndex.Monster;
+            if (TeleporterInteraction.instance)
+                TeleporterInteraction.instance.Network_shouldAttemptToSpawnMSPortal = true;
 		}
 
-		[ConCommand(commandName = "become_player", flags = ConVarFlags.ExecuteOnServer, helpText = "Become player-aligned. Monsters and neutral entities can attack you")]
-		private static void BecomePLayer(ConCommandArgs args)
-		{
-			CharacterMaster master;
-			if (args.Count == 1)
-			{
-				master = NetworkUser.readOnlyInstancesList[int.Parse(args[0])].master;
-			}
-			else
-			{
-				master = args.sender.master;
-			}
-			master.teamIndex = TeamIndex.Player;
-		}
+        [ConCommand(commandName = "change_team", flags = ConVarFlags.ExecuteOnServer, helpText = "Change team to Neutral, Player or Monster (0, 1, 2)")]
+        private static void CCChangeTeam(ConCommandArgs args) {
+            string teamString = ArgsHelper.GetValue(args.userArgs, 0);
+            string playerString = ArgsHelper.GetValue(args.userArgs, 1);
+
+            NetworkUser player = GetNetUserFromString(playerString);
+            player = player ?? args.sender;
+
+            TeamIndex teamIndex = TeamIndex.Player;
+            if (Enum.TryParse(teamString, true, out teamIndex)) {
+                if ((int)teamIndex >= (int)TeamIndex.None && (int)teamIndex < (int)TeamIndex.Count) {
+                    Debug.Log("Changed to team " + teamIndex);
+                    if (player.master.GetBody()) {
+                        player.master.GetBody().teamComponent.teamIndex = teamIndex;
+                        player.master.teamIndex = teamIndex;
+                    }
+                }
+            }
+        }
         
         [ConCommand(commandName = "respawn", flags = ConVarFlags.ExecuteOnServer, helpText = "Respawn a player")]
 		private static void RespawnPlayer(ConCommandArgs args)
 		{
-			if (args.Count == 1)
-			{
-				NetworkUser.readOnlyInstancesList[int.Parse(args[0])].master.Respawn(args.sender.master.GetBody().transform.position, args.sender.master.GetBody().transform.rotation, false);
-				return;
-			}
-			args.sender.master.Respawn(new Vector3(0f, 0f, 0f), args.sender.master.transform.rotation, false);
+            string playerString = ArgsHelper.GetValue(args.userArgs, 0);
+
+            NetworkUser player = GetNetUserFromString(playerString);
+            player = player ?? args.sender;
+
+            Transform spawnPoint = Stage.instance.GetPlayerSpawnTransform();
+            player.master.Respawn(spawnPoint.position, spawnPoint.rotation, false);
+
 		}
     }
 }

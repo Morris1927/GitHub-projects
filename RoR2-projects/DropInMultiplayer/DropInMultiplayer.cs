@@ -24,6 +24,9 @@ namespace DropInMultiplayer {
         public static ConfigWrapper<bool> SpawnAsEnabled { get; set; }
         public static ConfigWrapper<bool> HostOnlySpawnAs { get; set; }
 
+        private static DropInMultiplayer instance { get; set; }
+
+
         public static List<string> survivorList = new List<string>{
             "CommandoBody",
             "HuntressBody",
@@ -115,6 +118,11 @@ namespace DropInMultiplayer {
 
         public void Awake() {
 
+            if (instance == null) {
+                instance = this;
+            } else
+                Destroy(this);
+
             ImmediateSpawn = Config.Wrap("Enable/Disable", "ImmediateSpawn", "Enables or disables immediate spawning as you join", false);
             NormalSurvivorsOnly = Config.Wrap("Enable/Disable", "NormalSurvivorsOnly", "Changes whether or not spawn_as can only be used to turn into survivors", true);
             StartWithItems = Config.Wrap("Enable/Disable", "StartWithItems", "Enables or disables giving players items if they join mid-game", true);
@@ -135,12 +143,23 @@ namespace DropInMultiplayer {
             }
             On.RoR2.NetworkUser.Start += (orig, self) => {
                 orig(self);
-                if (NetworkServer.active && Run.instance != null)
-                    Chat.AddMessage("Join the game by typing 'spawn_as [name]' names are Commando, Huntress, Engi, Mage, Merc, Toolbot, Bandit");
+                if (NetworkServer.active && Stage.instance != null)
+                    AddChatMessage("Join the game by typing 'spawn_as [name]' names are Commando, Huntress, Engi, Mage, Merc, Toolbot, Bandit", 5f);
             };
 
             On.RoR2.Run.SetupUserCharacterMaster += SetupUserCharacterMaster;
             On.RoR2.Chat.UserChatMessage.ConstructChatString += UserChatMessage_ConstructChatString;
+        }
+
+        private static void AddChatMessage(string message, float time = 0.1f) {
+            instance.StartCoroutine(AddHelperMessage(message, time));
+        }
+
+        private static IEnumerator AddHelperMessage(string message, float time) {
+            yield return new WaitForSeconds(time);
+            var chatMessage = new Chat.SimpleChatMessage { baseToken = message };
+            Chat.SendBroadcastChat(chatMessage);
+
         }
 
         private string UserChatMessage_ConstructChatString(On.RoR2.Chat.UserChatMessage.orig_ConstructChatString orig, Chat.UserChatMessage self) {
@@ -171,30 +190,24 @@ namespace DropInMultiplayer {
                 return;
             }
 
-
             if (HostOnlySpawnAs.Value) {
                 if (NetworkUser.readOnlyInstancesList[0].netId != user.netId) {
                     return;
                 }
             }
 
-
             bodyString = GetBodyNameFromString(bodyString);
 
             GameObject bodyPrefab = BodyCatalog.FindBodyPrefab(bodyString);
             if (bodyPrefab == null) {
-                List<string> array = new List<string>();
-                foreach (var item in BodyCatalog.allBodyPrefabs) {
-                    array.Add(item.name);
-                }
-                string list = string.Join("\n", array.ToArray());
-                Debug.LogFormat("Could not spawn as {0}, Try: spawn_as GolemBody   --- \n{1}", bodyString, NormalSurvivorsOnly.Value ? string.Join("\n", survivorList.ToArray()) : list);
+                AddChatMessage("Could not find " + bodyString);
                 return;
             }
 
+
             if (NormalSurvivorsOnly.Value) {
                 if (!survivorList.Contains(bodyString)) {
-                    Chat.AddMessage("Can only spawn as survivors");
+                    AddChatMessage("Can only spawn as normal survivors");
                     return;
                 }
             }
@@ -204,10 +217,14 @@ namespace DropInMultiplayer {
             CharacterMaster master = player.master;
 
             if (master) {
-                if (AllowSpawnAsWhileAlive.Value) {
+                if (AllowSpawnAsWhileAlive.Value && master.alive) {
                     master.bodyPrefab = bodyPrefab;
                     master.Respawn(master.GetBody().transform.position, master.GetBody().transform.rotation);
-                    Debug.Log(player.userName + " respawning as " + bodyString);
+                    AddChatMessage(player.userName + " respawning as " + bodyString);
+                } else if (!master.alive) {
+                    AddChatMessage("Cannot use spawn_as while dead");
+                } else if (!AllowSpawnAsWhileAlive.Value && master.alive) {
+                    AddChatMessage("Cannot use spawn_as while alive");
                 }
             } else {
                 Run.instance.SetFieldValue("allowNewParticipants", true);
@@ -219,7 +236,7 @@ namespace DropInMultiplayer {
                 CharacterBody body = user.master.SpawnBody(bodyPrefab, spawnTransform.position, spawnTransform.rotation);
 
                 Run.instance.HandlePlayerFirstEntryAnimation(body, spawnTransform.position, spawnTransform.rotation);
-
+                AddChatMessage(player.userName + " spawning as " + bodyString);
                 if (!ImmediateSpawn.Value)
                     Run.instance.SetFieldValue("allowNewParticipants", false);
             }
@@ -242,7 +259,6 @@ namespace DropInMultiplayer {
                             return n;
                         }
                     }
-                    Debug.Log("Specified player does not exist");
                     return null;
                 }
             }

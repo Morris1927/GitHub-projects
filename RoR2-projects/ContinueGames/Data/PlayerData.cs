@@ -18,7 +18,7 @@ namespace SavedGames.Data {
         public int money;
         public int health;
         public int shields;
-
+        public int infusion;
 
         public int[] items;
         public List<DeployableData> deployables;
@@ -45,6 +45,7 @@ namespace SavedGames.Data {
             playerData.money = (int)player.master.money;
             playerData.health = (int)healthComponent.health;
             playerData.shields = (int)healthComponent.shield;
+            playerData.infusion = (int)inventory.infusionBonus;
 
             playerData.items = new int[(int)ItemIndex.Count - 1];
             for (int i = 0; i < (int)ItemIndex.Count - 1; i++) {
@@ -97,6 +98,9 @@ namespace SavedGames.Data {
                 inventory.SetActiveEquipmentSlot((byte)1);
                 inventory.SetEquipmentIndex((EquipmentIndex)equipItem1);
             }
+            
+            inventory.AddInfusionBonus((uint)-inventory.infusionBonus);
+            inventory.AddInfusionBonus((uint)infusion);
 
             player.master.money = (uint)money;
 

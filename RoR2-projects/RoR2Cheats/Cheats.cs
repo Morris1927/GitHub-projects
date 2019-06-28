@@ -12,6 +12,7 @@ using RoR2.CharacterAI;
 using Utilities;
 
 using ArgsHelper = Utilities.Generic.ArgsHelper;
+using System.Text;
 
 namespace RoR2Cheats {
     [BepInDependency("com.bepis.r2api")]
@@ -287,6 +288,33 @@ namespace RoR2Cheats {
         private static void HandleTimeScale(NetworkMessage netMsg) {
             NetworkReader reader = netMsg.reader;
             Time.timeScale = (float)reader.ReadDouble();
+        }
+
+        [ConCommand(commandName = "list_items", flags = ConVarFlags.ExecuteOnServer, helpText = "List all item names and their IDs")]
+        private static void CCListItems(ConCommandArgs args) {
+            StringBuilder text = new StringBuilder();
+            foreach (ItemIndex item in ItemCatalog.allItems)
+            {
+                int index = (int)item;
+                string line = string.Format("{0} = {1}", index, item);
+                text.AppendLine(line);
+            }
+
+            Debug.Log(text.ToString());
+        }
+
+
+        [ConCommand(commandName = "list_equips", flags = ConVarFlags.ExecuteOnServer, helpText = "List all equipment items and their IDs")]
+        private static void CCListEquipments(ConCommandArgs args) {
+            StringBuilder text = new StringBuilder();
+            foreach (EquipmentIndex item in EquipmentCatalog.allEquipment)
+            {
+                int index = (int)item;
+                string line = string.Format("{0} = {1}", index, item);
+                text.AppendLine(line);
+            }
+
+            Debug.Log(text.ToString());
         }
 
         [ConCommand(commandName = "give_item", flags = ConVarFlags.ExecuteOnServer, helpText = "Give item")]

@@ -344,7 +344,7 @@ namespace RoR2Cheats {
             } else if (Enum.TryParse<ItemIndex>(indexString, true, out itemType)) {
                 inventory.GiveItem(itemType, itemCount);
             } else {
-                Debug.Log("Incorrect arguments. Try: give_item syringe 10   --- https://pastebin.com/sTw3t56A for a list of items");
+                Debug.Log("Incorrect arguments. Try: give_item syringe 10   --- list_items for a list of items");
             }
 
 
@@ -370,7 +370,7 @@ namespace RoR2Cheats {
             } else if (Enum.TryParse<EquipmentIndex>(equipString, true, out equipType)) {
                 inventory.SetEquipmentIndex(equipType);
             } else {
-                Debug.Log("Incorrect arguments. Try: give_equip meteor   --- https://pastebin.com/RLRpDpwY for a list of equipment");
+                Debug.Log("Incorrect arguments. Try: give_equip meteor   --- list_equips for a list of all equipments");
             }
 
         }

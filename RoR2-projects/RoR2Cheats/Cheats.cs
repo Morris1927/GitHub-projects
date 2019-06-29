@@ -12,6 +12,7 @@ using RoR2.CharacterAI;
 using Utilities;
 
 using ArgsHelper = Utilities.Generic.ArgsHelper;
+using System.Text;
 
 namespace RoR2Cheats {
     [BepInDependency("com.bepis.r2api")]
@@ -289,6 +290,33 @@ namespace RoR2Cheats {
             Time.timeScale = (float)reader.ReadDouble();
         }
 
+        [ConCommand(commandName = "list_items", flags = ConVarFlags.ExecuteOnServer, helpText = "List all item names and their IDs")]
+        private static void CCListItems(ConCommandArgs args) {
+            StringBuilder text = new StringBuilder();
+            foreach (ItemIndex item in ItemCatalog.allItems)
+            {
+                int index = (int)item;
+                string line = string.Format("{0} = {1}", index, item);
+                text.AppendLine(line);
+            }
+
+            Debug.Log(text.ToString());
+        }
+
+
+        [ConCommand(commandName = "list_equips", flags = ConVarFlags.ExecuteOnServer, helpText = "List all equipment items and their IDs")]
+        private static void CCListEquipments(ConCommandArgs args) {
+            StringBuilder text = new StringBuilder();
+            foreach (EquipmentIndex item in EquipmentCatalog.allEquipment)
+            {
+                int index = (int)item;
+                string line = string.Format("{0} = {1}", index, item);
+                text.AppendLine(line);
+            }
+
+            Debug.Log(text.ToString());
+        }
+
         [ConCommand(commandName = "give_item", flags = ConVarFlags.ExecuteOnServer, helpText = "Give item")]
         private static void CCGiveItem(ConCommandArgs args) {
 
@@ -316,7 +344,7 @@ namespace RoR2Cheats {
             } else if (Enum.TryParse<ItemIndex>(indexString, true, out itemType)) {
                 inventory.GiveItem(itemType, itemCount);
             } else {
-                Debug.Log("Incorrect arguments. Try: give_item syringe 10   --- https://pastebin.com/sTw3t56A for a list of items");
+                Debug.Log("Incorrect arguments. Try: give_item syringe 10   --- list_items for a list of items");
             }
 
 
@@ -342,7 +370,7 @@ namespace RoR2Cheats {
             } else if (Enum.TryParse<EquipmentIndex>(equipString, true, out equipType)) {
                 inventory.SetEquipmentIndex(equipType);
             } else {
-                Debug.Log("Incorrect arguments. Try: give_equip meteor   --- https://pastebin.com/RLRpDpwY for a list of equipment");
+                Debug.Log("Incorrect arguments. Try: give_equip meteor   --- list_equips for a list of all equipments");
             }
 
         }

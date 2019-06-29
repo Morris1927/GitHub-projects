@@ -1,5 +1,6 @@
 ﻿using RoR2;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -39,7 +40,7 @@ namespace SavedGames.Data
                         playerMaster.AddDeployable(beetleBody.GetComponent<Deployable>(), DeployableSlot.BeetleGuardAlly);
 
                         beetleMaster.teamIndex = TeamIndex.Player;
-
+                        SavedGames.instance.StartCoroutine(WaitForStart(beetleBody));
                         break;
                     }
                 case "EngiTurretMaster": {
@@ -59,10 +60,16 @@ namespace SavedGames.Data
 
                         var turretBody = turretMaster.SpawnBody(BodyCatalog.FindBodyPrefab("EngiTurretBody"), transform.position.GetVector3(), transform.rotation.GetQuaternion());
                         turretMaster.teamIndex = TeamIndex.Player;
-
+                        SavedGames.instance.StartCoroutine(WaitForStart(turretBody));
                         break;
                     }
             }
         }
+
+        IEnumerator WaitForStart(CharacterBody turretBody) {
+            yield return null;
+            turretBody.transform.position = transform.position.GetVector3();
+        }
+
     }
 }

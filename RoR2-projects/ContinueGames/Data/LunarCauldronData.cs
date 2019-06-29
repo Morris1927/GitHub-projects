@@ -19,7 +19,6 @@ namespace SavedGames.Data
         public int tier;
         public int itemIndex;
 
-
         public static LunarCauldronData SaveLunarCauldron(ShopTerminalBehavior lunarCauldron) {
             var lunarCauldronData = new LunarCauldronData();
             var purchaseInteraction = lunarCauldron.GetComponent<PurchaseInteraction>();
@@ -53,7 +52,7 @@ namespace SavedGames.Data
             }
 
             purchaseInteraction.Networkcost = cost;
-            purchaseInteraction.costType = (CostType)costType;
+            purchaseInteraction.costType = (CostTypeIndex)costType;
 
         }
     }

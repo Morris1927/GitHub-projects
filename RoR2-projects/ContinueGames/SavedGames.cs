@@ -16,7 +16,7 @@ using System.Reflection;
 namespace SavedGames
 {
 
-    [BepInPlugin("com.morris1927.SavedGames", "SavedGames", "2.0.0")]
+    [BepInPlugin("com.morris1927.SavedGames", "SavedGames", "2.0.1")]
     public class SavedGames : BaseUnityPlugin {
 
         public static SavedGames instance { get; set; }
@@ -46,6 +46,7 @@ namespace SavedGames
                 orig(self);
             };
 
+
             On.RoR2.SceneDirector.PopulateScene += (orig, self) => {
                 if (!loadingScene) {
                     orig(self);
@@ -54,6 +55,7 @@ namespace SavedGames
             };
 
         }
+
 
         public void Update() {
             HandleInputs();
@@ -95,6 +97,7 @@ namespace SavedGames
             instance.StartCoroutine(instance.StartLoading(save));
         }
 
+
         [ConCommand(commandName = "save", flags = ConVarFlags.None, helpText = "Save game")]
         private static void CCSave(ConCommandArgs args) {
             if (args.Count != 1) {
@@ -117,6 +120,7 @@ namespace SavedGames
                 yield return new WaitUntil(() => Run.instance != null);
             }
             save.run.LoadData();
+
 
             yield return new WaitForSeconds(Stage.instance == null ? 1.5f : 0.75f);
             save.Load();

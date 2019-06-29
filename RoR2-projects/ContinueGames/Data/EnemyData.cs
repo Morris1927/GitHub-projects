@@ -8,7 +8,7 @@ using UnityEngine.Networking;
 using EntityStates.Missions.Goldshores;
 
 using Object = UnityEngine.Object;
-using MonoMod.ModInterop;
+
 
 namespace SavedGames.Data
 {
@@ -96,8 +96,8 @@ namespace SavedGames.Data
 
                 bossGroup.bossDropChance = 1f;
                 bossGroup.dropPosition = GoldshoresMissionController.instance.bossSpawnPosition;
-
-                bossGroup.AddMember(enemy);
+                 
+                bossGroup.combatSquad.AddMember(enemy);
                 bossFight.SetFieldValue("bossGroup", bossGroup);
                 bossFight.SetFieldValue("hasSpawnedBoss", true);
                 bossFight.SetFieldValue("bossInstanceBody", enemy.GetBody());
@@ -106,7 +106,7 @@ namespace SavedGames.Data
 
                 GoldshoresMissionController.instance.GetComponent<EntityStateMachine>().SetNextState(bossFight);
             } else if(isBoss) {
-                BossGroup.instance.AddMember(enemy);
+                BossGroup.instance.combatSquad.AddMember(enemy);
             }
 
             SavedGames.instance.StartCoroutine(WaitForStart(enemy));

@@ -112,7 +112,7 @@ namespace SavedGames.Data {
             yield return null;
             var healthComponent = player.GetCurrentBody().healthComponent;
 
-            healthComponent.health = health + 1;
+            healthComponent.health = health;
             healthComponent.shield = shields;
         }
     }

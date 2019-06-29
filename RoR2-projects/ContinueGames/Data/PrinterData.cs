@@ -24,7 +24,7 @@ namespace SavedGames.Data {
         }
 
         public void LoadPrinter() {
-            var gameobject = Resources.Load<SpawnCard>(Path + name).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var gameobject = Resources.Load<SpawnCard>(Path + name).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion(), null);
             var printer = gameobject.GetComponent<ShopTerminalBehavior>();
             SavedGames.instance.StartCoroutine(WaitForStart(printer));
         }

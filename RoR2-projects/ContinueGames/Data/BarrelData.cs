@@ -25,7 +25,7 @@ namespace SavedGames.Data {
         }
 
         public void LoadBarrel() {
-            var g = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var g = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion(), null);
             var barrel = g.GetComponent<BarrelInteraction>();
 
             SavedGames.instance.StartCoroutine(WaitForStart(barrel));

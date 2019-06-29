@@ -41,7 +41,7 @@ namespace SavedGames.Data {
         public void LoadTeleporter() {
             typeof(TeleporterInteraction).GetProperty("instance", BindingFlags.Public | BindingFlags.Static).SetValue(null, null);
 
-            var gameobject = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var gameobject = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion(), null);
             var teleporter = gameobject.GetComponent<TeleporterInteraction>();
 
             if (activationState == 2) {

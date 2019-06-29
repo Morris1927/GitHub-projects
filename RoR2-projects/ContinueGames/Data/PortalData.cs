@@ -36,7 +36,7 @@ namespace SavedGames.Data
                 //    }
                 case "RoR2/Scenes/goldshores": {
                         if (Stage.instance.sceneDef.sceneName.Contains("goldshores")) {
-                            var gameobject = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscGoldshoresPortal").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+                            var gameobject = Resources.Load<SpawnCard>("SpawnCards/InteractableSpawnCard/iscGoldshoresPortal").DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion(), null);
                             NetworkServer.Spawn(gameobject);
                             gameobject.GetComponent<SceneExitController>().useRunNextStageScene = useRunNextStageScene;
                         }

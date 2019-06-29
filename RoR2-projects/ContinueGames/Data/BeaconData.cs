@@ -29,7 +29,7 @@ namespace SavedGames.Data
         }
 
         public void LoadBeacon() {
-            var gameobject = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var gameobject = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion(), null);
             var beacon = gameobject.GetComponent<PurchaseInteraction>();
 
             beacon.SetAvailable(available);

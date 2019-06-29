@@ -22,7 +22,7 @@ namespace SavedGames.Data {
         }
 
         public void LoadShrineCombat() {
-            var gameobject = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var gameobject = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion(), null);
             var shrine = gameobject.GetComponent<ShrineCombatBehavior>();
             var purchaseInteraction = shrine.GetComponent<PurchaseInteraction>();
 

@@ -12,7 +12,12 @@ namespace QuickMonsterCreditFix
         private const int maxMonsterCredits = 14399;
 
         public void Awake() {
-            
+            On.RoR2.SceneCamera.Awake += (orig, self) => {
+
+                orig(self);
+                self.gameObject.AddComponent<Test>();
+            };
+
             IL.RoR2.CameraRigController.Update += (il) => {
                 var c = new ILCursor(il);
 
@@ -36,6 +41,11 @@ namespace QuickMonsterCreditFix
                 
             };
 
+        //   On.RoR2.UI.PauseScreenController.Update += (orig, self) => {
+        //       Debug.Log("sdfgsdfg");
+        //       orig(self);
+        //   };
+            
             On.RoR2.PositionIndicator.UpdatePositions += (orig, uiCamera) => {
                 
                 if (uiCamera.cameraRigController.target != null)

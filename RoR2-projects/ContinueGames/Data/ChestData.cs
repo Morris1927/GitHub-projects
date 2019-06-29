@@ -41,7 +41,7 @@ namespace SavedGames.Data {
             if (name.Contains("HumanFan")) {
                 return;
             }
-            var gameobject = Resources.Load<SpawnCard>(Path + name).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var gameobject = Resources.Load<SpawnCard>(Path + name).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion(), null);
             var chest = gameobject.GetComponent<ChestBehavior>();
             var purchaseInteraction = gameobject.GetComponent<PurchaseInteraction>();
 
@@ -52,7 +52,7 @@ namespace SavedGames.Data {
             }
 
             purchaseInteraction.Networkcost = cost;
-            purchaseInteraction.costType = (CostType) costType;
+            purchaseInteraction.costType = (CostTypeIndex) costType;
 
             chest.dropRoller = new UnityEngine.Events.UnityEvent();
 

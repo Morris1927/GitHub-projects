@@ -26,7 +26,7 @@ namespace SavedGames.Data {
         }
 
         public void LoadShrineChance() {
-            var gameobject = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var gameobject = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion(), null);
             var shrineChance = gameobject.GetComponent<ShrineChanceBehavior>();
             var purchaseInteraction = shrineChance.GetComponent<PurchaseInteraction>();
 

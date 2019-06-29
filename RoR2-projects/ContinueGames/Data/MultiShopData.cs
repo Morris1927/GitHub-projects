@@ -43,7 +43,7 @@ namespace SavedGames.Data {
         }
 
         public void LoadMultiShop() {
-            var gameobject = Resources.Load<SpawnCard>(Path + name).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var gameobject = Resources.Load<SpawnCard>(Path + name).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion(), null);
             var multiShop = gameobject.GetComponent<MultiShopController>();
 
             multiShop.Networkcost = cost;

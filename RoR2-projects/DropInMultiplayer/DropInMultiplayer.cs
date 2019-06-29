@@ -14,7 +14,7 @@ using UnityEngine.Networking;
 
 namespace DropInMultiplayer {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.morris1927.DropInMultiplayer", "DropInMultiplayer", "2.1.0")]
+    [BepInPlugin("com.morris1927.DropInMultiplayer", "DropInMultiplayer", "2.2.0")]
     public class DropInMultiplayer : BaseUnityPlugin {
 
         private static ConfigWrapper<bool> ImmediateSpawn { get; set; }

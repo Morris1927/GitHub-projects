@@ -22,7 +22,7 @@ namespace SavedGames.Data {
         }
 
         public void LoadBrokenDrone() {
-            var gameobject = Resources.Load<SpawnCard>(Path + name).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion());
+            var gameobject = Resources.Load<SpawnCard>(Path + name).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion(), null);
             var drone = gameobject.GetComponent<SummonMasterBehavior>();
 
             drone.GetComponent<PurchaseInteraction>().Networkcost = cost;

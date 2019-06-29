@@ -1,8 +1,10 @@
-﻿using MonoMod.Cil;
+﻿using Mono.Cecil.Cil;
+using MonoMod.Cil;
 using RoR2;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 using Utilities;
 
 namespace RoR2Cheats

@@ -59,6 +59,7 @@ namespace RoR2Cheats {
             new List<string> { "LemurianBruiserMaster", "LemurianBruiser"},
             new List<string> { "LemurianBruiserMasterFire", "LemurianBruiserFire"},
             new List<string> { "LemurianBruiserMasterIce", "LemurianBruiserIce"},
+            new List<string> { "LemurianBruiserMasterPoison", "LemurianBruiserPoison"},
             new List<string> { "LemurianMaster", "Lemurian"},
             new List<string> { "MagmaWormMaster", "MagmaWorm"},
             new List<string> { "MegaDroneMaster", "MegaDrone"},
@@ -75,6 +76,7 @@ namespace RoR2Cheats {
 
         public static List<List<string>> masterLink = new List<List<string>>() {
             new List<string> { "AncientWispBody", "AncientWispMaster", "AncientWisp"},
+            new List<string> { "ArchWispBody", "ArchWispMaster", "ArchWisp"},
             new List<string> { "BeetleGuardAllyBody", "BeetleGuardAllyMaster", "BeetleGuardAlly"},
             new List<string> { "BeetleGuardBody", "BeetleGuardMaster", "BeetleGuard"},
             new List<string> { "BeetleBody", "BeetleMaster", "Beetle"},
@@ -83,6 +85,7 @@ namespace RoR2Cheats {
             new List<string> { "BisonBody", "BisonMaster", "Bison"},
             new List<string> { "ClayBossBody", "ClayBossMaster", "ClayBoss"},
             new List<string> { "ClayBody", "ClaymanMaster", "Clayman"},
+            new List<string> { "ClayBruiserBody", "ClayBruiserMaster", "ClayBruiser"},
             new List<string> { "CommandoBody", "CommandoMaster", "Commando"},
             new List<string> { "CommandoBody", "CommandoMonsterMaster", "CommandoMonster"},
             new List<string> { "CommandoPerformanceTestBody", "CommandoMonsterMaster", "CommandoPerformanceTest"},
@@ -93,7 +96,9 @@ namespace RoR2Cheats {
             new List<string> { "ElectricWormBody", "ElectricWormMaster", "ElectricWorm"},
             new List<string> { "EngiBeamTurretBody", "EngiBeamTurretMaster", "EngiBeamTurret"},
             new List<string> { "EngiTurretBody", "EngiTurretMaster", "EngiTurret"},
+            new List<string> { "FlameDroneBody", "FlameDroneMaster", "FlameDrone"},
             new List<string> { "GolemBody", "GolemMaster", "Golem"},
+            new List<string> { "GravekeeperBody", "GravekeeperMaster", "Gravekeeper"},
             new List<string> { "GreaterWispBody", "GreaterWispMaster", "GreaterWisp"},
             new List<string> { "HermitCrabBody", "HermitCrabMaster", "HermitCrab"},
             new List<string> { "ImpBossBody", "ImpBossMaster", "ImpBoss"},
@@ -102,6 +107,7 @@ namespace RoR2Cheats {
             new List<string> { "LemurianBruiserBody", "LemurianBruiserMaster", "LemurianBruiser"},
             new List<string> { "LemurianBruiserBody", "LemurianBruiserMasterFire", "LemurianBruiserFire"},
             new List<string> { "LemurianBruiserBody", "LemurianBruiserMasterIce", "LemurianBruiserIce"},
+            new List<string> { "LemurianBruiserBody", "LemurianBruiserMasterPoison", "LemurianBruiserPoison"},
             new List<string> { "LemurianBody", "LemurianMaster", "Lemurian"},
             new List<string> { "MagmaWormBody", "MagmaWormMaster", "MagmaWorm"},
             new List<string> { "MegaDroneBody", "MegaDroneMaster", "MegaDrone"},
@@ -111,6 +117,7 @@ namespace RoR2Cheats {
             new List<string> { "TitanGoldBody", "TitanGoldMaster", "TitanGold"},
             new List<string> { "TitanBody", "TitanMaster", "Titan"},
             new List<string> { "Turret1Body", "Turret1Master", "Turret1"},
+            new List<string> { "UrchinTurretBody", "UrchinTurretMaster", "UrchinTurret"},
             new List<string> { "VagrantBody", "VagrantMaster", "Vagrant"},
             new List<string> { "WispBody", "WispMaster", "Wisp" }
 
@@ -128,23 +135,25 @@ namespace RoR2Cheats {
             new List<string> { "BanditBody", "Bandit"},
             new List<string> { "SniperBody", "Sniper"},
             new List<string> { "HANDBody", "HAND", "HAN-D"},
+            new List<string> { "TreebotBody", "Treebot", "REX"},
+
 
             new List<string> { "AltarSkeletonBody", "AltarSkeleton"},
             new List<string> { "AncientWispBody", "AncientWisp"},
+            new List<string> { "ArchWispBody", "ArchWisp"},
             new List<string> { "BackupDroneBody", "BackupDrone"},
             new List<string> { "BackupDroneOldBody", "BackupDroneOld"},
             new List<string> { "BeetleBody", "Beetle"},
             new List<string> { "BeetleGuardAllyBody", "BeetleGuardAlly"},
             new List<string> { "BeetleGuardBody", "BeetleGuard"},
-            new List<string> { "BeetleQueen2Body", "BeetleQueen2"},
-            new List<string> { "BeetleQueen3Body", "BeetleQueen3"},
-            new List<string> { "BeetleQueenBody", "BeetleQueen"},
+            new List<string> { "BeetleQueen2Body", "BeetleQueen"},
             new List<string> { "BellBody", "Bell"},
             new List<string> { "BirdsharkBody", "Birdshark"},
             new List<string> { "BisonBody", "Bison"},
             new List<string> { "BomberBody", "Bomber"},
             new List<string> { "ClayBody", "Clay"},
             new List<string> { "ClayBossBody", "ClayBoss"},
+            new List<string> { "ClayBruiserBody", "ClayBruiser"},
             new List<string> { "CommandoPerformanceTestBody", "CommandoPerformanceTest"},
             new List<string> { "Drone1Body", "Drone1"},
             new List<string> { "Drone2Body", "Drone2"},
@@ -153,9 +162,11 @@ namespace RoR2Cheats {
             new List<string> { "EngiBeamTurretBody", "EngiBeamTurret"},
             new List<string> { "EngiTurretBody", "EngiTurret"},
             new List<string> { "ExplosivePotDestructibleBody", "ExplosivePotDestructible"},
+            new List<string> { "FlameDroneBody", "FlameDrone"},
             new List<string> { "FusionCellDestructibleBody", "FusionCellDestructible"},
             new List<string> { "GolemBody", "Golem"},
             new List<string> { "GolemBodyInvincible", "GolemInvincible"},
+            new List<string> { "GravekeeperBody", "Gravekeeper"},
             new List<string> { "GreaterWispBody", "GreaterWisp"},
             new List<string> { "HaulerBody", "Hauler"},
             new List<string> { "HermitCrabBody", "HermitCrab"},
@@ -179,6 +190,7 @@ namespace RoR2Cheats {
             new List<string> { "TitanBody", "Titan"},
             new List<string> { "TitanGoldBody", "TitanGold"},
             new List<string> { "Turret1Body", "Turret1"},
+            new List<string> { "UrchinTurretBody", "UrchinTurret"},
             new List<string> { "VagrantBody", "Vagrant"},
             new List<string> { "WispBody", "Wisp" }
         };
@@ -304,7 +316,7 @@ namespace RoR2Cheats {
         }
 
 
-        [ConCommand(commandName = "list_equips", flags = ConVarFlags.ExecuteOnServer, helpText = "List all equipment items and their IDs")]
+        [ConCommand(commandName = "list_equips", flags = ConVarFlags.None, helpText = "List all equipment items and their IDs")]
         private static void CCListEquipments(ConCommandArgs args) {
             StringBuilder text = new StringBuilder();
             foreach (EquipmentIndex item in EquipmentCatalog.allEquipment)
@@ -317,7 +329,7 @@ namespace RoR2Cheats {
             Debug.Log(text.ToString());
         }
 
-        [ConCommand(commandName = "give_item", flags = ConVarFlags.ExecuteOnServer, helpText = "Give item")]
+        [ConCommand(commandName = "give_item", flags = ConVarFlags.None, helpText = "Give item")]
         private static void CCGiveItem(ConCommandArgs args) {
 
             string indexString = ArgsHelper.GetValue(args.userArgs, 0);

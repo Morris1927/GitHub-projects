@@ -12,6 +12,7 @@ using SavedGames.Data;
 
 using ArgsHelper = Utilities.Generic.ArgsHelper;
 using System.Reflection;
+using System.IO;
 
 namespace SavedGames
 {
@@ -26,14 +27,15 @@ namespace SavedGames
         public static ConfigWrapper<int> loadKey { get; set; }
         public static ConfigWrapper<int> saveKey { get; set; }
 
+        public static string directory = Assembly.GetExecutingAssembly().Location.Replace("SavedGames.dll", "SaveStates/");
+
         public void Awake() {
             if (instance == null) {
                 instance = this;
             } else {
                 Destroy(this);
             }
-
-            //Config.Wrap
+            
             loadKey = Config.Wrap<int>(
                 "Keybinds", "LoadKey", null,
                 (int) KeyCode.F5);
@@ -89,14 +91,12 @@ namespace SavedGames
                 return;
             }
 
+            string fileName = ArgsHelper.GetValue(args.userArgs, 0);
+            string saveJSON = File.ReadAllText($"{directory}{fileName}.json");
 
-            string saveString = PlayerPrefs.GetString("Save" + ArgsHelper.GetValue(args.userArgs, 0));
-            if (saveString == "") {
-                Debug.Log("Save does not exist.");
-                return;
-            }
-            SaveData save = TinyJson.JSONParser.FromJson<SaveData>(saveString);
+            SaveData save = TinyJson.JSONParser.FromJson<SaveData>(saveJSON);
             instance.StartCoroutine(instance.StartLoading(save));
+            
         }
 
 
@@ -106,7 +106,19 @@ namespace SavedGames
                 Debug.Log("Command failed, requires 1 argument: save <filename>");
                 return;
             }
-            SaveData.Save(ArgsHelper.GetValue(args.userArgs, 0));
+
+
+            SaveData save = new SaveData();
+
+            string json = TinyJson.JSONWriter.ToJson(save);
+            string fileName = ArgsHelper.GetValue(args.userArgs, 0);
+            //PlayerPrefs.SetString("Save" + fileName, json);
+
+            if (!Directory.Exists(directory)) {
+                Directory.CreateDirectory(directory);
+            }
+            System.IO.File.WriteAllText($"{directory}{fileName}.json", json);
+
         }
 
         private IEnumerator StartLoading(SaveData save) {

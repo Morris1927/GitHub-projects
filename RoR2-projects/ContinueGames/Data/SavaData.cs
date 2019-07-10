@@ -37,115 +37,110 @@ namespace SavedGames.Data {
 
         public TeleporterData teleporter;
 
-        public static void Save(string saveFile) {
-            var save = new SaveData();
-            save.players = new List<PlayerData>();
-            save.enemies = new List<EnemyData>();
-            save.chests = new List<ChestData>();
-            save.barrels = new List<BarrelData>();
-            save.printers = new List<PrinterData>();
-            save.multiShops = new List<MultiShopData>();
-            save.brokenDrones = new List<BrokenDroneData>();
-            save.fans = new List<FanData>();
+        public SaveData() {
+            players = new List<PlayerData>();
+            enemies = new List<EnemyData>();
+            chests = new List<ChestData>();
+            barrels = new List<BarrelData>();
+            printers = new List<PrinterData>();
+            multiShops = new List<MultiShopData>();
+            brokenDrones = new List<BrokenDroneData>();
+            fans = new List<FanData>();
 
-            save.chanceShrines = new List<ShrineChanceData>();
-            save.bloodShrines = new List<ShrineBloodData>();
-            save.bossShrines = new List<ShrineBossData>();
-            save.combatShrines = new List<ShrineCombatData>();
-            save.goldshoreShrines = new List<ShrineGoldshoresAccessData>();
-            save.bazaarPods = new List<BazaarPodData>();
-            save.lunarCauldrons = new List<LunarCauldronData>();
-            save.healingShrines = new List<ShrineHealingData>();
-            save.orderShrines = new List<ShrineRestackData>();
+            chanceShrines = new List<ShrineChanceData>();
+            bloodShrines = new List<ShrineBloodData>();
+            bossShrines = new List<ShrineBossData>();
+            combatShrines = new List<ShrineCombatData>();
+            goldshoreShrines = new List<ShrineGoldshoresAccessData>();
+            bazaarPods = new List<BazaarPodData>();
+            lunarCauldrons = new List<LunarCauldronData>();
+            healingShrines = new List<ShrineHealingData>();
+            orderShrines = new List<ShrineRestackData>();
 
-            save.itemDroplets = new List<ItemDropletData>();
-            save.portals = new List<PortalData>();
-            save.beacons = new List<BeaconData>();
+            itemDroplets = new List<ItemDropletData>();
+            portals = new List<PortalData>();
+            beacons = new List<BeaconData>();
 
             foreach (var item in NetworkUser.readOnlyInstancesList) {
-                save.players.Add(new PlayerData(item));
+                players.Add(new PlayerData(item));
             }
 
             foreach (var item in Object.FindObjectsOfType<CharacterMaster>()) {
                 if (item.GetBody() != null) {
                     if (!item.GetBody().isPlayerControlled) {
-                        save.enemies.Add(new EnemyData(item));
+                        enemies.Add(new EnemyData(item));
 
                     }
                 }
             }
             foreach (var item in Object.FindObjectsOfType<ChestBehavior>()) {
-                save.chests.Add(new ChestData(item));
+                chests.Add(new ChestData(item));
             }
             foreach (var item in Object.FindObjectsOfType<BarrelInteraction>()) {
-                save.barrels.Add(new BarrelData(item));
+                barrels.Add(new BarrelData(item));
             }
             foreach (var item in Object.FindObjectsOfType<ShopTerminalBehavior>()) {
                 if (item.name.Contains("Duplicator")) {
-                    save.printers.Add(new PrinterData(item));
+                    printers.Add(new PrinterData(item));
                 }
                 if (item.name.Contains("LunarShopTerminal")) {
-                    save.bazaarPods.Add(new BazaarPodData(item));
+                    bazaarPods.Add(new BazaarPodData(item));
                 }
                 if (item.name.Contains("LunarCauldron")) {
-                    save.lunarCauldrons.Add(new LunarCauldronData(item));
+                    lunarCauldrons.Add(new LunarCauldronData(item));
                 }
             }
             foreach (var item in Object.FindObjectsOfType<MultiShopController>()) {
-                save.multiShops.Add(new MultiShopData(item));
+                multiShops.Add(new MultiShopData(item));
             }
             foreach (var item in Object.FindObjectsOfType<ShrineChanceBehavior>()) {
-                save.chanceShrines.Add(new ShrineChanceData(item));
+                chanceShrines.Add(new ShrineChanceData(item));
             }
             foreach (var item in Object.FindObjectsOfType<ShrineBloodBehavior>()) {
-                save.bloodShrines.Add(new ShrineBloodData(item));
+                bloodShrines.Add(new ShrineBloodData(item));
             }
             foreach (var item in Object.FindObjectsOfType<ShrineBossBehavior>()) {
-                save.bossShrines.Add(new ShrineBossData(item));
+                bossShrines.Add(new ShrineBossData(item));
             }
             foreach (var item in Object.FindObjectsOfType<ShrineCombatBehavior>()) {
-                save.combatShrines.Add(new ShrineCombatData(item));
+                combatShrines.Add(new ShrineCombatData(item));
             }
             foreach (var item in Object.FindObjectsOfType<ShrineHealingBehavior>()) {
-                save.healingShrines.Add(new ShrineHealingData(item));
+                healingShrines.Add(new ShrineHealingData(item));
             }
             foreach (var item in Object.FindObjectsOfType<ShrineRestackBehavior>()) {
-                save.orderShrines.Add(new ShrineRestackData(item));
+                orderShrines.Add(new ShrineRestackData(item));
             }
             foreach (var item in Object.FindObjectsOfType<PortalStatueBehavior>()) {
                 if (item.name.Contains("Goldshores")) {
-                    save.goldshoreShrines.Add(new ShrineGoldshoresAccessData(item));
+                    goldshoreShrines.Add(new ShrineGoldshoresAccessData(item));
                 }
             }
             foreach (var item in Object.FindObjectsOfType<SummonMasterBehavior>()) {
-                save.brokenDrones.Add(new BrokenDroneData(item));
+                brokenDrones.Add(new BrokenDroneData(item));
             }
             foreach (var item in Object.FindObjectsOfType<GenericPickupController>()) {
                 if (item.enabled) {
-                    save.itemDroplets.Add(new ItemDropletData(item));
+                    itemDroplets.Add(new ItemDropletData(item));
                 }
             }
             foreach (var item in Object.FindObjectsOfType<SceneExitController>()) {
-                save.portals.Add(new PortalData(item));
+                portals.Add(new PortalData(item));
             }
             foreach (var item in Object.FindObjectsOfType<PurchaseInteraction>()) {
                 if (item.name.Contains("GoldshoresBeacon")) {
-                    save.beacons.Add(new BeaconData(item));
+                    beacons.Add(new BeaconData(item));
                 }
                 if (item.name.Contains("HumanFan")) {
-                    save.fans.Add(new FanData(item));
+                    fans.Add(new FanData(item));
                 }
             }
             if (TeleporterInteraction.instance) {
-                save.teleporter = new TeleporterData(TeleporterInteraction.instance);
+                teleporter = new TeleporterData(TeleporterInteraction.instance);
             }
 
-            save.run = new RunData(Object.FindObjectOfType<Run>());
+            run = new RunData(Object.FindObjectOfType<Run>());
 
-
-            string json = TinyJson.JSONWriter.ToJson(save);
-            //Debug.Log(json);
-            PlayerPrefs.SetString("Save" + saveFile, json);
         }
 
 

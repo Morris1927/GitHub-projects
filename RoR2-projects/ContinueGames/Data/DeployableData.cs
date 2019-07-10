@@ -65,8 +65,7 @@ namespace SavedGames.Data
 
         IEnumerator WaitForStart(CharacterBody turretBody) {
             yield return null;
-            Debug.Log(turretBody.transform.position);
-            //turretBody.transform.position = transform.position.GetVector3();
+            turretBody.transform.position = transform.position.GetVector3() + Vector3.up;
         }
 
     }

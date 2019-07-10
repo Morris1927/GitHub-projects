@@ -15,13 +15,11 @@ namespace SavedGames.Data
         public int itemIndex;
         public bool isEquipment;
 
-        public static ItemDropletData SaveItemDroplet(GenericPickupController pickupDroplet) {
-            var itemDropletData = new ItemDropletData();
-            itemDropletData.transform = new SerializableTransform(pickupDroplet.transform);
-            itemDropletData.itemIndex = (int) pickupDroplet.pickupIndex.value;
-            itemDropletData.isEquipment = pickupDroplet.pickupIndex.value >= (int) ItemIndex.Count;
+        public ItemDropletData(GenericPickupController pickupDroplet) {
+           transform = new SerializableTransform(pickupDroplet.transform);
+           itemIndex = (int)pickupDroplet.pickupIndex.value;
+           isEquipment = pickupDroplet.pickupIndex.value >= (int)ItemIndex.Count;
 
-            return itemDropletData;
         }
 
 

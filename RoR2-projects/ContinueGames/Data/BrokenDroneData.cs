@@ -12,13 +12,10 @@ namespace SavedGames.Data {
         public string name;
         public int cost;
 
-        public static BrokenDroneData SaveBrokenDrone(SummonMasterBehavior drone) {
-            var brokenDroneData = new BrokenDroneData();
-            brokenDroneData.transform = new SerializableTransform(drone.transform);
-            brokenDroneData.name = "Broken" + drone.name.Replace("Broken(Clone)", "");
-            brokenDroneData.cost = drone.GetComponent<PurchaseInteraction>().cost;
-
-            return brokenDroneData;
+        public BrokenDroneData(SummonMasterBehavior drone) {
+            transform = new SerializableTransform(drone.transform);
+            name = "Broken" + drone.name.Replace("Broken(Clone)", "");
+            cost = drone.GetComponent<PurchaseInteraction>().cost;
         }
 
         public void LoadBrokenDrone() {

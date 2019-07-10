@@ -23,23 +23,21 @@ namespace SavedGames.Data {
 
         public bool available;
 
-        public static MultiShopData SaveMultiShop(MultiShopController multiShop) {
-            var multiShopData = new MultiShopData();
+        public MultiShopData(MultiShopController multiShop) {
 
-            multiShopData.transform = new SerializableTransform(multiShop.transform);
-            multiShopData.name = multiShop.name.Replace("(Clone)", "");
+            transform = new SerializableTransform(multiShop.transform);
+            name = multiShop.name.Replace("(Clone)", "");
 
             foreach (var item in (GameObject[]) getTerminalGameObjects.GetValue(multiShop)) {
                 var shopTerminal = item.GetComponent<ShopTerminalBehavior>();
 
-                multiShopData.itemIndexes.Add((int) shopTerminal.GetFieldValue<PickupIndex>("pickupIndex").itemIndex);
-                multiShopData.hidden.Add((bool)  shopTerminal.pickupIndexIsHidden);
+                itemIndexes.Add((int) shopTerminal.GetFieldValue<PickupIndex>("pickupIndex").itemIndex);
+                hidden.Add((bool)  shopTerminal.pickupIndexIsHidden);
             }
 
-            multiShopData.cost = multiShop.GetFieldValue<int>("cost");
-            multiShopData.available = multiShop.GetFieldValue<bool>("available");
+            cost = multiShop.GetFieldValue<int>("cost");
+            available = multiShop.GetFieldValue<bool>("available");
             
-            return multiShopData;
         }
 
         public void LoadMultiShop() {

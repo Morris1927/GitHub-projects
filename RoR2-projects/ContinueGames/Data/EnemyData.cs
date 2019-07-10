@@ -34,32 +34,30 @@ namespace SavedGames.Data
         public bool isBoss;
         
 
-        public static EnemyData SaveEnemy(CharacterMaster enemy) {
-            var enemyData = new EnemyData();
+        public EnemyData(CharacterMaster enemy) {
             var inventory = enemy.inventory;
             var healthComponent = enemy.GetBody().healthComponent;
             var deathRewards = enemy.GetBody().GetComponent<DeathRewards>();
 
-            enemyData.transform = new SerializableTransform(enemy.GetBody().transform);
-            enemyData.enemyName = enemy.name.Replace("Master(Clone)", "");
-            enemyData.teamIndex = (int) enemy.teamIndex;
+            transform = new SerializableTransform(enemy.GetBody().transform);
+            enemyName = enemy.name.Replace("Master(Clone)", "");
+            teamIndex = (int) enemy.teamIndex;
 
-            enemyData.items = new int[(int) ItemIndex.Count - 1];
+            items = new int[(int) ItemIndex.Count - 1];
             for (int i = 0; i < (int) ItemIndex.Count -1; i++) {
-                enemyData.items[i] = inventory.GetItemCount((ItemIndex)i);
+                items[i] = inventory.GetItemCount((ItemIndex)i);
             }
 
-            enemyData.equipmentIndex = (int) inventory.GetEquipmentIndex();
-            enemyData.health = (float) healthComponent.health;
-            enemyData.shields = (float) healthComponent.shield;
+            equipmentIndex = (int) inventory.GetEquipmentIndex();
+            health = (float) healthComponent.health;
+            shields = (float) healthComponent.shield;
 
             if (deathRewards != null) {
-                enemyData.expReward = (int) deathRewards.expReward;
-                enemyData.goldReward = (int) deathRewards.goldReward;
+                expReward = (int) deathRewards.expReward;
+                goldReward = (int) deathRewards.goldReward;
             }
 
-            enemyData.isBoss = enemy.isBoss;
-            return enemyData;
+            isBoss = enemy.isBoss;
         }
 
         public void LoadEnemy() {

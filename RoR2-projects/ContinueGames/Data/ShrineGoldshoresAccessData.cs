@@ -13,17 +13,14 @@ namespace SavedGames.Data {
         public bool available;
         public int cost;
 
-        public static ShrineGoldshoresAccessData SaveShrineGoldshores(PortalStatueBehavior shrine) {
-            var shrineGoldshoresAccessData = new ShrineGoldshoresAccessData();
+        public ShrineGoldshoresAccessData(PortalStatueBehavior shrine) {
             var purchaseInteraction = shrine.GetComponent<PurchaseInteraction>();
 
-            shrineGoldshoresAccessData.transform = new SerializableTransform(shrine.transform);
-            shrineGoldshoresAccessData.cost = purchaseInteraction.cost;
-            shrineGoldshoresAccessData.available = purchaseInteraction.available;
+            transform = new SerializableTransform(shrine.transform);
+            cost = purchaseInteraction.cost;
+            available = purchaseInteraction.available;
 
-            shrineGoldshoresAccessData.portalIndex = (int) shrine.portalType;
-
-            return shrineGoldshoresAccessData;
+            portalIndex = (int) shrine.portalType;
         }
 
         public void LoadShrineGoldshores() {

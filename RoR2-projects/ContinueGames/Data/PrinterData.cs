@@ -13,14 +13,11 @@ namespace SavedGames.Data {
 
         public int itemIndex;
 
-        public static PrinterData SavePrinter(ShopTerminalBehavior printer) {
-            PrinterData printerData = new PrinterData();
-
-            printerData.transform = new SerializableTransform(printer.transform);
-            printerData.itemIndex = (int) printer.CurrentPickupIndex().itemIndex;
-            printerData.name = printer.name.Replace("(Clone)", "");
-
-            return printerData;
+        public PrinterData(ShopTerminalBehavior printer) {
+            transform = new SerializableTransform(printer.transform);
+            itemIndex = (int) printer.CurrentPickupIndex().itemIndex;
+            name = printer.name.Replace("(Clone)", "");
+            
         }
 
         public void LoadPrinter() {

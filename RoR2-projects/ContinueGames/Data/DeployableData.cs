@@ -17,13 +17,9 @@ namespace SavedGames.Data
         public string name;
 
 
-        public static DeployableData SaveDeployable(Deployable deployable) {
-            var deployableData = new DeployableData();
-            deployableData.transform = new SerializableTransform(deployable.transform);
-            deployableData.name = deployable.name.Replace("(Clone)", "");
-
-
-            return deployableData;
+        public DeployableData(Deployable deployable) {
+            transform = new SerializableTransform(deployable.transform);
+            name = deployable.name.Replace("(Clone)", "");
         }
 
         public void LoadDeployable(CharacterMaster playerMaster) {
@@ -40,7 +36,6 @@ namespace SavedGames.Data
                         playerMaster.AddDeployable(beetleBody.GetComponent<Deployable>(), DeployableSlot.BeetleGuardAlly);
 
                         beetleMaster.teamIndex = TeamIndex.Player;
-                        SavedGames.instance.StartCoroutine(WaitForStart(beetleBody));
                         break;
                     }
                 case "EngiTurretMaster": {
@@ -59,6 +54,8 @@ namespace SavedGames.Data
                         playerMaster.AddDeployable(deployable, DeployableSlot.EngiTurret);
 
                         var turretBody = turretMaster.SpawnBody(BodyCatalog.FindBodyPrefab("EngiTurretBody"), transform.position.GetVector3(), transform.rotation.GetQuaternion());
+                        Debug.Log(transform.position.GetVector3());
+                        turretMaster.transform.position = transform.position.GetVector3();
                         turretMaster.teamIndex = TeamIndex.Player;
                         SavedGames.instance.StartCoroutine(WaitForStart(turretBody));
                         break;
@@ -68,7 +65,8 @@ namespace SavedGames.Data
 
         IEnumerator WaitForStart(CharacterBody turretBody) {
             yield return null;
-            turretBody.transform.position = transform.position.GetVector3();
+            Debug.Log(turretBody.transform.position);
+            //turretBody.transform.position = transform.position.GetVector3();
         }
 
     }

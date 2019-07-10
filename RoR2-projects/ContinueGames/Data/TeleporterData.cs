@@ -24,18 +24,16 @@ namespace SavedGames.Data {
         public bool celestialOrb;
 
 
-        public static TeleporterData SaveTeleporter(TeleporterInteraction teleporter) {
-            var teleporterData = new TeleporterData();
+        public TeleporterData(TeleporterInteraction teleporter) {
+            transform = new SerializableTransform(teleporter.transform);
+            remainingCharge = teleporter.remainingChargeTimer;
+            activationState = (int) getActivationState.GetValue(teleporter);
+            bossShrineStacks = teleporter.shrineBonusStacks;
 
-            teleporterData.transform = new SerializableTransform(teleporter.transform);
-            teleporterData.remainingCharge = teleporter.remainingChargeTimer;
-            teleporterData.activationState = (int) getActivationState.GetValue(teleporter);
-            teleporterData.bossShrineStacks = teleporter.shrineBonusStacks;
-            teleporterData.blueOrb = teleporter.Network_shouldAttemptToSpawnShopPortal;
-            teleporterData.goldOrb = teleporter.Network_shouldAttemptToSpawnGoldshoresPortal;
-            teleporterData.celestialOrb = teleporter.Network_shouldAttemptToSpawnMSPortal;
-
-            return teleporterData;
+            blueOrb = teleporter.Network_shouldAttemptToSpawnShopPortal;
+            goldOrb = teleporter.Network_shouldAttemptToSpawnGoldshoresPortal;
+            celestialOrb = teleporter.Network_shouldAttemptToSpawnMSPortal;
+            
         }
 
         public void LoadTeleporter() {

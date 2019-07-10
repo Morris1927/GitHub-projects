@@ -19,17 +19,15 @@ namespace SavedGames.Data
         public int tier;
         public int itemIndex;
 
-        public static LunarCauldronData SaveLunarCauldron(ShopTerminalBehavior lunarCauldron) {
-            var lunarCauldronData = new LunarCauldronData();
+        public LunarCauldronData(ShopTerminalBehavior lunarCauldron) {
             var purchaseInteraction = lunarCauldron.GetComponent<PurchaseInteraction>();
 
-            lunarCauldronData.transform = new SerializableTransform(lunarCauldron.transform);
-            lunarCauldronData.cost = purchaseInteraction.cost;
-            lunarCauldronData.costType = (int) purchaseInteraction.costType;
-            lunarCauldronData.tier = (int) lunarCauldron.itemTier;
-            lunarCauldronData.itemIndex = (int) lunarCauldron.CurrentPickupIndex().value;
-
-            return lunarCauldronData;
+            transform = new SerializableTransform(lunarCauldron.transform);
+            cost = purchaseInteraction.cost;
+            costType = (int) purchaseInteraction.costType;
+            tier = (int) lunarCauldron.itemTier;
+            itemIndex = (int) lunarCauldron.CurrentPickupIndex().value;
+            
         }
 
         public void LoadLunarCauldron() {

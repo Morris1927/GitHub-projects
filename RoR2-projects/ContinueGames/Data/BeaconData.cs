@@ -18,15 +18,12 @@ namespace SavedGames.Data
         public int cost;
 
 
-        public static BeaconData SaveBeacon(PurchaseInteraction beacon) {
-            var beaconData = new BeaconData();
-
-            beaconData.transform = new SerializableTransform(beacon.transform);
-            beaconData.available = beacon.available;
-            beaconData.cost = beacon.cost;
-
-            return beaconData;
+        public BeaconData(PurchaseInteraction beacon) {
+            transform = new SerializableTransform(beacon.transform);
+            available = beacon.available;
+            cost = beacon.cost;
         }
+
 
         public void LoadBeacon() {
             var gameobject = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion(), null);

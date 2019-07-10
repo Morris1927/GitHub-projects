@@ -15,13 +15,10 @@ namespace SavedGames.Data {
 
         public bool opened;
 
-        public static BarrelData SaveBarrel(BarrelInteraction barrel) {
-            var barrelData = new BarrelData();
+        public BarrelData(BarrelInteraction barrel) {
+            transform = new SerializableTransform(barrel.transform);
 
-            barrelData.transform = new SerializableTransform(barrel.transform);
-
-            barrelData.opened = barrel.GetFieldValue<bool>("opened");
-            return barrelData;
+            opened = barrel.GetFieldValue<bool>("opened");
         }
 
         public void LoadBarrel() {

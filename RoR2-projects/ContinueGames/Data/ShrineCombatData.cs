@@ -11,14 +11,11 @@ namespace SavedGames.Data {
         public bool available;
 
 
-        public static ShrineCombatData SaveShrineCombat(ShrineCombatBehavior shrine) {
-            var shrineCombatData = new ShrineCombatData();
+        public ShrineCombatData(ShrineCombatBehavior shrine) {
             var purchaseInteraction = shrine.GetComponent<PurchaseInteraction>();
 
-            shrineCombatData.transform = new SerializableTransform(shrine.transform);
-            shrineCombatData.available = purchaseInteraction.available;
-
-            return shrineCombatData;
+            transform = new SerializableTransform(shrine.transform);
+            available = purchaseInteraction.available;
         }
 
         public void LoadShrineCombat() {

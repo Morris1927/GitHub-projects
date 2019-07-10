@@ -11,14 +11,12 @@ namespace SavedGames.Data {
 
         public bool available;
 
-        public static ShrineRestackData SaveShrineRestack(ShrineRestackBehavior shrine) {
-            var shrineRestackData = new ShrineRestackData();
+        public ShrineRestackData(ShrineRestackBehavior shrine) {
             var purchaseInteraction = shrine.GetComponent<PurchaseInteraction>();
 
-            shrineRestackData.transform = new SerializableTransform(shrine.transform);
-            shrineRestackData.available = purchaseInteraction.available;
-
-            return shrineRestackData;
+            transform = new SerializableTransform(shrine.transform);
+            available = purchaseInteraction.available;
+            
         }
 
         public void LoadShrineRestack() {

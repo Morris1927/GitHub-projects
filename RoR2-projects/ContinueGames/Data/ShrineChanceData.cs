@@ -13,16 +13,14 @@ namespace SavedGames.Data {
         public int successfulPurchaseCount;
         public int cost;
         
-        public static ShrineChanceData SaveShrineChance(ShrineChanceBehavior shrine) {
-            var shrineChanceData = new ShrineChanceData();
+        public ShrineChanceData(ShrineChanceBehavior shrine) {
             var purchaseInteraction = shrine.GetComponent<PurchaseInteraction>();
 
-            shrineChanceData.transform = new SerializableTransform(shrine.transform);
-            shrineChanceData.successfulPurchaseCount = shrine.GetFieldValue<int>("successfulPurchaseCount");
-            shrineChanceData.cost = purchaseInteraction.cost;
-            shrineChanceData.available = purchaseInteraction.available;
+            transform = new SerializableTransform(shrine.transform);
+            successfulPurchaseCount = shrine.GetFieldValue<int>("successfulPurchaseCount");
+            cost = purchaseInteraction.cost;
+            available = purchaseInteraction.available;
 
-            return shrineChanceData;
         }
 
         public void LoadShrineChance() {

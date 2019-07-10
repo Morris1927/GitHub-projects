@@ -14,14 +14,11 @@ namespace SavedGames.Data
         public bool useRunNextStageScene;
 
 
-        public static PortalData SavePortal(SceneExitController portal) {
-            var portalData = new PortalData();
-            portalData.transform = new SerializableTransform(portal.transform);
-            portalData.name = portal.destinationScene.SceneName;
-            portalData.useRunNextStageScene = portal.useRunNextStageScene;
+        public PortalData(SceneExitController portal) {
+            transform = new SerializableTransform(portal.transform);
+            name = portal.destinationScene.SceneName;
+            useRunNextStageScene = portal.useRunNextStageScene;
             
-
-            return portalData;
         }
 
         public void LoadPortal() {

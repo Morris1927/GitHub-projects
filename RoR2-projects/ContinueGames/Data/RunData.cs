@@ -19,17 +19,13 @@ namespace SavedGames.Data
         public string sceneName;
         public int teamExp;
 
-        public static RunData SaveRun(Run run) {
-            var runData = new RunData();
-
-            runData.seed = run.seed.ToString();
-            runData.difficulty = (int)run.selectedDifficulty;
-            runData.fixedTime = run.GetRunStopwatch();
-            runData.stageClearCount = run.stageClearCount;
-            runData.sceneName = Stage.instance.sceneDef.sceneName;
-            runData.teamExp = (int) TeamManager.instance.GetTeamExperience(TeamIndex.Player);
-
-            return runData;
+        public RunData(Run run) {
+            seed = run.seed.ToString();
+            difficulty = (int)run.selectedDifficulty;
+            fixedTime = run.GetRunStopwatch();
+            stageClearCount = run.stageClearCount;
+            sceneName = Stage.instance.sceneDef.sceneName;
+            teamExp = (int) TeamManager.instance.GetTeamExperience(TeamIndex.Player);
         }
 
 

@@ -31,42 +31,39 @@ namespace SavedGames.Data {
 
         public bool alive;
 
-        public static PlayerData SavePlayer(NetworkUser player) {
-            var playerData = new PlayerData();
+        public PlayerData(NetworkUser player) {
             var inventory = player.master.inventory;
             var healthComponent = player.GetCurrentBody().GetComponent<HealthComponent>();
 
 
-            playerData.deployables = new List<DeployableData>();
+            deployables = new List<DeployableData>();
 
-            playerData.transform = new SerializableTransform(player.GetCurrentBody().transform);
-            playerData.username = player.userName;
-            playerData.alive = player.master.alive;
-            playerData.money = (int)player.master.money;
-            playerData.health = (int)healthComponent.health;
-            playerData.shields = (int)healthComponent.shield;
-            playerData.infusion = (int)inventory.infusionBonus;
+            transform = new SerializableTransform(player.GetCurrentBody().transform);
+            username = player.userName;
+            alive = player.master.alive;
+            money = (int)player.master.money;
+            health = (int)healthComponent.health;
+            shields = (int)healthComponent.shield;
+            infusion = (int)inventory.infusionBonus;
 
-            playerData.items = new int[(int)ItemIndex.Count - 1];
+            items = new int[(int)ItemIndex.Count - 1];
             for (int i = 0; i < (int)ItemIndex.Count - 1; i++) {
-                playerData.items[i] = inventory.GetItemCount((ItemIndex)i);
+                items[i] = inventory.GetItemCount((ItemIndex)i);
             }
 
-            playerData.equipItem0 = (int)inventory.GetEquipment(0).equipmentIndex;
-            playerData.equipItem1 = (int)inventory.GetEquipment(1).equipmentIndex;
-            playerData.equipItemCount = inventory.GetEquipmentSlotCount();
+            equipItem0 = (int)inventory.GetEquipment(0).equipmentIndex;
+            equipItem1 = (int)inventory.GetEquipment(1).equipmentIndex;
+            equipItemCount = inventory.GetEquipmentSlotCount();
 
-            playerData.characterBodyName = player.master.bodyPrefab.name;
+            characterBodyName = player.master.bodyPrefab.name;
 
             var deployablesList = player.master.GetFieldValue<List<DeployableInfo>>("deployablesList");
             if (deployablesList != null) {
                 foreach (var item in deployablesList) {
-                    playerData.deployables.Add(DeployableData.SaveDeployable(item.deployable));
+                    deployables.Add(new DeployableData(item.deployable));
                 }
             }
-
-
-            return playerData;
+            
         }
 
 

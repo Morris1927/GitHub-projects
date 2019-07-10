@@ -10,12 +10,10 @@ namespace SavedGames.Data {
 
         public bool available;
 
-        public static ShrineBossData SaveShrineBoss(ShrineBossBehavior shrine) {
-            var shrineBossData = new ShrineBossData();
-            shrineBossData.transform = new SerializableTransform(shrine.transform);
-            shrineBossData.available = shrine.GetComponent<PurchaseInteraction>().available;
-
-            return shrineBossData;
+        public ShrineBossData(ShrineBossBehavior shrine) {
+            transform = new SerializableTransform(shrine.transform);
+            available = shrine.GetComponent<PurchaseInteraction>().available;
+            
         }
 
         public void LoadShrineBoss() {

@@ -19,22 +19,20 @@ namespace SavedGames.Data {
 
         public bool opened;
 
-        public static ChestData SaveChest(ChestBehavior chest) {
-            var chestData = new ChestData();
+        public ChestData(ChestBehavior chest) {
             var stateMachine = chest.GetComponent<EntityStateMachine>();
             var purchaseInteraction = chest.GetComponent<PurchaseInteraction>();
 
-            chestData.name = chest.name.Replace("(Clone)", "");
-            chestData.transform = new SerializableTransform(chest.transform);
+            name = chest.name.Replace("(Clone)", "");
+            transform = new SerializableTransform(chest.transform);
 
-            chestData.index = chest.GetFieldValue<PickupIndex>("dropPickup").value;
-            chestData.isEquipment = chestData.index >= (int)ItemIndex.Count;
+            index = chest.GetFieldValue<PickupIndex>("dropPickup").value;
+            isEquipment = index >= (int)ItemIndex.Count;
 
-            chestData.opened = stateMachine.state.GetType().IsEquivalentTo(typeof(EntityStates.Barrel.Opened)) ? true : false;
-            chestData.cost = purchaseInteraction.cost;
-            chestData.costType = (int)purchaseInteraction.costType;
+            opened = stateMachine.state.GetType().IsEquivalentTo(typeof(EntityStates.Barrel.Opened)) ? true : false;
+            cost = purchaseInteraction.cost;
+            costType = (int)purchaseInteraction.costType;
 
-            return chestData;
         }
 
         public void LoadChest() {

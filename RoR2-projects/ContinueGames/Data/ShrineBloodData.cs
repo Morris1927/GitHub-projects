@@ -13,15 +13,12 @@ namespace SavedGames.Data {
         public int purchaseCount;
         public int cost;
 
-        public static ShrineBloodData SaveShrineBlood(ShrineBloodBehavior shrine) {
-            var shrineBloodData = new ShrineBloodData();
+        public ShrineBloodData(ShrineBloodBehavior shrine) {
             var purchaseInteraction = shrine.GetComponent<PurchaseInteraction>();
-            shrineBloodData.transform = new SerializableTransform(shrine.transform);
-            shrineBloodData.purchaseCount = shrine.GetFieldValue<int>("purchaseCount");
-            shrineBloodData.cost = purchaseInteraction.cost;
-            shrineBloodData.available = purchaseInteraction.available;
-
-            return shrineBloodData;
+            transform = new SerializableTransform(shrine.transform);
+            purchaseCount = shrine.GetFieldValue<int>("purchaseCount");
+            cost = purchaseInteraction.cost;
+            available = purchaseInteraction.available;
         }
 
         public void LoadShrineBlood() {

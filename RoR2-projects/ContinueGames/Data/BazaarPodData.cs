@@ -12,16 +12,14 @@ namespace SavedGames.Data {
         public int itemIndex;
         public int cost;
 
-        public static BazaarPodData SavePod(ShopTerminalBehavior pod) {
-            var bazaarPodData = new BazaarPodData();
-            bazaarPodData.transform = new SerializableTransform(pod.transform);
-
+        public BazaarPodData(ShopTerminalBehavior pod) {
+            transform = new SerializableTransform(pod.transform);
+            
             var purchaseInteraction = pod.GetComponent<PurchaseInteraction>();
-
-            bazaarPodData.available = purchaseInteraction.available;
-            bazaarPodData.itemIndex = (int)pod.CurrentPickupIndex().value;
-            bazaarPodData.cost = purchaseInteraction.cost;
-            return bazaarPodData;
+            
+            available = purchaseInteraction.available;
+            itemIndex = (int)pod.CurrentPickupIndex().value;
+            cost = purchaseInteraction.cost;
         }
 
         public void LoadPod() {

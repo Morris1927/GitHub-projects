@@ -13,14 +13,11 @@ namespace SavedGames.Data {
         public bool available;
 
 
-        public static ShrineHealingData SaveShrineHealing(ShrineHealingBehavior shrine) {
-            var shrineHealingData = new ShrineHealingData();
+        public ShrineHealingData(ShrineHealingBehavior shrine) {
             var purchaseInteraction = shrine.GetComponent<PurchaseInteraction>();
-            shrineHealingData.transform = new SerializableTransform(shrine.transform);
-            shrineHealingData.purchaseCount = shrine.purchaseCount;
-            shrineHealingData.available = purchaseInteraction.available;
-
-            return shrineHealingData;
+            transform = new SerializableTransform(shrine.transform);
+            purchaseCount = shrine.purchaseCount;
+            available = purchaseInteraction.available;
         }
 
         public void LoadShrineHealing() {

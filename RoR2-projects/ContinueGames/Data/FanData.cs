@@ -15,17 +15,15 @@ namespace SavedGames.Data {
         public SerializableVector3 jumpVelocity;
 
 
-        public static FanData SaveFan(PurchaseInteraction fan) {
-            var fanData = new FanData();
+        public FanData(PurchaseInteraction fan) {
             var jumpVolume = fan.GetComponentInChildren<JumpVolume>(true);
 
-            fanData.transform = new SerializableTransform(fan.transform);
+            transform = new SerializableTransform(fan.transform);
 
-            fanData.cost = fan.cost;
-            fanData.available = fan.available;
-            fanData.jumpVelocity = new SerializableVector3(jumpVolume.jumpVelocity);
+            cost = fan.cost;
+            available = fan.available;
+            jumpVelocity = new SerializableVector3(jumpVolume.jumpVelocity);
 
-            return fanData;
         }
 
         public void LoadFan() {

@@ -16,73 +16,61 @@
 
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\0Harmony.dll</HintPath>
+      <HintPath>..\Libs\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp.R2API.mm">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\Assembly-CSharp.R2API.mm.dll</HintPath>
+      <HintPath>..\Libs\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\BepInEx.dll</HintPath>
+      <HintPath>..\Libs\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx.Harmony">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\BepInEx.Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="BepInEx.MonoMod.Loader">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\BepInEx.MonoMod.Loader.dll</HintPath>
+      <HintPath>..\Libs\BepInEx.Harmony.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx.Preloader">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\BepInEx.Preloader.dll</HintPath>
+      <HintPath>..\Libs\BepInEx.Preloader.dll</HintPath>
     </Reference>
     <Reference Include="MMHOOK_Assembly-CSharp">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\MMHOOK_Assembly-CSharp.dll</HintPath>
+      <HintPath>..\Libs\MMHOOK_Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\Mono.Cecil.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Mdb">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\Mono.Cecil.Mdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Pdb">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\Mono.Cecil.Pdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Rocks">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\Mono.Cecil.Rocks.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoMod">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\MonoMod.exe</HintPath>
+      <HintPath>..\Libs\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="MonoMod.RuntimeDetour">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\MonoMod.RuntimeDetour.dll</HintPath>
+      <HintPath>..\Libs\MonoMod.RuntimeDetour.dll</HintPath>
     </Reference>
     <Reference Include="MonoMod.Utils">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\MonoMod.Utils.dll</HintPath>
+      <HintPath>..\Libs\MonoMod.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="R2API">
+      <HintPath>..\Libs\R2API.dll</HintPath>
+    </Reference>
+    <Reference Include="Rewired_Core">
+      <HintPath>..\Libs\Rewired_Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>..\Libs\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\UnityEngine.dll</HintPath>
+      <HintPath>..\Libs\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>..\Libs\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Networking">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\UnityEngine.Networking.dll</HintPath>
+      <HintPath>..\Libs\UnityEngine.Networking.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\UnityEngine.PhysicsModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.TextCoreModule">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\UnityEngine.TextCoreModule.dll</HintPath>
+      <HintPath>..\Libs\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\UnityEngine.TextRenderingModule.dll</HintPath>
+      <HintPath>..\Libs\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\UnityEngine.UI.dll</HintPath>
+      <HintPath>..\Libs\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UIModule">
-      <HintPath>..\..\..\RoR2-projects morris\RoR2-projects\Libs\UnityEngine.UIModule.dll</HintPath>
+      <HintPath>..\Libs\UnityEngine.UIModule.dll</HintPath>
     </Reference>
   </ItemGroup>
 

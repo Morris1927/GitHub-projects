@@ -11,6 +11,10 @@ namespace Utilities
 {
     class Generic
     {
+
+        private static Dictionary<string, UnityEngine.Object> resources = new Dictionary<string, UnityEngine.Object>();
+
+
         public static void PrintFields(Type type, object instance) {
             FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
             List<string> list = new List<string>();
@@ -25,6 +29,23 @@ namespace Utilities
             Debug.Log(listString);
         }
 
+        public static TReturn FindResource<TReturn>(string name) where TReturn : UnityEngine.Object {
+            if (resources.ContainsKey(name)) {
+                try {
+                    return (TReturn)Convert.ChangeType(resources[name], typeof(TReturn));
+                } catch (InvalidCastException) {
+                    return default;
+                }
+            } else {
+                foreach (var item in Resources.FindObjectsOfTypeAll<TReturn>()) {
+                    if (item.name.Equals(name)) {
+                        resources.Add(name, item);
+                        return (TReturn)Convert.ChangeType(item, typeof(TReturn));
+                    }
+                }
+            }
+            return default;
+        }
 
         public class ArgsHelper {
 

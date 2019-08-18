@@ -16,7 +16,7 @@ using System.Text;
 
 namespace RoR2Cheats {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.morris1927.RoR2Cheats", "RoR2Cheats", "2.3.0")]
+    [BepInPlugin("com.morris1927.RoR2Cheats", "RoR2Cheats", "2.3.1")]
     public class Cheats : BaseUnityPlugin {
         
         private static ConfigWrapperJson<float> sprintFovMultiplierConfig { get; set; }
@@ -50,6 +50,7 @@ namespace RoR2Cheats {
             new List<string> { "ElectricWormMaster", "ElectricWorm"},
             new List<string> { "EngiBeamTurretMaster", "EngiBeamTurret"},
             new List<string> { "EngiTurretMaster", "EngiTurret"},
+            new List<string> { "EquipmentDroneMaster", "EquipmentDrone"},
             new List<string> { "GolemMaster", "Golem"},
             new List<string> { "GreaterWispMaster", "GreaterWisp"},
             new List<string> { "HermitCrabMaster", "HermitCrab"},
@@ -96,6 +97,7 @@ namespace RoR2Cheats {
             new List<string> { "ElectricWormBody", "ElectricWormMaster", "ElectricWorm"},
             new List<string> { "EngiBeamTurretBody", "EngiBeamTurretMaster", "EngiBeamTurret"},
             new List<string> { "EngiTurretBody", "EngiTurretMaster", "EngiTurret"},
+            new List<string> { "EquipmentDroneBody", "EquipmentDroneMaster", "EquipmentDrone"},
             new List<string> { "FlameDroneBody", "FlameDroneMaster", "FlameDrone"},
             new List<string> { "GolemBody", "GolemMaster", "Golem"},
             new List<string> { "GravekeeperBody", "GravekeeperMaster", "Gravekeeper"},
@@ -580,7 +582,7 @@ namespace RoR2Cheats {
             }
         }
 
-        [ConCommand(commandName = "sprint_fov_multiplier", flags = ConVarFlags.Engine, helpText = "Set your sprint FOV multiplier")]
+        [ConCommand(commandName = "fov_sprint_multiplier", flags = ConVarFlags.Engine, helpText = "Set your sprint FOV multiplier")]
         private static void CCSetSprintFOVMulti(ConCommandArgs args) {
             if (args.Count == 0) {
                 Debug.Log(sprintFovMultiplier);

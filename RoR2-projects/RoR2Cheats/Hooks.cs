@@ -7,6 +7,8 @@ using System.Text;
 using UnityEngine;
 using Utilities;
 
+#pragma warning disable 3026
+
 namespace RoR2Cheats
 {
     public class Hooks
@@ -94,8 +96,7 @@ namespace RoR2Cheats
                     x => x.MatchLdcR4(1.3f)
                 );
                 c.Index++;
-                c.EmitDelegate<Func<float, float>>((f) => { return Cheats.sprintFovMultiplier; });
-
+                c.EmitDelegate<Func<float, float>>((f) => { return 1; });
             };
 
             IL.EntityStates.Huntress.BackflipState.FixedUpdate += il => {

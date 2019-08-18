@@ -35,6 +35,7 @@ namespace DropInMultiplayer {
             "MercBody",
             "MageBody",
             "BanditBody",
+            "TreebotBody",
         };
 
         public static List<List<string>> bodyList = new List<List<string>> {
@@ -48,6 +49,7 @@ namespace DropInMultiplayer {
             new List<string> { "BanditBody", "Bandit"},
             new List<string> { "SniperBody", "Sniper"},
             new List<string> { "HANDBody", "HAND", "HAN-D"},
+            new List<string> { "TreebotBody", "Support", "Rex"},
 
             new List<string> { "AltarSkeletonBody", "AltarSkeleton"},
             new List<string> { "AncientWispBody", "AncientWisp"},
@@ -144,7 +146,7 @@ namespace DropInMultiplayer {
             On.RoR2.NetworkUser.Start += (orig, self) => {
                 orig(self);
                 if (NetworkServer.active && Stage.instance != null)
-                    AddChatMessage("Join the game by typing 'spawn_as [name]' names are Commando, Huntress, Engi, Mage, Merc, Toolbot, Bandit", 5f);
+                    AddChatMessage("Join the game by typing 'spawn_as [name]' names are Commando, Huntress, Engi, Mage, Merc, Toolbot, Bandit, Rex", 5f);
             };
 
             On.RoR2.Run.SetupUserCharacterMaster += SetupUserCharacterMaster;

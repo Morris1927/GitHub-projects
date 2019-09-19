@@ -46,8 +46,8 @@ namespace SavedGames.Data {
             shields = (int)healthComponent.shield;
             infusion = (int)inventory.infusionBonus;
 
-            items = new int[(int)ItemIndex.Count - 1];
-            for (int i = 0; i < (int)ItemIndex.Count - 1; i++) {
+            items = new int[(int)ItemIndex.Count];
+            for (int i = 0; i < (int)ItemIndex.Count; i++) {
                 items[i] = inventory.GetItemCount((ItemIndex)i);
             }
 

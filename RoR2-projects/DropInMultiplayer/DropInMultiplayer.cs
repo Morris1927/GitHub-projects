@@ -14,7 +14,7 @@ using UnityEngine.Networking;
 
 namespace DropInMultiplayer {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.morris1927.DropInMultiplayer", "DropInMultiplayer", "2.2.0")]
+    [BepInPlugin("com.morris1927.DropInMultiplayer", "DropInMultiplayer", "2.2.1")]
     public class DropInMultiplayer : BaseUnityPlugin {
 
         private static ConfigWrapper<bool> ImmediateSpawn { get; set; }
@@ -53,20 +53,20 @@ namespace DropInMultiplayer {
 
             new List<string> { "AltarSkeletonBody", "AltarSkeleton"},
             new List<string> { "AncientWispBody", "AncientWisp"},
+            new List<string> { "ArchWispBody", "ArchWisp"},
             new List<string> { "BackupDroneBody", "BackupDrone"},
             new List<string> { "BackupDroneOldBody", "BackupDroneOld"},
             new List<string> { "BeetleBody", "Beetle"},
             new List<string> { "BeetleGuardAllyBody", "BeetleGuardAlly"},
             new List<string> { "BeetleGuardBody", "BeetleGuard"},
-            new List<string> { "BeetleQueen2Body", "BeetleQueen2"},
-            new List<string> { "BeetleQueen3Body", "BeetleQueen3"},
-            new List<string> { "BeetleQueenBody", "BeetleQueen"},
+            new List<string> { "BeetleQueen2Body", "BeetleQueen"},
             new List<string> { "BellBody", "Bell"},
             new List<string> { "BirdsharkBody", "Birdshark"},
             new List<string> { "BisonBody", "Bison"},
             new List<string> { "BomberBody", "Bomber"},
             new List<string> { "ClayBody", "Clay"},
             new List<string> { "ClayBossBody", "ClayBoss"},
+            new List<string> { "ClayBruiserBody", "ClayBruiser"},
             new List<string> { "CommandoPerformanceTestBody", "CommandoPerformanceTest"},
             new List<string> { "Drone1Body", "Drone1"},
             new List<string> { "Drone2Body", "Drone2"},
@@ -75,9 +75,11 @@ namespace DropInMultiplayer {
             new List<string> { "EngiBeamTurretBody", "EngiBeamTurret"},
             new List<string> { "EngiTurretBody", "EngiTurret"},
             new List<string> { "ExplosivePotDestructibleBody", "ExplosivePotDestructible"},
+            new List<string> { "FlameDroneBody", "FlameDrone"},
             new List<string> { "FusionCellDestructibleBody", "FusionCellDestructible"},
             new List<string> { "GolemBody", "Golem"},
             new List<string> { "GolemBodyInvincible", "GolemInvincible"},
+            new List<string> { "GravekeeperBody", "Gravekeeper"},
             new List<string> { "GreaterWispBody", "GreaterWisp"},
             new List<string> { "HaulerBody", "Hauler"},
             new List<string> { "HermitCrabBody", "HermitCrab"},
@@ -101,6 +103,7 @@ namespace DropInMultiplayer {
             new List<string> { "TitanBody", "Titan"},
             new List<string> { "TitanGoldBody", "TitanGold"},
             new List<string> { "Turret1Body", "Turret1"},
+            new List<string> { "UrchinTurretBody", "UrchinTurret"},
             new List<string> { "VagrantBody", "Vagrant"},
             new List<string> { "WispBody", "Wisp" }
         };
@@ -133,7 +136,7 @@ namespace DropInMultiplayer {
             HostOnlySpawnAs = Config.Wrap("Enable/Disable", "HostOnlySpawnAs", "Changes the spawn_as command to be host only", false);
 
             On.RoR2.Console.Awake += (orig, self) => {
-                CommandHelper.RegisterCommands(self);
+                Utilities.Generic.CommandHelper.RegisterCommands(self);
                 orig(self);
             };
 
@@ -146,7 +149,7 @@ namespace DropInMultiplayer {
             On.RoR2.NetworkUser.Start += (orig, self) => {
                 orig(self);
                 if (NetworkServer.active && Stage.instance != null)
-                    AddChatMessage("Join the game by typing 'spawn_as [name]' names are Commando, Huntress, Engi, Mage, Merc, Toolbot, Bandit, Rex", 5f);
+                    AddChatMessage("Join the game by typing 'dim_spawn_as [name]' names are Commando, Huntress, Engi, Mage, Merc, Toolbot, Bandit, Rex", 5f);
             };
 
             On.RoR2.Run.SetupUserCharacterMaster += SetupUserCharacterMaster;
@@ -173,7 +176,7 @@ namespace DropInMultiplayer {
             List<string> split = new List<string>(self.text.Split(Char.Parse(" ")));
             string commandName = ArgsHelper.GetValue(split, 0);
 
-            if (commandName.Equals("spawn_as", StringComparison.OrdinalIgnoreCase)) {
+            if (commandName.Equals("dim_spawn_as", StringComparison.OrdinalIgnoreCase)) {
 
 
                 string bodyString = ArgsHelper.GetValue(split, 1);
@@ -224,9 +227,9 @@ namespace DropInMultiplayer {
                     master.Respawn(master.GetBody().transform.position, master.GetBody().transform.rotation);
                     AddChatMessage(player.userName + " respawning as " + bodyString);
                 } else if (!master.alive) {
-                    AddChatMessage("Cannot use spawn_as while dead");
+                    AddChatMessage("Cannot use dim_spawn_as while dead");
                 } else if (!AllowSpawnAsWhileAlive.Value && master.alive) {
-                    AddChatMessage("Cannot use spawn_as while alive");
+                    AddChatMessage("Cannot use dim_spawn_as while alive");
                 }
             } else {
                 Run.instance.SetFieldValue("allowNewParticipants", true);
@@ -331,7 +334,7 @@ namespace DropInMultiplayer {
 
 
 
-        [ConCommand(commandName = "spawn_as", flags = ConVarFlags.ExecuteOnServer, helpText = "Spawn as a new character. Type body_list for a full list of characters")]
+        [ConCommand(commandName = "dim_spawn_as", flags = ConVarFlags.ExecuteOnServer, helpText = "Spawn as a new character. Type body_list for a full list of characters")]
         private static void CCSpawnAs(ConCommandArgs args) {
             if (args.Count == 0) {
                 return;
@@ -366,30 +369,5 @@ namespace DropInMultiplayer {
         }
     }
 
-
-    //CommandHelper written by Wildbook
-    public class CommandHelper {
-        public static void RegisterCommands(RoR2.Console self) {
-            var types = typeof(CommandHelper).Assembly.GetTypes();
-            var catalog = self.GetFieldValue<IDictionary>("concommandCatalog");
-
-            foreach (var methodInfo in types.SelectMany(x => x.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))) {
-                var customAttributes = methodInfo.GetCustomAttributes(false);
-                foreach (var attribute in customAttributes.OfType<ConCommandAttribute>()) {
-                    var conCommand = Reflection.GetNestedType<RoR2.Console>("ConCommand").Instantiate();
-
-                    if (!DropInMultiplayer.SpawnAsEnabled.Value && attribute.commandName.Equals("spawn_as", StringComparison.CurrentCultureIgnoreCase)) {
-                        return;
-                    }
-
-                    conCommand.SetFieldValue("flags", attribute.flags);
-                    conCommand.SetFieldValue("helpText", attribute.helpText);
-                    conCommand.SetFieldValue("action", (RoR2.Console.ConCommandDelegate)Delegate.CreateDelegate(typeof(RoR2.Console.ConCommandDelegate), methodInfo));
-
-                    catalog[attribute.commandName.ToLower()] = conCommand;
-                }
-            }
-        }
-    }
 
 }

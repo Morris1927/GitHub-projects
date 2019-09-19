@@ -43,8 +43,8 @@ namespace SavedGames.Data
             enemyName = enemy.name.Replace("Master(Clone)", "");
             teamIndex = (int) enemy.teamIndex;
 
-            items = new int[(int) ItemIndex.Count - 1];
-            for (int i = 0; i < (int) ItemIndex.Count -1; i++) {
+            items = new int[(int) ItemIndex.Count];
+            for (int i = 0; i < (int) ItemIndex.Count; i++) {
                 items[i] = inventory.GetItemCount((ItemIndex)i);
             }
 
@@ -78,7 +78,7 @@ namespace SavedGames.Data
             enemy.SpawnBody(BodyCatalog.FindBodyPrefab(enemyName + "Body"), transform.position.GetVector3(), transform.rotation.GetQuaternion());
 
             enemy.teamIndex = (TeamIndex) teamIndex;
-            for (int i = 0; i < (int)ItemIndex.Count - 1; i++) {
+            for (int i = 0; i < (int)ItemIndex.Count; i++) {
                 inventory.GiveItem((ItemIndex)i, items[i]);
             }
             inventory.SetEquipmentIndex((EquipmentIndex)equipmentIndex);

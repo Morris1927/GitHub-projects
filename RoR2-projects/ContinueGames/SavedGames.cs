@@ -25,7 +25,7 @@ using UnityEngine.Events;
 namespace SavedGames
 {
 
-    [BepInPlugin("com.morris1927.SavedGames", "SavedGames", "2.1.0")]
+    [BepInPlugin("com.morris1927.SavedGames", "SavedGames", "2.1.1")]
     public class SavedGames : BaseUnityPlugin {
 
         public static SavedGames instance { get; set; }
@@ -277,10 +277,10 @@ namespace SavedGames
                 RoR2.Console.instance.SubmitCmd(null, "load quicksave ");
             }
             //---------------//---------------//---------------//---------------//---------------//---------------//---------------//---------------//---------------
-            if (Input.GetKeyDown(KeyCode.F6)) {
-                //Quick cheats
-                RoR2.Console.instance.SubmitCmd(NetworkUser.readOnlyLocalPlayersList[0], "give_item hoof 30; god; kill_all; no_enemies");
-            }
+           // if (Input.GetKeyDown(KeyCode.F6)) {
+           //     //Quick cheats
+           //     RoR2.Console.instance.SubmitCmd(NetworkUser.readOnlyLocalPlayersList[0], "give_item hoof 30; god; kill_all; no_enemies");
+           // }
             //---------------//---------------//---------------//---------------//---------------//---------------//---------------//---------------//---------------
         }
 

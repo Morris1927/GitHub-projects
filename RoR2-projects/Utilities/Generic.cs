@@ -9,11 +9,15 @@ using UnityEngine;
 
 namespace Utilities
 {
-    class Generic
+    static class Generic
     {
 
         private static Dictionary<string, UnityEngine.Object> resources = new Dictionary<string, UnityEngine.Object>();
 
+
+        public static string Remove(this string String, string stringToRemove) {
+            return String.Replace(stringToRemove, "");
+        }
 
         public static void PrintFields(Type type, object instance) {
             FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);

@@ -143,7 +143,8 @@ namespace RoR2Cheats {
 
 
             int itemCount = 1;
-            int.TryParse(countString, out itemCount);
+            if (!int.TryParse(countString, out itemCount))
+                itemCount = 1;
 
             int itemIndex = 0;
             ItemIndex itemType = ItemIndex.Syringe;

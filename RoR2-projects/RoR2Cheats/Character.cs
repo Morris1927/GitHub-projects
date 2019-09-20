@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Utilities;
 
 public class Character {
 
@@ -35,7 +36,7 @@ public class Character {
                 return character;
         }
 
-        return null;
+        return new Character(name, name.Remove("Body") + "Master", new string[] { "" });
     }
 
     public static List<Character> characters = new List<Character>() {

@@ -1,136 +1,51 @@
 ﻿using BepInEx;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using Mono.Cecil;
 using System;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.Scripting;
+using MonoMod.RuntimeDetour.HookGen;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SandBox
 {
-    [BepInPlugin("com.morris1927.sandbox", "sandbox", "1.0.0")]
+    [BepInPlugin("com.morris1927.sandbox", "Sandbox", "1.0.0")]
     public class SandBox : BaseUnityPlugin {
+        Dictionary<string, int> d = new Dictionary<string, int>(); 
+
+        public void Awake() {
+            int count = 0;
+
+            foreach (var item in Assembly.GetAssembly(typeof(On.CSteamID)).GetTypes()) {
+                if (d.ContainsKey(item.Namespace)) {
+                    d[item.Namespace]++;
+                } else {
+                    d.Add(item.Namespace, 1);
+                }
+                
+            }
+            foreach (var item in d.OrderByDescending(x => x.Value).ToList()) {
+                Debug.Log(item.Value + " " + item.Key);
+            }
+            Debug.Log(count);
+            
+            //var assembly = AssemblyDefinition.ReadAssembly("C:\\Games\\Steam\\steamapps\\common\\Risk of Rain 2\\BepInEx\\plugins\\R2API\\MMHOOK_Assembly-CSharp.dll");
+            //foreach (var item in assembly.MainModule.GetTypes()) {
+            ////    Debug.Log(item.Name);
+            //
+            //}
+
+        }
+
+        public void Update() {
+        }
 
 
 
-
-
-
-
-
-
-      //  public void Awake() {
-      //      // GarbageCollector.GCMode = GarbageCollector.Mode.Disabled;
-      //
-      //      IL.EntityStates.Treebot.Weapon.FireSyringe.OnEnter += (il) => {
-      //          var c = new ILCursor(il);
-      //
-      //          c.GotoNext((x) => (x.MatchRet()));
-      //          //c.Emit(OpCodes.Ldfld, typeof(RoR2.RoR2Application).Assembly.GetType("EntityStates.Treebot.Weapon.FireSyringe").GetField("duration", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance));
-      //          c.Emit(OpCodes.Ldarg_0);
-      //          c.EmitDelegate<Action<EntityStates.BaseState>>((x) => {
-      //              Debug.Log(x.GetFieldValue<float>("duration"));
-      //          });
-      //          
-      //      };
-      //      IL.RoR2.BodyCatalog.GeneratePortraits += il => {
-      //          var c = new ILCursor(il);
-      //
-      //          Debug.Log(il.ToString());
-      //      };
-      //
-      //      IL.RoR2.CameraRigController.Update += (il) => {
-      //          var c = new ILCursor(il);
-      //
-      //          //We use GotoNext to locate the code we want to edit
-      //          //Notice we can specify a block of instructions to match, rather than only a single instruction
-      //          //This is preferable as it is less likely to break something else because of an update
-      //
-      //          c.GotoNext(
-      //              x => x.MatchLdloc(4),      // num14 *= 0.5f;
-      //              x => x.MatchLdcR4(0.5f),   // 
-      //              x => x.MatchMul(),         // 
-      //              x => x.MatchStloc(4),      // 
-      //              x => x.MatchLdloc(5),      // num15 *= 0.5f;
-      //              x => x.MatchLdcR4(0.5f),   //
-      //              x => x.MatchMul(),         //
-      //              x => x.MatchStloc(5));     //
-      //
-      //          //When we GotoNext, the cursor is before the first instruction we match.
-      //          //So we remove the next 8 instructions
-      //          c.RemoveRange(8);
-      //          //Logger.LogError(il.ToString());
-      //      };
-      //  }
-      //  //
-      //  //     public void Update() {
-      //  //
-      //  //         if (Time.frameCount % 60 == 0) {
-      //  //              Debug.Log(GC.GetTotalMemory(false));
-      //  //         }
-      //  //         if (Input.GetKeyDown(KeyCode.U)) {
-      //  //             GarbageCollector.GCMode = GarbageCollector.GCMode == GarbageCollector.Mode.Enabled ? GarbageCollector.Mode.Disabled : GarbageCollector.Mode.Enabled;
-      //  //             Debug.Log(GarbageCollector.GCMode);
-      //  //         }
-      //  //
-      //  //
-      //  //         if (Input.GetKeyDown(KeyCode.I)) {
-      //  //             GarbageCollector.GCMode = GarbageCollector.Mode.Enabled;
-      //  //             GC.Collect();
-      //  //             GarbageCollector.GCMode = GarbageCollector.Mode.Disabled;
-      //  //         }
-      //  //
-      //  //     }
-      //
-      //  //    public void Awake() {
-      //  //        On.RoR2.SceneCamera.Awake += (orig, self) => {
-      //  //
-      //  //            orig(self);
-      //  //            self.gameObject.AddComponent<Test>();
-      //  //        };
-      //  //
-      //  //        IL.RoR2.CameraRigController.Update += (il) => {
-      //  //            var c = new ILCursor(il);
-      //  //
-      //  //            //We use GotoNext to locate the code we want to edit
-      //  //            //Notice we can specify a block of instructions to match, rather than only a single instruction
-      //  //            //This is preferable as it is less likely to break something else because of an update
-      //  //
-      //  //            c.GotoNext(
-      //  //                x => x.MatchLdloc(4),      // num14 *= 0.5f;
-      //  //                x => x.MatchLdcR4(0.5f),   // 
-      //  //                x => x.MatchMul(),         // 
-      //  //                x => x.MatchStloc(4),      // 
-      //  //                x => x.MatchLdloc(5),      // num15 *= 0.5f;
-      //  //                x => x.MatchLdcR4(0.5f),   //
-      //  //                x => x.MatchMul(),         //
-      //  //                x => x.MatchStloc(5));     //
-      //  //
-      //  //            //When we GotoNext, the cursor is before the first instruction we match.
-      //  //            //So we remove the next 8 instructions
-      //  //            c.RemoveRange(8);
-      //  //            
-      //  //        };
-      //  //
-      //  //    //   On.RoR2.UI.PauseScreenController.Update += (orig, self) => {
-      //  //    //       Debug.Log("sdfgsdfg");
-      //  //    //       orig(self);
-      //  //    //   };
-      //  //        
-      //  //        On.RoR2.PositionIndicator.UpdatePositions += (orig, uiCamera) => {
-      //  //            
-      //  //            if (uiCamera.cameraRigController.target != null)
-      //  //                orig(uiCamera);
-      //  //
-      //  //        };
-      //  //
-      //  //        On.RoR2.CombatDirector.Simulate += (orig, self, deltaTime) => {
-      //  //            self.monsterCredit = Mathf.Min(self.monsterCredit, maxMonsterCredits);
-      //  //           // if (self.monsterCredit < 0) {
-      //  //           //     self.monsterCredit = maxMonsterCredits;
-      //  //           // }
-      //  //            orig(self, deltaTime);
-      //  //        };
-      //  //    };
+      
 
     }
 }

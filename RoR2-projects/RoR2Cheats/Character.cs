@@ -35,7 +35,7 @@ public class Character {
             if (character.IsMatch(name))
                 return character;
         }
-
+        
         return new Character(name, name.Remove("Body") + "Master", new string[] { "" });
     }
 

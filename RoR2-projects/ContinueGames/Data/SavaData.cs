@@ -115,6 +115,7 @@ namespace SavedGames.Data {
                 if (item.name.Contains("Goldshores")) {
                     goldshoreShrines.Add(new ShrineGoldshoresAccessData(item));
                 }
+
             }
             foreach (var item in Object.FindObjectsOfType<SummonMasterBehavior>()) {
                 brokenDrones.Add(new BrokenDroneData(item));
@@ -125,20 +126,25 @@ namespace SavedGames.Data {
                 }
             }
             foreach (var item in Object.FindObjectsOfType<SceneExitController>()) {
-                portals.Add(new PortalData(item));
+                if (!item.name.Contains("Teleporter")) {
+                    if (item.destinationScene.sceneName != null) {
+                        portals.Add(new PortalData(item));
+                    }               
+                }
             }
             foreach (var item in Object.FindObjectsOfType<PurchaseInteraction>()) {
                 if (item.name.Contains("GoldshoresBeacon")) {
+                    Debug.Log(item.name);
                     beacons.Add(new BeaconData(item));
                 }
                 if (item.name.Contains("HumanFan")) {
+                    Debug.Log(item.name);
                     fans.Add(new FanData(item));
                 }
             }
             if (TeleporterInteraction.instance) {
                 teleporter = new TeleporterData(TeleporterInteraction.instance);
             }
-
             run = new RunData(Object.FindObjectOfType<Run>());
 
         }

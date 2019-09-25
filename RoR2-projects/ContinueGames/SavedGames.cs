@@ -39,6 +39,7 @@ namespace SavedGames
 
         
         public void Awake() {
+            //Singleton used for hacky crap :)
             if (instance == null) {
                 instance = this;
             } else {
@@ -52,12 +53,14 @@ namespace SavedGames
                 "Keybinds", "SaveKey", null,
                 (int) KeyCode.F8);
 
+            //Register our Commands
             On.RoR2.Console.Awake += (orig, self) => {
                 Generic.CommandHelper.RegisterCommands(self);
                 orig(self);
             };
 
 
+            //Stop the scene loading objects so we can load our own
             On.RoR2.SceneDirector.PopulateScene += (orig, self) => {
                 if (!loadingScene) {
                     orig(self);
@@ -65,25 +68,23 @@ namespace SavedGames
                 loadingScene = false;
             };
 
+            //Removing targetGraphic null error
             On.RoR2.UI.CustomButtonTransition.DoStateTransition += (orig, self, state, instant) => {
                 if (self.targetGraphic != null) {
                     orig(self, state, instant);
 
-                } else {
-
-                    Debug.LogWarning("RoR2.UI.CustomButtonTransition .DoStateTransition called with no targetGraphic");
                 }
             };
+
+            //Removing targetGraphic null error
             On.RoR2.UI.CustomScrollbar.DoStateTransition += (orig, self, state, instant) => {
                 if (self.targetGraphic != null) {
                     orig(self, state, instant);
 
-                } else {
-
-                    Debug.LogWarning("RoR2.UI.CustomScrollbar.DoStateTransition called with no targetGraphic");
                 }
             };
 
+            //Setup "Load Game" Main Menu button and loading menu
             On.RoR2.UI.MainMenu.MainMenuController.Start += (orig, self) => {
                 ModButton button = new ModButton("Load Game");
                 Transform buttonTransform = button.gameObject.transform;
@@ -229,6 +230,7 @@ namespace SavedGames
                 orig(self);
             };
 
+            //Add save button to pause screen
             On.RoR2.UI.PauseScreenController.Awake += (orig, self) => {
 
                 ModButton button = new ModButton("Save");
@@ -323,22 +325,6 @@ namespace SavedGames
 
         }
 
-        [ConCommand(commandName = "test", flags = ConVarFlags.None, helpText = "Save game")]
-        private static void CCTest(ConCommandArgs args) {
-            StringBuilder s = new StringBuilder();
-
-            foreach (var item in args.userArgs) {
-                s.Append($"{item}/");
-            }
-            s.Remove(s.Length -1, 1);
-
-            Debug.Log(s);
-
-            GameObject newObject = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>(s.ToString()));
-            newObject.transform.SetParent(FindObjectOfType<Canvas>().transform);
-            newObject.transform.position.Set(100, 100, 0);
-
-        }
          private IEnumerator StartLoading(SaveData save) {
 
             loadingScene = true;

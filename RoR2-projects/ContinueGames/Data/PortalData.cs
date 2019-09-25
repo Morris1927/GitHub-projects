@@ -16,9 +16,8 @@ namespace SavedGames.Data
 
         public PortalData(SceneExitController portal) {
             transform = new SerializableTransform(portal.transform);
-            name = portal.destinationScene.SceneName;
+            name = portal.destinationScene.sceneName;
             useRunNextStageScene = portal.useRunNextStageScene;
-            
         }
 
         public void LoadPortal() {

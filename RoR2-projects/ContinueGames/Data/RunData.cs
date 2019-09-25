@@ -65,7 +65,7 @@ namespace SavedGames.Data
                 }
             }
 
-            newRun.AdvanceStage(sceneName);
+            newRun.AdvanceStage(SceneCatalog.GetSceneDefFromSceneName(sceneName));
             newRun.stageClearCount = stageClearCount;
         }
 

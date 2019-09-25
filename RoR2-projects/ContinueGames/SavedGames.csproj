@@ -21,7 +21,6 @@
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\Libs\Assembly-CSharp.dll</HintPath>
-      <Private>false</Private>
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>..\Libs\BepInEx.dll</HintPath>
@@ -37,7 +36,6 @@
     </Reference>
     <Reference Include="MMHOOK_Assembly-CSharp">
       <HintPath>..\Libs\MMHOOK_Assembly-CSharp.dll</HintPath>
-      <Private>false</Private>
     </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>..\Libs\Mono.Cecil.dll</HintPath>
@@ -53,7 +51,6 @@
     </Reference>
     <Reference Include="R2API">
       <HintPath>..\Libs\R2API.dll</HintPath>
-      <Private>false</Private>
     </Reference>
     <Reference Include="Rewired_Core">
       <HintPath>..\Libs\Rewired_Core.dll</HintPath>

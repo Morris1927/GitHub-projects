@@ -96,7 +96,7 @@ namespace SavedGames.Data
                 bossGroup.dropPosition = GoldshoresMissionController.instance.bossSpawnPosition;
                  
                 bossGroup.combatSquad.AddMember(enemy);
-                bossFight.SetFieldValue("bossGroup", bossGroup);
+                TeleporterInteraction.instance.SetFieldValue("bossGroup", bossGroup);
                 bossFight.SetFieldValue("hasSpawnedBoss", true);
                 bossFight.SetFieldValue("bossInstanceBody", enemy.GetBody());
 
@@ -104,7 +104,7 @@ namespace SavedGames.Data
 
                 GoldshoresMissionController.instance.GetComponent<EntityStateMachine>().SetNextState(bossFight);
             } else if(isBoss) {
-                BossGroup.instance.combatSquad.AddMember(enemy);
+                TeleporterInteraction.instance.GetFieldValue<BossGroup>("bossGroup").combatSquad.AddMember(enemy);
             }
 
             SavedGames.instance.StartCoroutine(WaitForStart(enemy));

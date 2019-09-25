@@ -38,16 +38,15 @@ namespace SavedGames.Data {
 
         public void LoadTeleporter() {
             typeof(TeleporterInteraction).GetProperty("instance", BindingFlags.Public | BindingFlags.Static).SetValue(null, null);
-
             var gameobject = Resources.Load<SpawnCard>(Path).DoSpawn(transform.position.GetVector3(), transform.rotation.GetQuaternion(), null);
             var teleporter = gameobject.GetComponent<TeleporterInteraction>();
 
             if (activationState == 2) {
-                var bossGroup = GameObject.Instantiate(Resources.Load<BossGroup>("Prefabs/NetworkedObjects/BossGroup"));
-                NetworkServer.Spawn(bossGroup.gameObject);
-                bossGroup.dropPosition = teleporter.bossDirector.dropPosition;
-                teleporter.bossDirector.SetProperyValue("bossGroup", bossGroup);
-
+                var bossGroup = teleporter.gameObject.AddComponent<BossGroup>();
+                    //GameObject.Instantiate(Resources.Load<BossGroup>("Prefabs/NetworkedObjects/BossGroup"));
+                //NetworkServer.Spawn(bossGroup.gameObject);
+                //bossGroup.dropPosition = teleporter.bossDirector.
+                teleporter.SetFieldValue("bossGroup", bossGroup);
             }
             if (activationState >= 2) {
                 teleporter.bossDirector.monsterCredit = float.MinValue;

@@ -3,7 +3,7 @@ Hi, its been a struggle to update anything (and have it in a passable state), so
 Find other people mantaining these mods here:
 
 RoR2Cheats (now DebugToolkit)
-  https://github.com/harbingerofme/DebugToolkit
+...https://github.com/harbingerofme/DebugToolkit
   
 DropInMultiplayer
-  https://github.com/SushiDevshi/DropInMultiplayer
+...https://github.com/SushiDevshi/DropInMultiplayer

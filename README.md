@@ -7,3 +7,6 @@ RoR2Cheats (now DebugToolkit)
   
 DropInMultiplayer  
 >https://github.com/SushiDevshi/DropInMultiplayer
+
+SavedGames
+>https://github.com/MagnusMagnuson/RoR2-projects/tree/master/RoR2-projects/ContinueGames
